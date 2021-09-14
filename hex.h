@@ -36,6 +36,9 @@ class hexBoard
 		
 		hCLR getCellColor(int r, int c) { return boardCell[r][c].color; }
 		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
+		
+		void setCellColor(int r, int c, hCLR hCC) { boardCell[r][c].color = hCC; }
+		void setCellColor(int n, hCLR hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c].color = hCC; }
 };
 
 enum class status: unsigned {ILLEGAL = 1, CONTINUE, WINNER};
