@@ -7,15 +7,15 @@ int main ()
 	
 	int row, col; cout << Enter your move: "; cin >> row >> col;
 	
-	move = game.getMove(row, col);
+	status result = game.analyzeMove(row, col);
 	
-	switch (move)
+	switch (result)
 	{
-		case illegal:
+		case status::ILLEGAL:
 			break;
-		case continue:
+		case status::CONTINUE:
 			break;
-		case winner:
+		case status::WINNER:
 			break;
 		default:
 			return 0;

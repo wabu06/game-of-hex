@@ -19,3 +19,11 @@ hexBoard::hexBoard(int S)
 		r++;
 	}
 }
+
+status hexGamePlay::analyzeMove(int r, int c)
+{
+	if (gameBoard.getCellColor(r, c) != hCLR::NONE)
+		return status::ILLEGAL;
+	else
+		return status::CONTINUE;
+}

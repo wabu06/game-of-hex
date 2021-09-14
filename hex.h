@@ -38,6 +38,8 @@ class hexBoard
 		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
 };
 
+enum class status: unsigned {NONE, ILLEGAL, CONTINUE, WINNER};
+
 	// hexGamePlay class implements hex game engine
 class hexGamePlay
 {
@@ -46,8 +48,11 @@ class hexGamePlay
 	
 	hexBoard gameBoard;
 	
+	status gameState;
+	
 	public:
-		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ) {}
+		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ), gameState( status::CONTINUE ) {}
+		status analyzeMove(int r, int c);
 };
 
 // computer calculates it's longest paths, and see which one's it can extend, calculates the human's and see which one's it
