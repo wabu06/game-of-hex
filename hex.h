@@ -1,9 +1,16 @@
+#ifndef HEX
+#define HEX
+
 #include<iostream>
 #include<vector>
+#include<tuple>
 #include<unordered_map>
 
-
 using namespace std;
+
+#endif
+
+#include "dPath.h"
 
 
 enum class hCLR: unsigned {NONE, RED, BLUE}; // color of a cell on the hex board
