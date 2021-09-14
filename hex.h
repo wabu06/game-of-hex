@@ -53,14 +53,14 @@ class pGraph
 	// hexGamePlay class implements hex game engine
 class hexGamePlay
 {
-	pGraph computer;
-	pGraph human;
+	graph computer; // graph that tracks computer's cells on the gameboard
+	graph human; // graph that tracks the human player's cells on the gameboard
 	
 	hexBoard gameBoard;
 	
 	public:
 		//hexGamePlay( int B = 11, pGraph C = pGraph(), pGraph H = pGraph() ): computer(C), human(H) { gameBoard = hexBoard{B}; }
-		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( pGraph() ), human( pGraph() ) {}
+		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ) {}
 };
 
 // computer calculates it's longest paths, and see which one's it can extend, calculates the human's and see which one's it
