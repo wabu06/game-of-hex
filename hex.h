@@ -3,7 +3,6 @@
 
 #include<iostream>
 #include<vector>
-#include<tuple>
 #include<unordered_map>
 
 using namespace std;

@@ -1,4 +1,4 @@
-#include "shortestPath.h"
+#include "dPath.h"
 
 
 
@@ -15,8 +15,7 @@ bool dsPath::nodeInClosedSet(int n)
 
 nodePath dsPath::getNodePath( int sN, int dN)
 {
-		// what to return if either source or destination nodes are not in the
-		// graph
+		// what to return if either source or destination nodes are not in the graph
 	if( !( spGraph.nodeExist(sN) && spGraph.nodeExist(dN) ) )
 		return nodePath( -1, vector<int>() );
 	
@@ -47,8 +46,8 @@ nodePath dsPath::getNodePath( int sN, int dN)
 		
 		LP = closedSet.back(); // get most recent path added to closed set
 		
-			// if final node in the most recent path added to closed set is 
-			// "dN", the destination node, then shortest path has been found
+			// if final node in the most recent path added to closed set is "dN", the destination node, then shortest path
+			// has been found
 		if ( LP.nodeList.back() == dN )
 			return LP;
 
@@ -56,24 +55,19 @@ nodePath dsPath::getNodePath( int sN, int dN)
 		
 		nodeNeighbors = spGraph.getNeighbors(cn);
 		
-			// if a node has no neighbors then there isn't a path to the 
-			// destination node "dN"
+			// if a node has no neighbors then there isn't a path to the destination node "dN"
 		if (nodeNeighbors.size() == 0)
 			return nodePath( -2, vector<int>() );
 
 		for(auto& N: nodeNeighbors)
-		{
-			if( !cMap[ spGraph.getEdgeColor(cn, N) ] )
-				continue;
-			
+		{			
 			if( nodeInClosedSet(N) )
 				continue;
 			
 			tempEV = np.ect;
 			tempNP = np.nodeList;
 			
-				// returns the index of the node in the open set, if node is not
-				// in the open set return -1
+				// returns the index of the node in the open set, if node is not in the open set return -1
 			idx = openSet.contains(N);
 		
 			ev = spGraph.getEdgeValue(cn, N);
@@ -82,9 +76,8 @@ nodePath dsPath::getNodePath( int sN, int dN)
 			
 			tempNP.push_back(N);
 			
-				// add new path to open set if the node is leads to isn't
-				// already ready visited, if it's already been visited, add it
-				// only if it's better path than one already checked/found
+				// add new path to open set if the node is leads to isn't already ready visited, if it's already been visited,
+				// add it only if it's better path than one already checked/found
 			if (idx < 0)
 				openSet.insert( nodePath(tempEV, tempNP) );
 			else
@@ -100,13 +93,8 @@ nodePath dsPath::getNodePath( int sN, int dN)
 					openSet.modVal( idx, nodePath(tempEV, tempNP) );
 				}
 			}
-		}
-		
-		//np = openSet.getMin(); // get shortest path currently in open set
-		
-		//closedSet.push_back(np);
+		}		
 	}
-	
 		// return empty path list if node "dN" is not reachable from node "sN"
 	return nodePath( -3, vector<int>() );
 }
