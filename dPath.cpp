@@ -1,18 +1,6 @@
 #include "dPath.h"
 
 
-
-bool dsPath::nodeInClosedSet(int n)
-{
-	for(auto& N: closedSet)
-	{
-		if (N.nodeList.back() == n)
-			return true;
-	}
-	
-	return false;
-}
-
 nodePath dsPath::getNodePath( int sN, int dN)
 {
 		// what to return if either source or destination nodes are not in the graph
@@ -36,20 +24,15 @@ nodePath dsPath::getNodePath( int sN, int dN)
 	
 	vector<int> tempNP;
 	
-	nodePath LP; // last path added to closed set
-	
 	vector<int> nodeNeighbors;
-	
+		
 	while( openSet.notEmpty() )
 	{
-		np = openSet.getMin(); closedSet.push_back(np);
-		
-		LP = closedSet.back(); // get most recent path added to closed set
-		
-			// if final node in the most recent path added to closed set is "dN", the destination node, then shortest path
-			// has been found
-		if ( LP.nodeList.back() == dN )
-			return LP;
+		np = openSet.getMin(); closedSet[np.nodeList.back()] = np;
+			
+			// if destination node "dN" is in the closed set then shortest path has been found
+		if ( closedSet.count(dN) == 1)
+			return closedSet[dN];
 
 		cn = np.nodeList.back(); // current node to be examined
 		
@@ -61,7 +44,8 @@ nodePath dsPath::getNodePath( int sN, int dN)
 
 		for(auto& N: nodeNeighbors)
 		{			
-			if( nodeInClosedSet(N) )
+				// do not add a path to the open set if it's in the closed set
+			if( closedSet.count(N) == 1)
 				continue;
 			
 			tempEV = np.ect;

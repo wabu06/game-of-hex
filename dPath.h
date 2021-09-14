@@ -3,7 +3,6 @@
 
 #include<iostream>
 #include<vector>
-#include<tuple>
 #include<unordered_map>
 
 using namespace std;
@@ -18,17 +17,14 @@ class dsPath
 {
 	priorityQueue openSet;
 	graph spGraph;
-	vector<nodePath> closedSet;
-		
-		// returns true if given node is in the closed set
-	bool nodeInClosedSet(int n);
-	
+	unordered_map<int, nodePath> closedSet;
+			
 		// Dijkstra's Algorithm is implemented here
 	nodePath getNodePath(int sN, int dN);
 	
 	public:
 			// constructor takes a graph object as input, and appropriately initializes the open and closed set
-		dsPath( graph G = graph() ): spGraph(G), openSet( priorityQueue() ), closedSet( vector<nodePath>() ) {}
+		dsPath( graph G = graph() ): spGraph(G), openSet( priorityQueue() ), closedSet( unordered_map<int, nodePath>{} ) {}
 					
 		 	// find shortest path between from node u to node w and returns the sequence of vertices representing shortest
 			// path between them

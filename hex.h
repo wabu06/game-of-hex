@@ -37,18 +37,6 @@ class hexBoard
 		hCLR getCellColor(int r, int c) { return boardCell[r][c].color; }
 };
 
-	// graph to hold each players cells
-class pGraph
-{
-	unordered_map< int, vector<int> > node;
-	int size;
-	
-	public:
-		pGraph( int S = 0, unordered_map< int, vector<int> > N = unordered_map< int, vector<int> >{} ): size(S), node(N) {}
-		
-		int getSize() { return size; }
-};
-
 	// hexGamePlay class implements hex game engine
 class hexGamePlay
 {
@@ -58,7 +46,6 @@ class hexGamePlay
 	hexBoard gameBoard;
 	
 	public:
-		//hexGamePlay( int B = 11, pGraph C = pGraph(), pGraph H = pGraph() ): computer(C), human(H) { gameBoard = hexBoard{B}; }
 		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ) {}
 };
 

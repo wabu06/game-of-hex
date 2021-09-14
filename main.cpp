@@ -5,7 +5,9 @@ int main ()
 {
 	hexGamePlay game{};
 	
-	move = game.getMove();
+	int row, col; cout << Enter your move: "; cin >> row >> col;
+	
+	move = game.getMove(row, col);
 	
 	switch (move)
 	{
