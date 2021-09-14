@@ -22,8 +22,20 @@ hexBoard::hexBoard(int S)
 
 status hexGamePlay::analyzeMove(int r, int c)
 {
-	if (gameBoard.getCellColor(r, c) != hCLR::NONE)
-		return status::ILLEGAL;
-	else
-		return status::CONTINUE;
+	switch (gameState)
+	{
+		case status::ILLEGAL: case status::CONTINUE:
+		
+				if (gameBoard.getCellColor(r, c) != hCLR::NONE)
+					gameState = status::ILLEGAL;
+				else
+					gameState = status::CONTINUE;
+			break;
+			
+		case status::WINNER:
+				gameState = status::WINNER;
+			break;
+	}
+	
+	return gameState;
 }

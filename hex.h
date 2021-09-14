@@ -38,7 +38,7 @@ class hexBoard
 		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
 };
 
-enum class status: unsigned {NONE, ILLEGAL, CONTINUE, WINNER};
+enum class status: unsigned {ILLEGAL = 1, CONTINUE, WINNER};
 
 	// hexGamePlay class implements hex game engine
 class hexGamePlay
