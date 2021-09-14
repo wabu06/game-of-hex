@@ -35,6 +35,7 @@ class hexBoard
 		hexBoard(int S = 0);
 		
 		hCLR getCellColor(int r, int c) { return boardCell[r][c].color; }
+		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
 };
 
 	// hexGamePlay class implements hex game engine
