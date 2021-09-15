@@ -14,16 +14,17 @@ using namespace std;
 
 enum class hCLR: unsigned {NONE, RED, BLUE}; // color of a cell on the hex board
 
+	// cells on the hex game board
 class hexCell
 {
 	public:
 		hCLR color;
-		int n, s;
-		int nw, sw;
-		int ne, se;
+		int top, bttm; // neighbors on the top & bottom sides of a cell
+		int upperL, lowerL; // neighbors at the upper & lower left sides of a cell
+		int upperR, lowerR; // neighbors at the upper & lower right sides of a cell
 		
-		hexCell(int N = -1, int S = -1, int NW = -1, int SW = -1, int NE = -1, int SE = -1, hCLR C = hCLR::NONE):
-				color(C), n(N), s(S), nw(NW), sw(SW), ne(NE), se(SE) {}
+		hexCell(int T = -1, int B = -1, int UL = -1, int LL = -1, int UR = -1, int LR = -1, hCLR C = hCLR::NONE):
+				top(T), bttm(B), upperL(UL), lowerL(LL), upperR(UR), lowerR(LR), color(C) {}
 };
 
 class hexBoard
@@ -33,6 +34,8 @@ class hexBoard
 	
 	public:
 		hexBoard(int S = 0);
+		
+		int getSize() { return size; }
 		
 		hCLR getCellColor(int r, int c) { return boardCell[r][c].color; }
 		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
@@ -52,6 +55,8 @@ class hexGamePlay
 	hexBoard gameBoard;
 	
 	status gameState;
+	
+	status updateHumanGraph(int r, int c);
 	
 	public:
 		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ), gameState( status::CONTINUE ) {}

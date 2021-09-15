@@ -20,17 +20,31 @@ hexBoard::hexBoard(int S)
 	}
 }
 
+status hexGamePlay::updateHumanGraph(int r, int c)
+{
+	int s{ gameBoard.getSize() }; // game board size
+	int n{ r*s + c }; // calculate node from r,c coordinates
+	
+	if (gameBoard.getCellColor(r, c) != hCLR::NONE)
+		gameState = status::ILLEGAL;
+	else
+	{
+		gameState = status::CONTINUE;
+		
+		gameBoard.setCellColor(r, c, hCLR::BLUE);
+		human.addNode(n);
+	}
+	
+	return gameState;
+}
+
 status hexGamePlay::analyzeMove(int r, int c)
 {
 	switch (gameState)
 	{
 		case status::ILLEGAL: case status::CONTINUE:
-		
-				if (gameBoard.getCellColor(r, c) != hCLR::NONE)
-					gameState = status::ILLEGAL;
-				else
-					gameState = status::CONTINUE;
-			break;
+			updateHumanGraph(r, c);
+		break;
 			
 		case status::WINNER:
 				gameState = status::WINNER;
