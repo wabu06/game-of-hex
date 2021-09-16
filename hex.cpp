@@ -20,35 +20,56 @@ hexBoard::hexBoard(int S)
 	}
 }
 
-status hexGamePlay::updateHumanGraph(int r, int c)
+void hexGamePlay::setBluePlayer(string p)
+{
+	bool hBlue = p == "B" || p == "b" || p == "blue" || p == "Blue"; // did the human player pick blue
+	
+	string blue = hBlue ? "human": "computer";
+	
+	bluePlayer = blue;
+	gameState = state::CONTINUE;
+	
+	if (bluePlayer == "computer")
+		cout << "computer plays first\n";
+}
+
+state hexGamePlay::updateHumanGraph(int r, int c)
 {
 	int s{ gameBoard.getSize() }; // game board size
 	int n{ r*s + c }; // calculate node from r,c coordinates
 	
+	hCLR cellCLR = bluePlayer == "human" ? hCLR::BLUE : hCLR::RED;
+	
 	if (gameBoard.getCellColor(r, c) != hCLR::NONE)
-		gameState = status::ILLEGAL;
+		gameState = state::ILLEGAL;
 	else
 	{
-		gameState = status::CONTINUE;
+		gameState = state::CONTINUE;
 		
-		gameBoard.setCellColor(r, c, hCLR::BLUE);
+		gameBoard.setCellColor(r, c, cellCLR);
 		human.addNode(n);
 	}
 	
 	return gameState;
 }
 
-status hexGamePlay::analyzeMove(int r, int c)
+state hexGamePlay::analyzeMove(int r, int c)
 {
 	switch (gameState)
 	{
-		case status::ILLEGAL: case status::CONTINUE:
+		case state::ILLEGAL:
+		break;
+		
+		case state::CONTINUE:
 			updateHumanGraph(r, c);
 		break;
 			
-		case status::WINNER:
-				gameState = status::WINNER;
-			break;
+		case state::WINNER:
+				gameState = state::WINNER;
+		break;
+		
+		case state::NOCOLORSET:
+		break;
 	}
 	
 	return gameState;

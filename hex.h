@@ -4,6 +4,7 @@
 #include<iostream>
 #include<vector>
 #include<unordered_map>
+#include<string>
 
 using namespace std;
 
@@ -44,23 +45,31 @@ class hexBoard
 		void setCellColor(int n, hCLR hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c].color = hCC; }
 };
 
-enum class status: unsigned {ILLEGAL = 1, CONTINUE, WINNER};
+enum class state: unsigned {NOCOLORSET, ILLEGAL, CONTINUE, WINNER};
 
 	// hexGamePlay class implements hex game engine
 class hexGamePlay
 {
 	graph computer; // graph that tracks computer's cells on the gameboard
-	graph human; // graph that tracks the human player's cells on the gameboard
+	graph human; // graph that tracks the human player's cells on the gameboard 
+	
+	string bluePlayer;
 	
 	hexBoard gameBoard;
 	
-	status gameState;
+	state gameState;
 	
-	status updateHumanGraph(int r, int c);
+	state updateHumanGraph(int r, int c);
 	
 	public:
-		hexGamePlay(int B = 11): gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ), gameState( status::CONTINUE ) {}
-		status analyzeMove(int r, int c);
+		hexGamePlay(int B = 11):
+			gameBoard( hexBoard{B} ), computer( graph() ), human( graph() ), bluePlayer("none"), gameState( state::NOCOLORSET ) {}
+				
+		state analyzeMove(int r, int c);
+		
+		void setBluePlayer(string p);
+		
+		state getGameState() { return gameState; }
 };
 
 // computer calculates it's longest paths, and see which one's it can extend, calculates the human's and see which one's it
