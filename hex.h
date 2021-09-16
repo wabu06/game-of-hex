@@ -59,7 +59,8 @@ class hexGamePlay
 	
 	state gameState;
 	
-	state updateHumanGraph(int r, int c);
+	state updateHumanPlayer(int r, int c);
+	state updateComputerPlayer();
 	
 	public:
 		hexGamePlay(int B = 11):

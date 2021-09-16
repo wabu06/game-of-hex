@@ -22,18 +22,25 @@ hexBoard::hexBoard(int S)
 
 void hexGamePlay::setBluePlayer(string p)
 {
-	bool hBlue = p == "B" || p == "b" || p == "blue" || p == "Blue"; // did the human player pick blue
+		// if bluePlayer was previously set do nothing
+	if ( (bluePlayer=="human") || (bluePlayer=="computer") )
+		return;
+
+	bool blue = p == "B" || p == "b" || p == "blue" || p == "Blue"; // did the human player pick blue
 	
-	string blue = hBlue ? "human": "computer";
+	// string blue = hBlue ? "human": "computer";
 	
-	bluePlayer = blue;
+	bluePlayer = blue ? "human": "computer";
 	gameState = state::CONTINUE;
 	
+		// if computer is the blue player, then it gets first turn
 	if (bluePlayer == "computer")
-		cout << "computer plays first\n";
+		updateComputerPlayer();
 }
 
-state hexGamePlay::updateHumanGraph(int r, int c)
+state hexGamePlay::updateComputerPlayer() { return gameState; }
+
+state hexGamePlay::updateHumanPlayer(int r, int c)
 {
 	int s{ gameBoard.getSize() }; // game board size
 	int n{ r*s + c }; // calculate node from r,c coordinates
@@ -55,22 +62,24 @@ state hexGamePlay::updateHumanGraph(int r, int c)
 
 state hexGamePlay::analyzeMove(int r, int c)
 {
-	switch (gameState)
+	if (gameState == state::NOCOLORSET)
+		return gameState;
+	
+	if( (gameState == state::CONTINUE) || (gameState ==  state::ILLEGAL) )
 	{
-		case state::ILLEGAL:
-		break;
+		updateHumanPlayer(r, c);
 		
-		case state::CONTINUE:
-			updateHumanGraph(r, c);
-		break;
-			
-		case state::WINNER:
-				gameState = state::WINNER;
-		break;
-		
-		case state::NOCOLORSET:
-		break;
+		if (gameState ==  state::ILLEGAL)
+			return gameState;
+		else
+		{
+			updateComputerPlayer();
+			return gameState;
+		}
 	}
 	
-	return gameState;
+	if (gameState ==  state::WINNER)
+		return gameState;
+	
+	return gameState;	
 }
