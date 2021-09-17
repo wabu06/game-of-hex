@@ -20,12 +20,12 @@ class hexCell
 {
 	public:
 		hCLR color;
-		int top, bttm; // neighbors on the top & bottom sides of a cell
+		int left, right; // neighbors on the left & right sides of a cell
 		int upperL, lowerL; // neighbors at the upper & lower left sides of a cell
 		int upperR, lowerR; // neighbors at the upper & lower right sides of a cell
 		
-		hexCell(int T = -1, int B = -1, int UL = -1, int LL = -1, int UR = -1, int LR = -1, hCLR C = hCLR::NONE):
-				top(T), bttm(B), upperL(UL), lowerL(LL), upperR(UR), lowerR(LR), color(C) {}
+		hexCell(int L = -1, int R = -1, int UL = -1, int LL = -1, int UR = -1, int LR = -1, hCLR C = hCLR::NONE):
+				left(L), right(R), upperL(UL), lowerL(LL), upperR(UR), lowerR(LR), color(C) {}
 };
 
 class hexBoard

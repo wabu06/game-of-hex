@@ -38,7 +38,74 @@ void hexGamePlay::setBluePlayer(string p)
 		updateComputerPlayer();
 }
 
-state hexGamePlay::updateComputerPlayer() { return gameState; }
+state hexGamePlay::updateComputerPlayer() 
+{
+	hCLR compCLR = bluePlayer == "computer" ? hCLR::BLUE : hCLR::RED;
+	
+	int s{ gameBoard.getSize() };
+	
+		// pick middle cell first
+	if ( gameBoard.getCellColor( s/2, s/2 ) == hCLR::NONE )
+	{
+		gameBoard.setCellColor( s/2, s/2, compCLR);
+		gameState = state::CONTINUE;
+		return gameState;
+	}
+	
+	int r, c;
+	
+		// find left most or top most cell that's in the computer player's graph, this will be used as the start node for find the
+		// longest path in the player's graph
+	if (compCLR == hCLR::RED)
+	{
+		for(r = 0; r < s; ++r)
+		{
+			for(c = 0; c < s; ++c)
+			{
+				if (gameBoard.getCellColor(r, c) == compCLR)
+					break;
+			}
+			
+			if (gameBoard.getCellColor(r, c) == compCLR)
+				break;
+		}
+	}
+	else
+	{
+		for(c = 0; c < s; ++c)
+		{
+			for(r = 0; r < s; ++r)
+			{
+				if (gameBoard.getCellColor(c, r) == compCLR)
+					break;
+			}
+			
+			if (gameBoard.getCellColor(c, r) == compCLR)
+				break;
+		}
+	}
+	
+	vector<int> cNodes{ computer.getNodes() }; // nodes of computer player graph
+	vector<int> maxPath;
+	int max{0}, ps; // maximum path size in computer player graph
+	
+	dsPath mGP{ computer };
+	
+	int n{ r*s + c }; // calculate start node from r,c coordinates
+	
+	for(auto& N: cNodes)
+	{
+		ps = mGP.getPathSize(n,N);
+		
+		if (ps > max)
+		{
+			maxPath = mGP.getPath(n,N);
+			max = ps;
+		}
+	}
+	
+	return gameState;
+}
 
 state hexGamePlay::updateHumanPlayer(int r, int c)
 {
@@ -65,21 +132,26 @@ state hexGamePlay::analyzeMove(int r, int c)
 	if (gameState == state::NOCOLORSET)
 		return gameState;
 	
+	if (gameState ==  state::WINNER)
+		return gameState;
+	
 	if( (gameState == state::CONTINUE) || (gameState ==  state::ILLEGAL) )
 	{
 		updateHumanPlayer(r, c);
 		
-		if (gameState ==  state::ILLEGAL)
+		if (gameState == state::ILLEGAL)
 			return gameState;
 		else
 		{
-			updateComputerPlayer();
-			return gameState;
+			if (gameState == state::WINNER)
+				return gameState;
+			else
+			{
+				updateComputerPlayer();
+				return gameState;
+			}
 		}
 	}
-	
-	if (gameState ==  state::WINNER)
-		return gameState;
 	
 	return gameState;	
 }

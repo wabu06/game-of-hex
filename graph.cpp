@@ -212,3 +212,13 @@ double graph::avePathLength(int n)
 	else
 		return 0.0;
 }
+
+vector<int> graph::getNodes()
+{
+	vector<int> gNodes{ vector<int>() };
+	
+	for(auto& N: nodes)
+		gNodes.push_back(N.first);
+	
+	return gNodes;
+}

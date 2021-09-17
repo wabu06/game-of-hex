@@ -69,4 +69,6 @@ class graph
 			// get the average path length of all the nodes connected to
 			// node "n"
 		double avePathLength(int n);
+		
+		vector<int> getNodes();
 };
