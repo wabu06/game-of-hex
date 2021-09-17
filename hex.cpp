@@ -42,65 +42,36 @@ state hexGamePlay::updateComputerPlayer()
 {
 	hCLR compCLR = bluePlayer == "computer" ? hCLR::BLUE : hCLR::RED;
 	
-	int s{ gameBoard.getSize() };
+	int s{ gameBoard.getSize() }; int n{ (s/2)*s + (s/2) };
 	
 		// pick middle cell first
 	if ( gameBoard.getCellColor( s/2, s/2 ) == hCLR::NONE )
 	{
 		gameBoard.setCellColor( s/2, s/2, compCLR);
-		gameState = state::CONTINUE;
-		return gameState;
+		
+		computer.addNode(n);
+		
+		gameState = state::CONTINUE; return gameState;
 	}
 	
-	int r, c;
+	vector<int> cNodes{ computer.getNodes() }; // the nodes of computer player graph
 	
-		// find left most or top most cell that's in the computer player's graph, this will be used as the start node for find the
-		// longest path in the player's graph
-	if (compCLR == hCLR::RED)
-	{
-		for(r = 0; r < s; ++r)
-		{
-			for(c = 0; c < s; ++c)
-			{
-				if (gameBoard.getCellColor(r, c) == compCLR)
-					break;
-			}
-			
-			if (gameBoard.getCellColor(r, c) == compCLR)
-				break;
-		}
-	}
-	else
-	{
-		for(c = 0; c < s; ++c)
-		{
-			for(r = 0; r < s; ++r)
-			{
-				if (gameBoard.getCellColor(c, r) == compCLR)
-					break;
-			}
-			
-			if (gameBoard.getCellColor(c, r) == compCLR)
-				break;
-		}
-	}
+	vector<int> maxPath; int maxPS{0}, ps; // maximum path size in computer player graph
 	
-	vector<int> cNodes{ computer.getNodes() }; // nodes of computer player graph
-	vector<int> maxPath;
-	int max{0}, ps; // maximum path size in computer player graph
-	
+		// instance of class that implements Dijkstra's Algorithm, used to find the maximum path in computer player graph	
 	dsPath mGP{ computer };
 	
-	int n{ r*s + c }; // calculate start node from r,c coordinates
-	
-	for(auto& N: cNodes)
+	for(auto& ON: cNodes)
 	{
-		ps = mGP.getPathSize(n,N);
-		
-		if (ps > max)
+		for(auto& IN: cNodes)
 		{
-			maxPath = mGP.getPath(n,N);
-			max = ps;
+			ps = mGP.getPathSize(ON,IN);
+			
+			if (ps > maxPS)
+			{
+				maxPath = mGP.getPath(ON,IN);
+				maxPS = ps;
+			}
 		}
 	}
 	
