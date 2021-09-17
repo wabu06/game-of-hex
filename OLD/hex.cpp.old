@@ -5,12 +5,18 @@
 hexBoard::hexBoard(int S)
 {
 	size = S;
-	boardCell = vector< vector<hCLR> >(size);
+	boardCell = vector< vector<hexCell> >(size);
+			
+	int r{0};
 			
 	for(auto& C: boardCell)
 	{
-		for(int col = 0; col < size; ++col)
-			C.push_back(hCLR::NONE);
+		for(int i = 0; i < size; ++i)
+		{
+			C.push_back( hexCell( r*S + i+1, r*S + i-1, (r+1) * S + i, (r+1) * S + i + 1, (r-1) * S + i, (r-1) * S + i - 1) );
+		}
+				
+		r++;
 	}
 }
 
@@ -36,36 +42,65 @@ state hexGamePlay::updateComputerPlayer()
 {
 	hCLR compCLR = bluePlayer == "computer" ? hCLR::BLUE : hCLR::RED;
 	
-	int s{ gameBoard.getSize() }; int n{ (s/2)*s + (s/2) };
+	int s{ gameBoard.getSize() };
 	
 		// pick middle cell first
 	if ( gameBoard.getCellColor( s/2, s/2 ) == hCLR::NONE )
 	{
 		gameBoard.setCellColor( s/2, s/2, compCLR);
-		
-		computer.addNode(n);
-		
-		gameState = state::CONTINUE; return gameState;
+		gameState = state::CONTINUE;
+		return gameState;
 	}
 	
-	vector<int> cNodes{ computer.getNodes() }; // the nodes of computer player graph
+	int r, c;
 	
-	vector<int> maxPath; int maxPS{0}, ps; // maximum path size in computer player graph
+		// find left most or top most cell that's in the computer player's graph, this will be used as the start node for find the
+		// longest path in the player's graph
+	if (compCLR == hCLR::RED)
+	{
+		for(r = 0; r < s; ++r)
+		{
+			for(c = 0; c < s; ++c)
+			{
+				if (gameBoard.getCellColor(r, c) == compCLR)
+					break;
+			}
+			
+			if (gameBoard.getCellColor(r, c) == compCLR)
+				break;
+		}
+	}
+	else
+	{
+		for(c = 0; c < s; ++c)
+		{
+			for(r = 0; r < s; ++r)
+			{
+				if (gameBoard.getCellColor(c, r) == compCLR)
+					break;
+			}
+			
+			if (gameBoard.getCellColor(c, r) == compCLR)
+				break;
+		}
+	}
 	
-		// instance of class that implements Dijkstra's Algorithm, used to find the maximum path in computer player graph	
+	vector<int> cNodes{ computer.getNodes() }; // nodes of computer player graph
+	vector<int> maxPath;
+	int max{0}, ps; // maximum path size in computer player graph
+	
 	dsPath mGP{ computer };
 	
-	for(auto& ON: cNodes)
+	int n{ r*s + c }; // calculate start node from r,c coordinates
+	
+	for(auto& N: cNodes)
 	{
-		for(auto& IN: cNodes)
+		ps = mGP.getPathSize(n,N);
+		
+		if (ps > max)
 		{
-			ps = mGP.getPathSize(ON,IN);
-			
-			if (ps > maxPS)
-			{
-				maxPath = mGP.getPath(ON,IN);
-				maxPS = ps;
-			}
+			maxPath = mGP.getPath(n,N);
+			max = ps;
 		}
 	}
 	
@@ -87,48 +122,6 @@ state hexGamePlay::updateHumanPlayer(int r, int c)
 		
 		gameBoard.setCellColor(r, c, cellCLR);
 		human.addNode(n);
-		
-			// if right neighbor has same color add edge
-		if( (c+1) < s )
-		{
-			if (gameBoard.getCellColor(r, c+1) == cellCLR)
-				human.addEdge( n, r*s + c+1, 1 );
-		}
-			
-			// if left neighbor has same color add edge
-		if( (c-1) >= 0 )
-		{
-			if (gameBoard.getCellColor(r, c-1) == cellCLR)
-				human.addEdge( n, r*s + c-1, 1 );
-		}
-		
-			// if upper right neighbor has same color add edge
-		if( ((r-1) >= 0) && ((c+1) < s) )
-		{
-			if (gameBoard.getCellColor(r-1, c+1) == cellCLR)
-				human.addEdge( n, (r-1)*s + c+1, 1 );
-		}
-		
-			// if lower right neighbor has same color add edge
-		if( ( (r+1) < s) )
-		{
-			if (gameBoard.getCellColor(r+1, c) == cellCLR)
-				human.addEdge( n, (r+1)*s + c, 1 );
-		}
-		
-			// if upper left neighbor has same color add edge
-		if( (r-1) >= 0 )
-		{
-			if (gameBoard.getCellColor(r-1, c) == cellCLR)
-				human.addEdge( n, (r-1)*s + c, 1 );
-		}
-		
-			// if lower left neighbor has same color add edge
-		if( ((r+1) < s) && ((c-1) >= 0) )
-		{
-			if (gameBoard.getCellColor(r+1, c-1) == cellCLR)
-				human.addEdge( n, (r+1)*s + c-1, 1 );
-		}
 	}
 	
 	return gameState;
