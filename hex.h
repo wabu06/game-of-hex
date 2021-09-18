@@ -15,9 +15,22 @@ using namespace std;
 
 enum class hCLR: unsigned {NONE, RED, BLUE}; // color of a cell on the hex board
 
+	// cells on the hex game board
+class hexCell
+{
+	public:
+		hCLR color;
+		int left, right; // neighbors on the left & right sides of a cell
+		int upperL, lowerL; // neighbors at the upper & lower left sides of a cell
+		int upperR, lowerR; // neighbors at the upper & lower right sides of a cell
+		
+		hexCell(int L, int R, int UL, int LL, int UR, int LR, hCLR C = hCLR::NONE):
+				left(L), right(R), upperL(UL), lowerL(LL), upperR(UR), lowerR(LR), color(C) {}
+};
+
 class hexBoard
 {
-	vector< vector<hCLR> > boardCell;
+	vector< vector<hexCell> > boardCell;
 	int size;
 	
 	public:
@@ -25,11 +38,11 @@ class hexBoard
 		
 		int getSize() { return size; }
 		
-		hCLR getCellColor(int r, int c) { return boardCell[r][c]; }
-		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c]; }
+		hCLR getCellColor(int r, int c) { return boardCell[r][c].color; }
+		hCLR getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
 		
-		void setCellColor(int r, int c, hCLR hCC) { boardCell[r][c] = hCC; }
-		void setCellColor(int n, hCLR hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c] = hCC; }
+		void setCellColor(int r, int c, hCLR hCC) { boardCell[r][c].color = hCC; }
+		void setCellColor(int n, hCLR hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c].color = hCC; }
 };
 
 enum class state: unsigned {NOCOLORSET, ILLEGAL, CONTINUE, WINNER};

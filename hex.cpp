@@ -5,12 +5,52 @@
 hexBoard::hexBoard(int S)
 {
 	size = S;
-	boardCell = vector< vector<hCLR> >(size);
+	boardCell = vector< vector<hexCell> >(size);
+	
+	int L, R, UR, LR, UL, LL;
 			
-	for(auto& C: boardCell)
+	for(int r = 0; r < size; ++r)
 	{
-		for(int col = 0; col < size; ++col)
-			C.push_back(hCLR::NONE);
+		for(int c = 0; c < size; ++c)
+		{	
+				// left neighbor
+			if( (c-1) >= 0 )
+				L = r*S + c-1;
+			else
+				L = -1;
+				
+				// right neighbor
+			if( (c+1) < (S-1) )
+				R = r*S + c+1;
+			else
+				R = -1;
+			
+					// upper right neighbor
+			if( ( (r-1) >= 0) && ( (c+1) < (S-1) ) )
+				UR = (r-1)*S + c+1;
+			else
+				UR = -1;
+
+				// lower right neighbor
+			if( ( (r+1) < (S-1) ) )
+				LR = (r+1)*S + c;
+			else
+				LR = -1;
+
+				// upper left neighbor
+			if( (r-1) >= 0 )
+				UL = (r-1)*S + c;
+			else
+				UL = -1;
+
+				// lower left
+			if( ((r+1) < (S-1)) && ((c-1) >= 0) )
+				LL = (r+1)*S + c-1;
+			else
+				LL = -1;
+				
+			boardCell[r].push_back( hexCell(L, R, UL, LL, UR, LR) );
+		}
 	}
 }
 
@@ -21,8 +61,6 @@ void hexGamePlay::setBluePlayer(string p)
 		return;
 
 	bool blue = p == "B" || p == "b" || p == "blue" || p == "Blue"; // did the human player pick blue
-	
-	// string blue = hBlue ? "human": "computer";
 	
 	bluePlayer = blue ? "human": "computer";
 	gameState = state::CONTINUE;
@@ -39,7 +77,7 @@ void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
 	int n{ r*s + c }; // calculate node from r,c coordinates
 	
 			// if right neighbor has same color add edge
-	if( (c+1) < s )
+	if( (c+1) < (s-1) )
 	{
 		if (gameBoard.getCellColor(r, c+1) == color)
 			human.addEdge( n, r*s + c+1, 1 );
@@ -53,14 +91,14 @@ void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
 	}
 
 		// if upper right neighbor has same color add edge
-	if( ((r-1) >= 0) && ((c+1) < s) )
+	if( ((r-1) >= 0) && ((c+1) < (s-1)) )
 	{
 		if (gameBoard.getCellColor(r-1, c+1) == color)
 			human.addEdge( n, (r-1)*s + c+1, 1 );
 	}
 
 		// if lower right neighbor has same color add edge
-	if( ( (r+1) < s) )
+	if( ( (r+1) < (s-1)) )
 	{
 		if (gameBoard.getCellColor(r+1, c) == color)
 			human.addEdge( n, (r+1)*s + c, 1 );
@@ -74,7 +112,7 @@ void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
 	}
 
 		// if lower left neighbor has same color add edge
-	if( ((r+1) < s) && ((c-1) >= 0) )
+	if( ((r+1) < (s-1)) && ((c-1) >= 0) )
 	{
 		if (gameBoard.getCellColor(r+1, c-1) == color)
 			human.addEdge( n, (r+1)*s + c-1, 1 );
