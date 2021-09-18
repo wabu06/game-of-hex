@@ -38,7 +38,7 @@ state hexGamePlay::updateComputerPlayer()
 	
 	int s{ gameBoard.getSize() }; int n{ (s/2)*s + (s/2) };
 	
-		// pick middle cell first
+		// pick middle cell first, if not already chosen
 	if ( gameBoard.getCellColor( s/2, s/2 ) == hCLR::NONE )
 	{
 		gameBoard.setCellColor( s/2, s/2, compCLR);
@@ -75,6 +75,21 @@ state hexGamePlay::updateComputerPlayer()
 state hexGamePlay::updateHumanPlayer(int r, int c)
 {
 	int s{ gameBoard.getSize() }; // game board size
+	
+	int maxRC{ s-1 };
+	
+	if( (r < 0) || (r > maxRC) )
+	{
+		gameState = state::ILLEGAL;
+		return gameState;
+	}
+	
+	if( (c < 0) || (c > maxRC) )
+	{
+		gameState = state::ILLEGAL;
+		return gameState;
+	}
+	
 	int n{ r*s + c }; // calculate node from r,c coordinates
 	
 	hCLR cellCLR = bluePlayer == "human" ? hCLR::BLUE : hCLR::RED;
