@@ -132,6 +132,24 @@ state hexGamePlay::updateComputerPlayer()
 		
 		computer.addNode(n);
 		
+		if( gameBoard.getCellColor( gameBoard.getRightNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getRightNeighbor(n), 1 );
+		
+		if( gameBoard.getCellColor( gameBoard.getLeftNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getLeftNeighbor(n), 1 );
+		
+		if( gameBoard.getCellColor( gameBoard.getUpperRightNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getUpperRightNeighbor(n), 1 );
+		
+		if( gameBoard.getCellColor( gameBoard.getLowerRightNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getLowerRightNeighbor(n), 1 );
+		
+		if( gameBoard.getCellColor( gameBoard.getUpperLeftNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getUpperLeftNeighbor(n), 1 );
+		
+		if( gameBoard.getCellColor( gameBoard.getLowerLeftNeighbor(n) ) == compCLR)
+			computer.addEdge( n, gameBoard.getLowerLeftNeighbor(n), 1 );
+		
 		gameState = state::CONTINUE; return gameState;
 	}
 	

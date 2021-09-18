@@ -43,6 +43,13 @@ class hexBoard
 		
 		void setCellColor(int r, int c, hCLR hCC) { boardCell[r][c].color = hCC; }
 		void setCellColor(int n, hCLR hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c].color = hCC; }
+		
+		int getRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].right; }
+		int getLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].left; }
+		int getUpperLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].upperL; }
+		int getLowerLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerL; }
+		int getUpperRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].upperR; }
+		int getLowerRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerR; }
 };
 
 enum class state: unsigned {NOCOLORSET, ILLEGAL, CONTINUE, WINNER};
