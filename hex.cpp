@@ -32,6 +32,55 @@ void hexGamePlay::setBluePlayer(string p)
 		updateComputerPlayer();
 }
 
+void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
+{
+	int s{ gameBoard.getSize() }; // game board size
+	
+	int n{ r*s + c }; // calculate node from r,c coordinates
+	
+			// if right neighbor has same color add edge
+	if( (c+1) < s )
+	{
+		if (gameBoard.getCellColor(r, c+1) == color)
+			human.addEdge( n, r*s + c+1, 1 );
+	}
+
+		// if left neighbor has same color add edge
+	if( (c-1) >= 0 )
+	{
+		if (gameBoard.getCellColor(r, c-1) == color)
+			human.addEdge( n, r*s + c-1, 1 );
+	}
+
+		// if upper right neighbor has same color add edge
+	if( ((r-1) >= 0) && ((c+1) < s) )
+	{
+		if (gameBoard.getCellColor(r-1, c+1) == color)
+			human.addEdge( n, (r-1)*s + c+1, 1 );
+	}
+
+		// if lower right neighbor has same color add edge
+	if( ( (r+1) < s) )
+	{
+		if (gameBoard.getCellColor(r+1, c) == color)
+			human.addEdge( n, (r+1)*s + c, 1 );
+	}
+
+		// if upper left neighbor has same color add edge
+	if( (r-1) >= 0 )
+	{
+		if (gameBoard.getCellColor(r-1, c) == color)
+			human.addEdge( n, (r-1)*s + c, 1 );
+	}
+
+		// if lower left neighbor has same color add edge
+	if( ((r+1) < s) && ((c-1) >= 0) )
+	{
+		if (gameBoard.getCellColor(r+1, c-1) == color)
+			human.addEdge( n, (r+1)*s + c-1, 1 );
+	}
+}
+
 state hexGamePlay::updateComputerPlayer() 
 {
 	hCLR compCLR = bluePlayer == "computer" ? hCLR::BLUE : hCLR::RED;
@@ -76,7 +125,7 @@ state hexGamePlay::updateHumanPlayer(int r, int c)
 {
 	int s{ gameBoard.getSize() }; // game board size
 	
-	int maxRC{ s-1 };
+	int maxRC{ s-1 }; // maximum row or column
 	
 	if( (r < 0) || (r > maxRC) )
 	{
@@ -95,57 +144,18 @@ state hexGamePlay::updateHumanPlayer(int r, int c)
 	hCLR cellCLR = bluePlayer == "human" ? hCLR::BLUE : hCLR::RED;
 	
 	if (gameBoard.getCellColor(r, c) != hCLR::NONE)
-		gameState = state::ILLEGAL;
-	else
 	{
-		gameState = state::CONTINUE;
-		
-		gameBoard.setCellColor(r, c, cellCLR);
-		human.addNode(n);
-		
-			// if right neighbor has same color add edge
-		if( (c+1) < s )
-		{
-			if (gameBoard.getCellColor(r, c+1) == cellCLR)
-				human.addEdge( n, r*s + c+1, 1 );
-		}
-			
-			// if left neighbor has same color add edge
-		if( (c-1) >= 0 )
-		{
-			if (gameBoard.getCellColor(r, c-1) == cellCLR)
-				human.addEdge( n, r*s + c-1, 1 );
-		}
-		
-			// if upper right neighbor has same color add edge
-		if( ((r-1) >= 0) && ((c+1) < s) )
-		{
-			if (gameBoard.getCellColor(r-1, c+1) == cellCLR)
-				human.addEdge( n, (r-1)*s + c+1, 1 );
-		}
-		
-			// if lower right neighbor has same color add edge
-		if( ( (r+1) < s) )
-		{
-			if (gameBoard.getCellColor(r+1, c) == cellCLR)
-				human.addEdge( n, (r+1)*s + c, 1 );
-		}
-		
-			// if upper left neighbor has same color add edge
-		if( (r-1) >= 0 )
-		{
-			if (gameBoard.getCellColor(r-1, c) == cellCLR)
-				human.addEdge( n, (r-1)*s + c, 1 );
-		}
-		
-			// if lower left neighbor has same color add edge
-		if( ((r+1) < s) && ((c-1) >= 0) )
-		{
-			if (gameBoard.getCellColor(r+1, c-1) == cellCLR)
-				human.addEdge( n, (r+1)*s + c-1, 1 );
-		}
+		gameState = state::ILLEGAL;
+		return gameState;
 	}
-	
+
+	gameState = state::CONTINUE;
+		
+	gameBoard.setCellColor(r, c, cellCLR);
+	human.addNode(n);
+		
+	addNeighborEdges(r, c, cellCLR);
+		
 	return gameState;
 }
 
