@@ -54,6 +54,51 @@ hexBoard::hexBoard(int S)
 	}
 }
 
+vector<int> hexBoard::getCellNeighbors(int cell, int fn, bool cw)
+{
+	vector<int> neighbors = vector<int>();
+	
+	array<string, 6> ns = {"R", "LR", "LL", "L", "UL", "UR"};
+	
+	for(int i = 0; i < 6; ++i)
+	{
+		if ( ns[fn] == "R" )
+			neighbors.push_back( getRightNeighbor(cell) );
+		
+		if ( ns[fn] == "LR" )
+			neighbors.push_back( getLowerRightNeighbor(cell) );
+		
+		if ( ns[fn] == "LL" )
+			neighbors.push_back( getLowerLeftNeighbor(cell) );
+		
+		if ( ns[fn] == "L" )
+			neighbors.push_back( getLeftNeighbor(cell) );
+		
+		if ( ns[fn] == "UL" )
+			neighbors.push_back( getUpperLeftNeighbor(cell) );
+		
+		if ( ns[fn] == "UR" )
+			neighbors.push_back( getUpperRightNeighbor(cell) );
+		
+		if (cw) // clock wise or counter clock wise
+		{
+			if (fn == 5)
+				fn = 0;
+			else
+				++fn;
+		}
+		else
+		{
+			if (fn == 0)
+				fn = 5;
+			else
+				--fn;
+		}
+	}
+	
+	return neighbors;
+}
+
 void hexGamePlay::setBluePlayer(string p)
 {
 		// if bluePlayer was previously set do nothing
@@ -190,6 +235,7 @@ state hexGamePlay::updateComputerPlayer()
 		// instance of class that implements Dijkstra's Algorithm, used to find the maximum path in computer player graph	
 	dsPath mGP{ computer };
 	
+		// find maximum path
 	for(auto& ON: cNodes)
 	{
 		for(auto& IN: cNodes)
@@ -204,11 +250,21 @@ state hexGamePlay::updateComputerPlayer()
 		}
 	}
 	
-	if( gameBoard.getCellColor( gameBoard.getRightNeighbor( maxPath.back() ) ) == hCLR::NONE )
+		// find best way to expand maximum path
+	for(auto& NC: gameBoard.getCellNeighbors( maxPath.back(), 0, true ) )
 	{
-		computer.addNode( gameBoard.getRightNeighbor( maxPath.back() ) );
-		
-		gameState = state::CONTINUE; return gameState;
+		if (NC >= 0)
+		{
+			if( gameBoard.getCellColor(NC) == hCLR::NONE )
+			{
+				gameBoard.setCellColor(NC, compCLR);
+				computer.addNode(NC);
+				computer.addEdge( maxPath.back(), NC, 1 );
+				
+				gameState = state::CONTINUE;
+				break; // what if all neighbors are already colored
+			}
+		}
 	}
 	
 	return gameState;

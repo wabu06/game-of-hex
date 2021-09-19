@@ -5,6 +5,7 @@
 #include<vector>
 #include<unordered_map>
 #include<string>
+#include <array>
 
 using namespace std;
 
@@ -50,6 +51,8 @@ class hexBoard
 		int getLowerLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerL; }
 		int getUpperRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].upperR; }
 		int getLowerRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerR; }
+		
+		vector<int> getCellNeighbors(int cell, int fn, bool cw);
 };
 
 enum class state: unsigned {NOCOLORSET, ILLEGAL, CONTINUE, WINNER};
