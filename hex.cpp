@@ -204,6 +204,13 @@ state hexGamePlay::updateComputerPlayer()
 		}
 	}
 	
+	if( gameBoard.getCellColor( gameBoard.getRightNeighbor( maxPath.back() ) ) == hCLR::NONE )
+	{
+		computer.addNode( gameBoard.getRightNeighbor( maxPath.back() ) );
+		
+		gameState = state::CONTINUE; return gameState;
+	}
+	
 	return gameState;
 }
 
