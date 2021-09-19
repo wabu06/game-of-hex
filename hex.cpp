@@ -70,7 +70,7 @@ void hexGamePlay::setBluePlayer(string p)
 		updateComputerPlayer();
 }
 
-void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
+void hexGamePlay::addNeighborEdges(int r, int c, hCLR color, string player)
 {
 	int s{ gameBoard.getSize() }; // game board size
 	
@@ -80,42 +80,72 @@ void hexGamePlay::addNeighborEdges(int r, int c, hCLR color)
 	if( (c+1) < (s-1) )
 	{
 		if (gameBoard.getCellColor(r, c+1) == color)
-			human.addEdge( n, r*s + c+1, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, r*s + c+1, 1 );
+			else
+				computer.addEdge( n, r*s + c+1, 1 );
+		}
 	}
 
 		// if left neighbor has same color add edge
 	if( (c-1) >= 0 )
 	{
 		if (gameBoard.getCellColor(r, c-1) == color)
-			human.addEdge( n, r*s + c-1, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, r*s + c-1, 1 );
+			else
+				computer.addEdge( n, r*s + c-1, 1 );
+		}
 	}
 
 		// if upper right neighbor has same color add edge
 	if( ((r-1) >= 0) && ((c+1) < (s-1)) )
 	{
 		if (gameBoard.getCellColor(r-1, c+1) == color)
-			human.addEdge( n, (r-1)*s + c+1, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, (r-1)*s + c+1, 1 );
+			else
+				computer.addEdge( n, (r-1)*s + c+1, 1 );
+		}
 	}
 
 		// if lower right neighbor has same color add edge
 	if( ( (r+1) < (s-1)) )
 	{
 		if (gameBoard.getCellColor(r+1, c) == color)
-			human.addEdge( n, (r+1)*s + c, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, (r+1)*s + c, 1 );
+			else
+				computer.addEdge( n, (r+1)*s + c, 1 );
+		}
 	}
 
 		// if upper left neighbor has same color add edge
 	if( (r-1) >= 0 )
 	{
 		if (gameBoard.getCellColor(r-1, c) == color)
-			human.addEdge( n, (r-1)*s + c, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, (r-1)*s + c, 1 );
+			else
+				computer.addEdge( n, (r-1)*s + c, 1 );	
+		}
 	}
 
 		// if lower left neighbor has same color add edge
 	if( ((r+1) < (s-1)) && ((c-1) >= 0) )
 	{
 		if (gameBoard.getCellColor(r+1, c-1) == color)
-			human.addEdge( n, (r+1)*s + c-1, 1 );
+		{
+			if( player == "human")
+				human.addEdge( n, (r+1)*s + c-1, 1 );
+			else
+				computer.addEdge( n, (r+1)*s + c-1, 1 );
+		}
 	}
 }
 
@@ -210,7 +240,7 @@ state hexGamePlay::updateHumanPlayer(int r, int c)
 	gameBoard.setCellColor(r, c, cellCLR);
 	human.addNode(n);
 		
-	addNeighborEdges(r, c, cellCLR);
+	addNeighborEdges(r, c, cellCLR, "human");
 		
 	return gameState;
 }

@@ -66,7 +66,7 @@ class hexGamePlay
 	
 	state gameState;
 	
-	void addNeighborEdges(int r, int c, hCLR color);
+	void addNeighborEdges(int r, int c, hCLR color, string player);
 	
 	state updateHumanPlayer(int r, int c);
 	state updateComputerPlayer();
