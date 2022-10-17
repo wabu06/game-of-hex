@@ -1,0 +1,32 @@
+#include<iostream>
+//#include<string>
+
+#include "HexPlayer.h"
+#include "HexBoard.h"
+//#include "HexUI.h"
+
+using std namespace;
+
+enum class hexColors: unsigned {NONE, RED, BLUE};
+
+class HexGameEngine
+{
+	int hRow, hCol; // row & col chosen by human player
+	int cRow, cCol; // row & col chosen by computer
+
+	HexPlayer computer, human;
+	HexBoard board;
+	//HexUI* ui;
+	bool run; //stop
+	
+	void processInput();
+	void updateGame();
+	void generateOutput();
+	
+	public:
+		HexGameEngine(int size = 7): run(true), board( HexBoard(size) ) {}
+
+		bool initialize();
+		void runLoop(); // or run()
+		void shutdown();
+};

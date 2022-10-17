@@ -1,47 +1,19 @@
-#include "hex.h"
-
-#include<iostream>
-#include<string>
-
-using namespace std;
+#include "HexGameEngine.h"
 
 
-int main ()
+int main (int argc, char* argv[])
 {
-	//hexGamePlay game{};
+	HexGameEngine game(11), game1();
 	
-	//hCLR hc;
-	
-	string hc; bool ans{false};
-	
-	
-	do {
-		cout << "Red player or Blue player? "; cin >> hc;
-		
-		ans = hc == "B" || hc == "b" || hc == "blue" || hc == "Blue" || hc == "r" || hc == "R" || hc == "red" || hc == "Red";
-	} while(!ans);
-	
-	//cout << hc << endl;
-	
-	game.setHumanColor(hc); //setBluePlayer()
-	
-	game.getCurrentBoard(); // then display it
-	
-	int row, col; cout << Enter your move: "; cin >> row >> col;
-	
-	status result = game.analyzeMove(row, col);
-	
-	switch (result)
+	if( !game.initialize() )
 	{
-		case status::ILLEGAL:
-			break;
-		case status::CONTINUE:
-			break;
-		case status::WINNER:
-			break;
-		default:
-			return 0;
+		cout << "Game Initialization Failure, exiting ...." << endl;
+		return EXIT_FAILURE;
 	}
+
+	game.runLoop();
+	game.shutdown();
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
+
