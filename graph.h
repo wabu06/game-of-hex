@@ -1,14 +1,10 @@
-#ifndef HEX
-#define HEX
+#pragma once
 
 #include<iostream>
 #include<vector>
 #include<unordered_map>
 
 using namespace std;
-
-#endif
-
 
 
 class edge
@@ -29,7 +25,11 @@ class graph
 	
 	public:
 			// default constructor creates empty graph
-		graph(int S = 0): size(S), nodes ( unordered_map< int, vector<edge> >{} ) {}
+		graph(int S = 0): size(S), nodes ( unordered_map< int, vector<edge> >{} )
+		{
+			for(int n = 0; n < S; n++)
+				nodes[n] = vector<edge>();
+		}
 		
 			// adds a node to the graph, returns true if successful
 		bool addNode(int n); 

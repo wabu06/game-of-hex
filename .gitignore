@@ -1,5 +1,5 @@
 *.o
-OLD
-OLD1
+OLD/
+OLD1/
 *.png
-
+hex

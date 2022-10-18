@@ -4,30 +4,39 @@
 
 void HexGameEngine::updateGame()
 {
-	board.setCellColor( hRow, hCol, human.getColor() )
+	board.setCellColor( hRow, hCol, currentPlayer->getColor() );
 	
+	if(currentPlayer == &computer)
+		currentPlayer = &human;
+	else
+		currentPlayer = &computer;
+	
+	//board.setCellColor( hRow, hCol, human.getColor() );
 	//board.setCellColor( row, col, computer.getColor() )
 }
 
 void HexGameEngine::processInput()
 {
+	if( currentPlayer == &computer ) // if computer is currentPlayer then do not get input from user
+		return;
+		
 	hexColors cc; // cell color
 	
-	bool legal; int size = board.getSize();
+	bool legal; int size{ board.getSize() - 1 };
 	 
 	do {
 		legal = true;
 		
-		cout << "Enter your move: "; cin >> hRow >> hCol;
+		cout << "\nEnter your move: "; cin >> hRow >> hCol;
 		
-		if( hRow < 0 || hRow > size-1 )
+		if( hRow < 0 || hRow > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 			continue;
 		}
 		
-		if( hCol < 0 || hCol > size-1 )
+		if( hCol < 0 || hCol > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
@@ -36,7 +45,7 @@ void HexGameEngine::processInput()
 		
 		cc = board.getCellColor(hRow, hCol);
 		
-		if(cc != hexColors.NONE)
+		if(cc != hexColors::NONE)
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
@@ -70,19 +79,23 @@ bool HexGameEngine::initialize()
 	int player;
 	
 	do {
-			cout << "1) Red Player or 2) Blue Player, Enter 1 or 2: ";
+			cout << "\n1) Red Player\n2) Blue Player\nEnter 1 or 2: ";
 			cin >> player;
 	} while( player != 1 && player != 2 );
 	
+	int size{ board.getSize() };
+	
 	if (player == 1)
 	{
-		human = HexPlayer(hexColors.RED);
-		computer = HexPlayer(hexColors.Blue);
+		human = HexPlayer(hexColors::RED, size);
+		computer = HexPlayer(hexColors::BLUE, size);
+		currentPlayer = &computer;
 	}
 	else
 	{
-		human = HexPlayer(hexColors.BLUE);
-		computer = HexPlayer(hexColors.RED);
+		human = HexPlayer(hexColors::BLUE, size);
+		currentPlayer = &human;
+		computer = HexPlayer(hexColors::RED, size);
 	}
 	
 	return true;

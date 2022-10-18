@@ -1,4 +1,9 @@
+#pragma once
+
+#include "hex.h"
+
 #include<vector>
+#include<array>
 
 class hexCell
 {

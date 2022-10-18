@@ -1,13 +1,10 @@
-#ifndef HEX
-#define HEX
+#pragma once
 
 #include<iostream>
 #include<vector>
 #include<unordered_map>
 
 using namespace std;
-
-#endif
 
 #include "graph.h"
 #include "priorityQueue.h"

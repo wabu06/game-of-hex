@@ -1,5 +1,4 @@
-#ifndef HEX
-#define HEX
+#pragma once
 
 #include<iostream>
 #include<vector>
@@ -7,7 +6,6 @@
 
 using namespace std;
 
-#endif
 
 
 	// the "nodePath" class used to represent a list of nodes, corresponding

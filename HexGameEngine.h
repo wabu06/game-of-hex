@@ -1,20 +1,26 @@
+#pragma once
+
+
 #include<iostream>
+
+#include "hex.h"
+
 //#include<string>
 
 #include "HexPlayer.h"
 #include "HexBoard.h"
 //#include "HexUI.h"
 
-using std namespace;
+//using std namespace;
 
-enum class hexColors: unsigned {NONE, RED, BLUE};
+//enum class hexColors: unsigned {NONE, RED, BLUE};
 
 class HexGameEngine
 {
 	int hRow, hCol; // row & col chosen by human player
 	int cRow, cCol; // row & col chosen by computer
 
-	HexPlayer computer, human;
+	HexPlayer computer, human, *currentPlayer;
 	HexBoard board;
 	//HexUI* ui;
 	bool run; //stop
@@ -30,3 +36,4 @@ class HexGameEngine
 		void runLoop(); // or run()
 		void shutdown();
 };
+

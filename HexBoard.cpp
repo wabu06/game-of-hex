@@ -1,6 +1,6 @@
-#include "HexBoard"
+#include "HexBoard.h"
 
-void HexBoard::HexBoard(int S)
+HexBoard::HexBoard(int S)
 {
 	size = S;
 	boardCell = vector< vector<hexCell> >(size);
@@ -41,7 +41,7 @@ void HexBoard::HexBoard(int S)
 			else
 				UL = -1;
 
-				// lower left
+				// lower left neighbor
 			if( ((r+1) < (S-1)) && ((c-1) >= 0) )
 				LL = (r+1)*S + c-1;
 			else
