@@ -17,8 +17,8 @@
 
 class HexGameEngine
 {
-	int hRow, hCol; // row & col chosen by human player
-	int cRow, cCol; // row & col chosen by computer
+	int row, col; // row & col chosen by human player
+	//int cRow, cCol; // row & col chosen by computer
 
 	HexPlayer computer, human, *currentPlayer;
 	HexBoard board;

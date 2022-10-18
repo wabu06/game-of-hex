@@ -4,7 +4,36 @@
 
 void HexGameEngine::updateGame()
 {
-	board.setCellColor( hRow, hCol, currentPlayer->getColor() );
+	vector<int> nodes = currentPlayer->getGraph().getNodes();
+	
+	int count = currentPlayer->getGraph().getNodeCount(); // currentPlayer graph's node count
+	
+	int max{0}, pSize, mStart{0}, mEnd{0};
+	
+	if(currentPlayer == &computer)
+	{
+		cout << "\nComputer Takes It's Turn\n";
+		
+		for(auto& start: nodes)
+		{
+			for(int end = 0; end < count; end++)
+			{
+				pSize = currentPlayer->getPath().getPathSize(start, end);
+			
+				if(pSize > max)
+				{
+					max = pSize;
+					mStart = start; mEnd = end;
+				}
+			}
+		}
+		
+		row = mStart / board.getSize(); col = mEnd % board.getSize();
+		
+		board.setCellColor( row, col, currentPlayer->getColor() );
+	}
+	else
+		board.setCellColor( row, col, currentPlayer->getColor() );
 	
 	if(currentPlayer == &computer)
 		currentPlayer = &human;
@@ -19,7 +48,7 @@ void HexGameEngine::processInput()
 {
 	if( currentPlayer == &computer ) // if computer is currentPlayer then do not get input from user
 		return;
-		
+	
 	hexColors cc; // cell color
 	
 	bool legal; int size{ board.getSize() - 1 };
@@ -27,23 +56,23 @@ void HexGameEngine::processInput()
 	do {
 		legal = true;
 		
-		cout << "\nEnter your move: "; cin >> hRow >> hCol;
+		cout << "\nEnter your move: "; cin >> row >> col;
 		
-		if( hRow < 0 || hRow > size )
+		if( row < 0 || row > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 			continue;
 		}
 		
-		if( hCol < 0 || hCol > size )
+		if( col < 0 || col > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 			continue;
 		}
 		
-		cc = board.getCellColor(hRow, hCol);
+		cc = board.getCellColor(row, col);
 		
 		if(cc != hexColors::NONE)
 		{
