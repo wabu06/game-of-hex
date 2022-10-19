@@ -4,21 +4,22 @@
 
 void HexGameEngine::updateGame()
 {
-	vector<int> nodes = currentPlayer->getGraph().getNodes();
-	
-	int count = currentPlayer->getGraph().getNodeCount(); // currentPlayer graph's node count
-	
-	int max{0}, pSize, mStart{0}, mEnd{0};
-	
 	if(currentPlayer == &computer)
 	{
 		cout << "\nComputer Takes It's Turn\n";
 		
+		vector<int> nodes = currentPlayer->getGraph().getNodes();
+	
+		int count = currentPlayer->getGraph().getNodeCount(); // currentPlayer graph's node count
+	
+		int max{0}, pSize, mStart{0}, mEnd{0};
+		
+			// get start and end nodes of maximum path
 		for(auto& start: nodes)
 		{
 			for(int end = 0; end < count; end++)
 			{
-				pSize = currentPlayer->getPath().getPathSize(start, end);
+				pSize = currentPlayer->getPath().getPathSize(start, end); // path size
 			
 				if(pSize > max)
 				{
@@ -27,13 +28,74 @@ void HexGameEngine::updateGame()
 				}
 			}
 		}
+			// need to use neighbors of mStart and mEnd, and not mStart & mEnd themselves
+		//row = mStart / board.getSize(); col = mStart % board.getSize(); //col = mEnd % board.getSize();
 		
-		row = mStart / board.getSize(); col = mEnd % board.getSize();
+		vector<int> maxNeighbors = board.getCellNeighbors(mStart, 1, true);
+		
+		bool noColor{true};
+		
+			// neighbors of mStart
+		for(auto& N: maxNeighbors)
+		{
+			if( board.getCellColor(N) == hexColors::NONE )
+			{
+				row = N / board.getSize();
+				col = N % board.getSize();
+				noColor = false; break;
+			}
+		}
+		
+		if (noColor) // look at end node if start node has no colorless neighbors
+		{
+			maxNeighbors = board.getCellNeighbors(mEnd, 1, true);
+		
+				// neighbors of mEnd
+			for(auto& N: maxNeighbors)
+			{
+				if( board.getCellColor(N) == hexColors::NONE )
+				{
+					row = N / board.getSize();
+					col = N % board.getSize();
+					break;
+				}
+			}
+		}
+		
+		/*if( row < 0 || row > (board.getSize() - 1) || col < 0 || col > (board.getSize() - 1) )
+		{
+			row = mEnd / board.getSize();
+			col = mEnd % board.getSize();
+		}*/
 		
 		board.setCellColor( row, col, currentPlayer->getColor() );
+		
+			// create edge between cell neighbors that are the same color
+		int n{ row*board.getSize() + col };
+		
+		vector<int> neighbors = board.getCellNeighbors(n, 1, true);
+		
+		for(auto& N: neighbors)
+		{
+			if( board.getCellColor(N) == currentPlayer->getColor() )
+				currentPlayer->getGraph().addEdge(n, N, 1);
+		}
 	}
 	else
+	{
 		board.setCellColor( row, col, currentPlayer->getColor() );
+		
+			// create edge between cell neighbors that are the same color
+		int n{ row*board.getSize() + col };
+		
+		vector<int> neighbors = board.getCellNeighbors(n, 1, true);
+		
+		for(auto& N: neighbors)
+		{
+			if( board.getCellColor(N) == currentPlayer->getColor() )
+				currentPlayer->getGraph().addEdge(n, N, 1);
+		}
+	}
 	
 	if(currentPlayer == &computer)
 		currentPlayer = &human;
@@ -46,9 +108,6 @@ void HexGameEngine::updateGame()
 
 void HexGameEngine::processInput()
 {
-	if( currentPlayer == &computer ) // if computer is currentPlayer then do not get input from user
-		return;
-	
 	hexColors cc; // cell color
 	
 	bool legal; int size{ board.getSize() - 1 };
@@ -93,15 +152,25 @@ void HexGameEngine::generateOutput()
 
 void HexGameEngine::runLoop()
 {
+	if(!isInitialized)
+		return;
+		
 	while(run)
 	{
-		processInput(); // check for legality of a move
+			// if computer is currentPlayer then do not get input from user
+		if( currentPlayer == &human )
+			processInput(); // check for legality of a move
+		
 		updateGame(); // update player graphs and gameBoard
 		generateOutput();
 	}
 }
 
-void HexGameEngine::shutdown() {}
+void HexGameEngine::shutdown()
+{
+	if(!isInitialized)
+		cout << "\nGame Engine Was Not Initialized" << endl;
+}
 
 bool HexGameEngine::initialize()
 {	
@@ -127,5 +196,8 @@ bool HexGameEngine::initialize()
 		computer = HexPlayer(hexColors::RED, size);
 	}
 	
+	isInitialized = true;
+	
 	return true;
 }
+

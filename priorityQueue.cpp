@@ -8,16 +8,16 @@ void PQswap(nodePath& x, nodePath& y)
 }
 
 	// make subtree with root at given index priority queue compliant
-void priorityQueue::heapify(int i)
+void priorityQueue::heapify(int i) // make max heap here, replace < with >
 {
 	int l = left(i);
 	int r = right(i);
 	int smallest = i;
 	
-	if (l < size && pqArray[l].ect < pqArray[i].ect)
+	if (l > size && pqArray[l].ect > pqArray[i].ect)
     	smallest = l;
 
-	if (r < size && pqArray[r].ect < pqArray[smallest].ect)
+	if (r > size && pqArray[r].ect > pqArray[smallest].ect)
     	smallest = r;
 
 	if (smallest != i)
@@ -72,7 +72,7 @@ int priorityQueue::contains(int n)
 }
 
 	// insert node path "np" into queue
-void priorityQueue::insert(nodePath np)
+void priorityQueue::insert(nodePath np) //make max heap here, replace > with <
 {
 	size++;
 	int i = size - 1;
@@ -80,7 +80,7 @@ void priorityQueue::insert(nodePath np)
 	pqArray.push_back(np);
 	
 		// make priority queue compliant
-    while (i != 0 && pqArray[parent(i)].ect > pqArray[i].ect)
+    while (i != 0 && pqArray[parent(i)].ect < pqArray[i].ect)
     {
        PQswap(pqArray[i], pqArray[parent(i)]);
        i = parent(i);
@@ -88,12 +88,12 @@ void priorityQueue::insert(nodePath np)
 }
 
 	// Decreases value of key at index 'i' to new_val
-void priorityQueue::decreaseKey(int i, int new_val)
+void priorityQueue::decreaseKey(int i, int new_val) // make max heap here, replace > with <
 {
 	pqArray[i].ect = new_val;
 	
 		// make priority queue compliant
-	while (i != 0 && pqArray[parent(i)].ect > pqArray[i].ect)
+	while (i != 0 && pqArray[parent(i)].ect < pqArray[i].ect)
 	{
 		PQswap(pqArray[i], pqArray[parent(i)]);
 		i = parent(i);

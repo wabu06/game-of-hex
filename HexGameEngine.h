@@ -23,6 +23,8 @@ class HexGameEngine
 	HexPlayer computer, human, *currentPlayer;
 	HexBoard board;
 	//HexUI* ui;
+	
+	bool isInitialized;
 	bool run; //stop
 	
 	void processInput();
@@ -30,7 +32,7 @@ class HexGameEngine
 	void generateOutput();
 	
 	public:
-		HexGameEngine(int size = 7): run(true), board( HexBoard(size) ) {}
+		HexGameEngine(int size = 7): isInitialized(false), run(true), board( HexBoard(size) ) {}
 
 		bool initialize();
 		void runLoop(); // or run()

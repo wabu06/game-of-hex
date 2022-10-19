@@ -13,11 +13,10 @@ using namespace std;
 class nodePath
 {
 	public:
-	int ect; // edge count total of a given node path
-	vector<int> nodeList;
+		int ect; // edge count total of a given node path
+		vector<int> nodeList;
 
-	nodePath(int T = 0, vector<int> NL = vector<int>()):
-				ect(T), nodeList(NL) {}
+		nodePath( int T = 0, vector<int> NL = vector<int>() ): ect(T), nodeList(NL) {}
 };
 
 class priorityQueue
