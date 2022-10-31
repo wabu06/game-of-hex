@@ -45,11 +45,38 @@ class HexPlayer
 		
 		bool win()
 		{
+			if( color == hexColors::BLUE )
+				return blueWin();
+			
+			if( color == hexColors::RED )
+				return redWin();
+		}
+		
+		bool blueWin()
+		{
 			Bfs playBFS{bSize*bSize, playGraph};
 			
 			for(int start = 0; start < bSize; start++)
 			{
 				for(int end = (bSize - 1)*bSize; end < bSize*bSize; end++)
+				{
+						if( playBFS.hasPath(start, end) )
+							return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		bool redWin()
+		{
+			Bfs playBFS{bSize*bSize, playGraph};
+			
+			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize + bSize;
+			
+			for(int start = 0; start <= slimit; start += bSize)
+			{
+				for(int end = bSize - 1; end < elimit; end += bSize)
 				{
 						if( playBFS.hasPath(start, end) )
 							return true;
