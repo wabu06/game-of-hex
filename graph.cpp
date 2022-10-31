@@ -81,31 +81,47 @@ vector<int> graph::getNeighbors(int n)
 	
 	if ( nodeExist(n) )
 	{
-		for(auto& E: nodes[n])
+		auto Edges = nodes[n];
+		
+		for(auto& E: Edges)
 			neighbors.push_back(E.node);
+		
+		//cout << Edges.size() << "\t";
+		//for(auto& E: nodes[n])
+				//cout << E.node << '\t';
 	}
+	
+	cout << n << '\t';
 	
 	return neighbors;
 }
 
 	// adds edge between x & y, if one is currently nonexistent
 	// returns true if edge was added, if not return false
-bool graph::addEdge(int x, int y, int d)
+bool graph::addEdge(const int x, const int y, int d)
 {
-	if ( nodeExist(x) && nodeExist(y) )
-	{
+	//if ( nodeExist(x) && nodeExist(y) )
+	//{
 		if ( isAdjacent(x, y) && isAdjacent(y, x) )
 			return false;
 		else
 		{
+			//auto itr = nodes[x].begin(); nodes[x].insert( itr, edge(y, d) );
 			nodes[x].push_back( edge(y, d) );
-			nodes[y].push_back( edge(x, d) );
+			
+			for(auto& E: nodes[x])
+				cout << E.node << '\t';
+			
+			//cout << nodes[x].size() << "\t";
+			//auto itr = nodes[y].begin(); nodes[y].insert( itr, edge(x, d) );
+			nodes[y].push_back( edge(x, d) ); //cout << nodes[y][0].node << "\t";
+			//cout << nodes[y].size() << "\t" << "nodey " << y << '\t';
 		
 			return true;
 		}
-	}
-	else
-		return false;
+	//}
+	//else
+		//return false;
 }
 
 	// if there's an edge between x & y, delete it and return true

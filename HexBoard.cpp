@@ -18,19 +18,19 @@ HexBoard::HexBoard(int S)
 				L = -1;
 				
 				// right neighbor
-			if( (c+1) < (S-1) )
+			if( (c+1) < S ) //if( (c+1) < (S-1) )
 				R = r*S + c+1;
 			else
 				R = -1;
 			
 					// upper right neighbor
-			if( ( (r-1) >= 0) && ( (c+1) < (S-1) ) )
+			if( ( (r-1) >= 0) && ( (c+1) < S ) ) //if( ( (r-1) >= 0) && ( (c+1) < (S-1) ) )
 				UR = (r-1)*S + c+1;
 			else
 				UR = -1;
 
 				// lower right neighbor
-			if( ( (r+1) < (S-1) ) )
+			if( (r+1) < S  ) //if( ( (r+1) < (S-1) ) )
 				LR = (r+1)*S + c;
 			else
 				LR = -1;
@@ -42,7 +42,7 @@ HexBoard::HexBoard(int S)
 				UL = -1;
 
 				// lower left neighbor
-			if( ((r+1) < (S-1)) && ((c-1) >= 0) )
+			if( ( (r+1) < S ) && ( (c-1) >= 0 ) ) //if( ((r+1) < (S-1)) && ((c-1) >= 0) )
 				LL = (r+1)*S + c-1;
 			else
 				LL = -1;

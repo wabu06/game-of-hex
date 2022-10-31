@@ -3,7 +3,10 @@
 
 #include<iostream>
 
+//#include "graph.h"
 #include "hex.h"
+//#include "bfs.h"
+//#include "dfs.h"
 
 //#include<string>
 
@@ -11,15 +14,9 @@
 #include "HexBoard.h"
 //#include "HexUI.h"
 
-//using std namespace;
-
-//enum class hexColors: unsigned {NONE, RED, BLUE};
 
 class HexGameEngine
 {
-	int row, col; // row & col chosen by human player
-	//int cRow, cCol; // row & col chosen by computer
-
 	HexPlayer computer, human, *currentPlayer;
 	HexBoard board;
 	//HexUI* ui;
@@ -27,15 +24,66 @@ class HexGameEngine
 	bool isInitialized;
 	bool run; //stop
 	
-	void processInput();
-	void updateGame();
+	void processInput()
+	{
+		char ans; 
+		cout << "\nContinue game?(y/n) "; cin >> ans;
+	
+		if (ans != 'y') run = false;
+	}
+	
+	void playHuman();
+	void playComputer();
+	
+	void executeGamePlay()
+	{
+		if(currentPlayer == &human)
+		{
+			//generateOutput();
+			playHuman();
+			generateOutput();
+			currentPlayer = &computer;
+			playComputer();
+			generateOutput();
+			currentPlayer = &human;
+			//return;
+		}
+		
+		if(currentPlayer == &computer)
+		{
+			playComputer();
+			currentPlayer = &human;
+			generateOutput();
+			playHuman();
+			generateOutput();
+			currentPlayer = &computer;
+		}
+	}
+	
 	void generateOutput();
+
+	void colorCellNeighbor(int Cell);
 	
 	public:
 		HexGameEngine(int size = 7): isInitialized(false), run(true), board( HexBoard(size) ) {}
 
 		bool initialize();
-		void runLoop(); // or run()
+		
+		void runLoop() // or run()
+		{
+			if(!isInitialized)
+				return;
+		
+			generateOutput();
+			
+			while(run)
+			{
+				executeGamePlay(); // update player graphs and gameBoard
+				//generateOutput();
+				processInput();
+			}
+		}
+		
 		void shutdown();
 };
 

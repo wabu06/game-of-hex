@@ -1,74 +1,83 @@
 #pragma once
 
-#include<iostream>
-#include<vector>
 #include<unordered_map>
 
 using namespace std;
 
-
 class edge
 {
-	public:
-		int node; // vertex endpoint of an edge
-		int weight; // edge weight (distance)
-		
-		edge(int N = -1, int W = 0): node(N), weight(W){}
+    public:
+        int node;
+        int weight;
+
+        edge(int N = -1, int W = 0): node(N), weight(W) {}
 };
 
 class graph
 {
-	int size; // current graph size (amount of nodes/vertices)
-	
-		// graph implemented via adjacency list
-	unordered_map< int, vector<edge> > nodes;
-	
-	public:
-			// default constructor creates empty graph
-		graph(int S = 0): size(S), nodes ( unordered_map< int, vector<edge> >{} )
-		{
-			for(int n = 0; n < S; n++)
-				nodes[n] = vector<edge>();
-		}
-		
-			// adds a node to the graph, returns true if successful
-		bool addNode(int n); 
-		
-			// deletes node <n> from graph, returns true if successful
-		bool delNode(int n);
-		
-			// total node count
-		int getNodeCount() { return size; }
-		
-			// total edge count
-		int getEdgeCount();
-		
-			// returns true if node "n" exists
-		bool nodeExist(int n) { return nodes.count(n) == 1 ? true: false; }
-		
-			// returns true if there's an edge from node x to y
-		bool isAdjacent(int x, int y);
-		
-			// get all vertices connected to n
-		vector<int> getNeighbors(int n);
-		
-			// adds edge between x & y, if one is currently nonexistent
-			// returns true if edge was added, if not return false
-		bool addEdge(int x, int y, int d);
-		
-			// if there's an edge between x & y, delete it and return true
-			// else return false
-		bool deleteEdge(int x, int y);
-		
-			// get edge weight/distance from x to y,
-			// if there is no edge return -1
-		int getEdgeValue(int x, int y);
-		
-		bool setEdgeValue(int x, int y, int ev);
-		
-			// get the average path length of all the nodes connected to
-			// node "n"
-		double avePathLength(int n);
-		
-		vector<int> getNodes();
+    unordered_map< int, unordered_map< int, edge> > nodes;
+    int size;
+
+    public:
+        graph(int S = 0): size(S), nodes( unordered_map< int, unordered_map<int, edge> > {} )
+        {
+            for(int n = 0; n < S; n++)
+                nodes[n] = unordered_map<int, edge> {};
+        }
+        
+        graph(const graph& srcGraph): nodes(srcGraph.nodes), size(srcGraph.size) {}
+
+        int getSize() { return size; }
+        bool nodeExist(int n) { return nodes.count(n) == 1; }
+
+        bool isAdjacent(int n1, int n2)
+        {
+            if( nodeExist(n1) && nodeExist(n2) )
+                return ( nodes[n1].count(n2) ) == 1 && ( nodes[n2].count(n1) == 1 );
+            else
+                return false;
+        }
+
+        bool addNode(int n)
+        {
+            if( nodeExist(n) )
+                return false;
+            else
+            {
+                nodes[n] = unordered_map<int, edge> {};
+                return true;
+            }
+        }
+
+        bool addEdge(int n1, int n2, int w)
+        {
+            if( isAdjacent(n1, n2) && isAdjacent(n2, n1) )
+                return false;
+            else
+            {
+                nodes[n1][n2] = edge(n2, w);
+                nodes[n2][n1] = edge(n1, w);
+
+                return true;
+            }
+        }
+
+        vector<int> getNeighbors(int n)
+        {
+            vector<int> neighbors = vector<int>();
+
+            for(const auto& N: nodes[n] )
+                neighbors.push_back(N.first);
+
+            return neighbors; 
+        }
+
+        int getEdgeValue(int n1, int n2)
+        { 
+            if( isAdjacent(n1, n2) )
+                return nodes[n1][n2].weight;
+            else
+                return -1;
+        }
 };
+

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "hex.h"
 
 #include<vector>
 #include<array>
+
+#include "hex.h"
 
 class hexCell
 {

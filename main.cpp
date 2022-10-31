@@ -3,7 +3,9 @@
 
 int main (int argc, char* argv[])
 {
-	HexGameEngine game(11), game1;
+	HexGameEngine game(7), game1;
+	
+	//cout << argc;
 	
 	if( !game.initialize() )
 	{
