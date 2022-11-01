@@ -30,6 +30,8 @@ class graph
         int getSize() { return size; }
         bool nodeExist(int n) { return nodes.count(n) == 1; }
 
+		int getNodeCount() { return nodes.size(); }
+
         bool isAdjacent(int n1, int n2)
         {
             if( nodeExist(n1) && nodeExist(n2) )

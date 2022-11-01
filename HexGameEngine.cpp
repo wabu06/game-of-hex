@@ -145,54 +145,24 @@ void HexGameEngine::playComputer()
 		}
 	}
 	
-	//currentPlayer = &human; // computer just played so human plays next
+	if( computer.win() )
+	{
+		winner = &computer;
+		run = false;
+		currentPlayer = nullptr;
+	}
+	else
+		currentPlayer = &human; // computer just played so human plays next
 }
 
 void HexGameEngine::playHuman()
 {
-	int row, col;
+	//int row, col;
 	
-	hexColors cc; // cell color
-	
-	bool legal; int size{ board.getSize() - 1 };
-	 
-	do {
-		int coord;
-		
-		legal = true;
-		
-		cout << "\nEnter your move: "; cin >> coord;
-		
-		row = coord / 10; col = coord % 10;
-		
-		if( row < 0 || row > size )
-		{
-			cout << "ILLEGAL MOVE!\n";
-			legal = false;
-			continue;
-		}
-		
-		if( col < 0 || col > size )
-		{
-			cout << "ILLEGAL MOVE!\n";
-			legal = false;
-			continue;
-		}
-		
-		cc = board.getCellColor(row, col);
-		
-		if(cc != hexColors::NONE)
-		{
-			cout << "ILLEGAL MOVE!\n";
-			legal = false;
-		}
-		
-	} while(!legal);
-	
-	board.setCellColor( row, col, human.getColor() );
+	board.setCellColor( hRow, hCol, human.getColor() );
 		
 			// create edge between cell neighbors that are the same color
-	int cell{ row*board.getSize() + col };
+	int cell{ hRow*board.getSize() + hCol };
 		
 	vector<int> neighbors = board.getCellNeighbors(cell, 1, true);
 		
@@ -202,18 +172,105 @@ void HexGameEngine::playHuman()
 		{
 			if( board.getCellColor(N) == human.getColor() )
 				human.connectCells(cell, N);
-			
 		}
 	}
 	
 	if( human.win() )
-		cout << "\nhuman wins\n"; // run = false;
+	{
+		winner = &human;
+		run = false;
+		currentPlayer = nullptr;
+	}
+	else
+		currentPlayer = &computer; // human just played so computer plays next
 	
-	//currentPlayer = &computer; // human just played so computer plays next
+	cout << "win " << human.win();
+}
+
+int HexGameEngine::parseInput()
+{
+	string input; size_t pos{}; int coord{};
+
+	while(true)
+	{
+		cout << "\nEnter your move, or <q> to quit: "; cin >> input;
+		
+		if( (input.size() == 1) && (input.front() == 'q') || (input.front() == 'Q') )
+		{
+			currentPlayer = nullptr;
+			run = false;
+			throw exception();
+		}
+		
+		try
+		{
+			coord = stoi(input, &pos);
+		
+			if( (pos == 0) || (pos != input.size()) )
+				throw runtime_error("ILLEGAL ENTRY");
+			
+			break;
+		}
+		catch(invalid_argument const& exp)
+		{
+			cout << "ILLEGAL ENTRY" << endl;
+		}
+		catch(out_of_range const& exp)
+		{
+			cout << "ILLEGAL ENTRY" << endl;
+		}
+		catch(runtime_error const& exp)
+		{
+			cout << "ILLEGAL ENTRY" << endl;
+		}
+	}
+	
+	return coord;
+}
+
+void HexGameEngine::getHumanInput()
+{
+	hexColors cc; // cell color
+	
+	bool legal; int coord, size{ board.getSize() - 1 };
+	 
+	do
+	{	try { coord = parseInput(); } catch(exception const& exp) { break; }
+		
+		legal = true;
+		
+		hRow = coord / 10; hCol = coord % 10;
+		
+		if( hRow < 0 || hRow > size )
+		{
+			cout << "ILLEGAL MOVE!\n";
+			legal = false;
+			continue;
+		}
+		
+		if( hCol < 0 || hCol > size )
+		{
+			cout << "ILLEGAL MOVE!\n";
+			legal = false;
+			continue;
+		}
+		
+		cc = board.getCellColor(hRow, hCol);
+		
+		if(cc != hexColors::NONE)
+		{
+			cout << "ILLEGAL MOVE!\n";
+			legal = false;
+		}
+		
+	} while(!legal);
 }
 
 void HexGameEngine::generateOutput()
 {
+	if( (winner == nullptr) && !run )
+		return;
+	
 	int bSize = board.getSize();
 	hexColors cc; // board cell color
 	
@@ -243,6 +300,12 @@ void HexGameEngine::generateOutput()
 		
 		cout << endl;
 	}
+	
+	if(winner == &human)
+		cout << "\nHuman Wins\n";
+	
+	if(winner == &computer)
+		cout << "\nComputer Wins\n";
 }
 
 void HexGameEngine::shutdown()
@@ -253,11 +316,13 @@ void HexGameEngine::shutdown()
 
 bool HexGameEngine::initialize()
 {	
+	cout << "A Game Of Hex\n";
+
 	int player;
 	
 	do {
-			cout << "\n1) Red Player\n2) Blue Player\nEnter 1 or 2: ";
-			cin >> player;
+		cout << "\n1) Red Player\n2) Blue Player\n\u2193\u2192Enter 1 or 2: ";
+		cin >> player;
 	} while( player != 1 && player != 2 );
 	
 	int size{ board.getSize() };

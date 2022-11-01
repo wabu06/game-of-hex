@@ -3,6 +3,7 @@
 
 #include "dPath.h"
 #include "bfs.h"
+#include "dfs.h"
 //#include "graph.h"
 #include "hex.h"
 
@@ -28,7 +29,7 @@ class HexPlayer
 		{
 			bSize = size;
 			playGraph = graph{size*size};
-			playPath = dsPath{playGraph};
+			playPath = dsPath{playGraph}; // will need to implement the same as bfs
 			//playBFS = Bfs{size*size, playGraph};
 		}
 		
