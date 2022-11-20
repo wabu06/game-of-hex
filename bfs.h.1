@@ -1,0 +1,50 @@
+#pragma once
+
+#include<vector>
+#include<queue>
+
+#include "graph.h"
+
+using namespace std;
+
+	// Breath First Search, can be used to find winner
+class Bfs
+{
+	vector<bool> visited;
+	queue<int> bfsQueue;
+	
+	graph bfsGraph;
+	
+	public:
+		Bfs( int size = 0, graph G = graph() ): bfsGraph(G), bfsQueue( queue<int>() ), visited( vector<bool>(size*size, false) ) {}
+		
+		bool hasPath(int n1, int n2)
+		{
+			visited[n1] = true;
+			
+			//cout << bfsGraph.getEdgeCount() << "\t";
+			
+			for(auto& N: bfsGraph.getNeighbors(n1) )
+			{
+				bfsQueue.push(N);
+				visited[N] = true;
+			}
+			
+			while( !bfsQueue.empty() )
+			{
+				for(auto& N: bfsGraph.getNeighbors( bfsQueue.front() ) )
+				{
+					if(visited[N])
+						continue;
+					
+					bfsQueue.push(N);
+					visited[N] = true;
+					bfsQueue.pop();
+					
+					//cout << visited[N] << "\t";
+				}
+			}
+			
+			return visited[n2];
+		}
+};

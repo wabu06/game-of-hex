@@ -26,61 +26,47 @@ class nodePath
 		friend bool operator>(nodePath np1, nodePath np2) { return np1.ect > np2.ect; }
 };
 
-class maxPQ
+class dsPQ
 {
 	priority_queue<nodePath> npq;
 	unordered_map<int, nodePath> pqMap; // key = node
-
+	
 	public:
-		maxPQ( priority_queue<nodePath> N = priority_queue<nodePath>{},
-									unordered_map<int, nodePath> M = unordered_map<int, nodePath>{} ): npq(N), pqMap(M) {}
-
+		dsPQ( priority_queue<nodePath> N = priority_queue<nodePath>{},
+			unordered_map<int, nodePath> M = unordered_map<int, nodePath>{} ): npq(N), pqMap(M) {}
+	
 		bool notEmpty() { return !( npq.empty() && pqMap.empty() ); }
 		
 		bool contains(int node) { return pqMap.count(node) == 1; }
 		
-		nodePath getNodePath(int node) { return pqMap[node]; }
-		
-		void add(nodePath np)
+		int getEdgeCountValue(int node)
 		{
-			pqMap[np.eNode] = np;
-			npq.push(np);
-		}
-
-		nodePath remove(nodePath np)
-		{
-			vector<nodePath> npv = vector<nodePath>();
+			vector<nodePath> np = vector<nodePath>();
 			nodePath top;
-			bool found{false};
 			
 			while( !npq.empty() )
 			{	
 				top = npq.top();
-				
+				np.push_back(top);
 				npq.pop();
 				
-				if(top.eNode == np.eNode)
-				{
-					found = true;
+				if(top.eNode == node)
 					break;
-				}
-				else
-					npv.push_back(top);
 			}
 			
-			//bool empty = npq.empty();
+			bool empty = npq.empty();
 			
-			if(found)
-				pqMap.erase( top.eNode );
-			
-			for(auto& N: npv)
+			for(auto& N: np)
 				npq.push(N);
 			
-			if(found)
-				return top;
+			if(empty)
+				return 0;
 			else
-				return nodePath();
+				return top.ect;
 		}
+		
+		void insert(nodePath np);
+		void remove(nodePath np);
 		
 		void emptyPQ()
 		{
@@ -89,21 +75,17 @@ class maxPQ
 		}
 		
 		nodePath getMax()
-		{
-			pqMap.erase( npq.top().eNode );
+		{ 
 			nodePath top = npq.top();
+			pqMap.erase( npq.top().eNode );
 			npq.pop();
 			return top;
 		}
-		
-		int qSize() { return npq.size(); }
-		int mapSize() { return pqMap.size(); }
 };
-
 
 class dsPath
 {
-	maxPQ openSet;
+	dsPQ openSet;
 	graph spGraph;
 	unordered_map<int, nodePath> closedSet;
 			
@@ -112,7 +94,7 @@ class dsPath
 	
 	public:
 			// constructor takes a graph object as input, and appropriately initializes the open and closed set
-		dsPath( graph G = graph() ): spGraph(G), openSet( maxPQ() ), closedSet( unordered_map<int, nodePath>{} ) {}
+		dsPath( graph G = graph() ): spGraph(G), openSet( dsPQ() ), closedSet( unordered_map<int, nodePath>{} ) {}
 					
 		 	// find shortest path between from node u to node w and returns the sequence of vertices representing shortest
 			// path between them

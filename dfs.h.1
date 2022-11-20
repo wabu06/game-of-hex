@@ -1,0 +1,76 @@
+#pragma once
+
+#include<utility>
+#include<vector>
+#include<stack>
+
+#include "graph.h"
+
+using namespace std;
+
+
+	// Depth First Search, can be used to find winner
+class Dfs
+{
+	vector< pair<bool, bool> > visited; // first = visited, second = backtracked
+	stack<int> dfsStack;
+	
+	graph dfsGraph;
+	
+	public:
+		Dfs( graph G = graph() ): dfsGraph(G), dfsStack( stack<int>() )
+		{
+			auto size = dfsGraph.getNodeCount();
+			
+			visited = vector< pair<bool, bool> >(size, pair<bool, bool>(false, false) );
+		}
+		
+		bool hasPath(int n1, int n2)
+		{
+			visited[n1].first = true; visited[n1].second = true;
+			
+			auto currentNode = n1;
+			bool found;
+			
+			while( !dfsStack.empty() ) // stack starts off as empty, use do/while as possible fix
+			{
+				found = false;
+				
+					// check to see which neighbors of current node have been visited
+				for(auto& N: dfsGraph.getNeighbors(currentNode) )
+				{
+					if( !visited[N].first || !visited[N].second )
+					{
+						visited[N].first = true;
+						dfsStack.push(N);
+						currentNode = N;
+						found = true;
+						break;
+					}
+				}
+				
+				if(found) // if node is found that has not been visited, mark it as visited, and then check it's neighbors
+					continue;
+				
+					// if all neighbors of currentNode have been visited then backtrack
+				int backtrack;
+					// if currentNode is backtracked then it is not on stack, so no need to pop
+				if(visited[currentNode].second)
+				{
+					currentNode = dfsStack.top();
+					dfsStack.pop();
+					visited[currentNode].second = true;
+				}
+				else	// if currentNode is not backtracked, then pop it first from stack, and then the node before
+				{
+					dfsStack.pop(); 
+					backtrack = dfsStack.top(); dfsStack.pop();
+					visited[backtrack].second = true;
+					currentNode = backtrack;
+				}	
+			}
+			
+			return visited[n2].first;
+		}
+};
+

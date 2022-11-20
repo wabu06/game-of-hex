@@ -5,6 +5,8 @@
 #include "bfs.h"
 #include "dfs.h"
 //#include "graph.h"
+
+#define _HEX
 #include "hex.h"
 
 // 1. start with graph of unconnected nodes
@@ -15,42 +17,47 @@
 
 class HexPlayer
 {
-	int pCell; // previously colored cell
-	
 	hexColors color;
 	graph playGraph;
-	dsPath playPath;
+	//dsPath playPath;
 	//Bfs playBFS;
 	
 	int bSize;
 	
 	public:
-		HexPlayer(hexColors c = hexColors::NONE, int size = 0): pCell(-1), color(c)
+		HexPlayer(hexColors c = hexColors::NONE, int size = 0): color(c)
 		{
 			bSize = size;
 			playGraph = graph{size*size};
-			playPath = dsPath{playGraph}; // will need to implement the same as bfs
+			//playPath = dsPath{playGraph}; // will need to implement the same as bfs
 			//playBFS = Bfs{size*size, playGraph};
 		}
-		
-		void setPrevCell(int pc) { pCell = pc; }
-		int getPrevCell() { return pCell; }
 		
 		hexColors getColor() { return color; }
 		void setColor(hexColors c) { color = c; }
 		
 		graph getGraph() { return playGraph; }
-		dsPath getPath() { return playPath; }
+		//dsPath& getPath() { return playPath; }
+		
+		int findNextPathSize(int c1, int c2)
+		{
+			dsPath playPath{playGraph};
+			return playPath.getPathSize(c1, c2);
+		}
 		
 		void connectCells(int c1, int c2) { playGraph.addEdge(c1, c2, 1); }
 		
 		bool win()
 		{
+			bool pWin;
+
 			if( color == hexColors::BLUE )
-				return blueWin();
+				pWin = blueWin();
 			
 			if( color == hexColors::RED )
-				return redWin();
+				pWin = redWin();
+			
+			return pWin;
 		}
 		
 		bool blueWin()
