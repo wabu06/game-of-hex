@@ -15,28 +15,42 @@ class Bfs
 	
 	graph bfsGraph;
 	
-	public:
-		//Bfs() {}
-		Bfs( int size = 0, graph G = graph() ): bfsGraph(G), bfsQueue( queue<int>() ), visited( vector<bool>(size, false) ) {}
-		
-		bool hasPath(int n1, int n2)
-		{
-			visited[n1] = true; bfsQueue.push(n1); int front;
+	vector<int> closedSet;
+	
+	void visitNodes(int& start)
+	{
+		visited[start] = true; bfsQueue.push(start); int front;
 			
-			while( !bfsQueue.empty() )
-			{
-				front = bfsQueue.front(); bfsQueue.pop();
+		while( !bfsQueue.empty() )
+		{
+			front = bfsQueue.front(); closedSet.push_back(front); bfsQueue.pop();
 
-				for(auto& N: bfsGraph.getNeighbors(front) )
-				{
+			for(auto& N: bfsGraph.getNeighbors(front) )
+			{
 					if(visited[N])
 						continue;
 					
 					bfsQueue.push(N);
 					visited[N] = true;
-				}
 			}
-
+		}
+	}
+	
+	public:
+		//Bfs() = default;
+		//Bfs( int size /*= 0*/, const graph& G /*= graph()*/ ): bfsGraph(G), bfsQueue( queue<int>() ), visited( vector<bool>(size, false) ) {}
+		Bfs(int size, const graph& G): bfsGraph(G), bfsQueue( queue<int>() ), visited( vector<bool>(size, false) ), closedSet( vector<int>() ) {}
+		
+		bool hasPath(int n1, int n2)
+		{
+			visitNodes(n1);
 			return visited[n2];
 		}
+		
+		vector<int> getCurrentCells(int n)
+		{
+			visitNodes(n);
+			return closedSet;
+		}
 };
+

@@ -3,51 +3,62 @@
 
 #include<vector>
 #include<array>
+//#include<iostream>
 
 #define _HEX
 
 #include "hex.h"
 
-class hexCell
-{
-	public:
-		hexColors color;
-		int left, right; // neighbors on the left & right sides of a cell
-		int upperL, lowerL; // neighbors at the upper & lower left sides of a cell
-		int upperR, lowerR; // neighbors at the upper & lower right sides of a cell
-		
-		hexCell(int L, int R, int UL, int LL, int UR, int LR, hexColors C = hexColors::NONE):
-				left(L), right(R), upperL(UL), lowerL(LL), upperR(UR), lowerR(LR), color(C) {}
-};
 
 class HexBoard
 {
-	vector< vector<hexCell> > boardCell;
 	int size;
+	vector< vector<hexColors> > boardCell;
+	
+	enum class sides: unsigned {L, R, UL, LL, UR, LR};
 	
 	public:
-		enum class sides: unsigned {L, R, UL, LL, UR, LR};
-		
-		HexBoard(int S = 0);
-		
+		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >() )
+		{
+			for(int r = 0; r < size; ++r)
+				boardCell.push_back( vector<hexColors>(size, hexColors::NONE) );
+				//boardCell[r] = vector<hexColors>(size, hexColors::NONE);
+		}
+
 		int getSize() { return size; }
 		
-		hexColors getCellColor(int r, int c) { return boardCell[r][c].color; }
-		hexColors getCellColor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].color; }
+		hexColors getCellColor(int r, int c) { return boardCell[r][c]; }
 		
-		void setCellColor(int r, int c, hexColors hCC) { boardCell[r][c].color = hCC; }
-		void setCellColor(int n, hexColors hCC) { int r{ n/size }, c{ n%size }; boardCell[r][c].color = hCC; }
+		hexColors getCellColor(int n)
+		{
+			int r{ n/size }, c{ n%size };
+			return boardCell[r][c];
+		}
 		
-		int getRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].right; }
-		int getLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].left; }
-		int getUpperLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].upperL; }
-		int getLowerLeftNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerL; }
-		int getUpperRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].upperR; }
-		int getLowerRightNeighbor(int n) { int r{ n/size }, c{ n%size }; return boardCell[r][c].lowerR; }
+		void setCellColor(int r, int c, hexColors hCC) { boardCell[r][c] = hCC; }
 		
-		vector<int> getCellNeighbors(int cell, int fn, bool cw);
+		void setCellColor(int n, hexColors hCC)
+		{
+			int r{ n/size }, c{ n%size };
+			boardCell[r][c] = hCC;
+		}
 		
-		vector<int> getCellNeighbors(int cell);
+		vector<int> getCellNeighbors(int cell)
+		{
+			vector<int> neighbors = vector<int>();
+	
+			array<sides, 6> SIDES = {sides::R, sides::LR, sides::LL, sides::L, sides::UL, sides::UR};
+	
+			for(auto& s: SIDES)
+			{
+				auto n = getCellNeighbor(cell, s);
+				
+				if(n > -1)
+					neighbors.push_back(n);
+			}
+	
+			return neighbors;
+		}
 		
 		int getCellNeighbor(int n, sides);
 };

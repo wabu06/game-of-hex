@@ -5,6 +5,7 @@
 //#include<string>
 #include<stdexcept>
 #include<utility>
+#include<algorithm>
 
 //#include "graph.h"
 //#include "hex.h"
@@ -20,6 +21,8 @@ class HexGameEngine
 	HexPlayer computer, human, *currentPlayer, *winner;
 	HexBoard board;
 	//HexUI* ui;
+	
+	//ComputerPlayer* CP = new ComputerPlayerLP(board, computer); // use smart pointer
 	
 	bool isInitialized;
 	bool run; //stop
@@ -62,7 +65,7 @@ class HexGameEngine
 	pair<int, int> colorCellNeighbor(int bCell, int eCell);
 	
 	public:
-		HexGameEngine(int size = 7): isInitialized(false), run(true), winner(nullptr), board( HexBoard(size) ) {}
+		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), isInitialized(false), run(true) {}
 
 		bool initialize();
 		

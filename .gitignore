@@ -1,5 +1,9 @@
 *.o
 OLD/
-OLD1/
+oldImp/
+oldImp1/
 *.png
 hex
+core
+*.pdf
+test/

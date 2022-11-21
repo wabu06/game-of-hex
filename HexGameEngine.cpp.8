@@ -1,148 +1,213 @@
 #include "HexGameEngine.h"
 
+
+pair<int, int> HexGameEngine::colorCellNeighbor(int bCell, int eCell)
+{
+	int row{-1}, col{-1};
+	
+	if(computer.getColor() == hexColors::BLUE)
+	{
+		auto bRow = bCell / board.getSize(); auto eRow = eCell / board.getSize();
 		
+		auto midBoard = board.getSize() / 2;
+		
+		if( (bRow <= midBoard) && (bRow > 0) && ((bRow - 0) < (board.getSize() - eRow)) )
+		{
+			//vector<int> neighbors = board.getCellNeighbors(bCell, 1, true);
+			vector<int> neighbors = board.getCellNeighbors(bCell);
+			
+			for(auto& N: neighbors)
+			{
+				row = N / board.getSize();
+				col = N % board.getSize();
+					
+				if( board.getCellColor(row, col) == hexColors::NONE )
+				{
+					board.setCellColor(row, col, hexColors::BLUE);
+					break;
+				}
+			}
+		}
+		else
+		{
+			//vector<int> neighbors = board.getCellNeighbors(eCell, 1, true);
+			vector<int> neighbors = board.getCellNeighbors(eCell);
+			
+			for(auto& N: neighbors)
+			{
+				row = N / board.getSize();
+				col = N % board.getSize();
+					
+				if( board.getCellColor(row, col) == hexColors::NONE )
+				{
+					board.setCellColor(row, col, hexColors::BLUE);
+					break;
+				}
+			}
+		}
+	}
+	
+	if(computer.getColor() == hexColors::RED)
+	{
+		auto bCol = bCell % board.getSize(); auto eCol = eCell % board.getSize();
+		
+		auto midBoard = board.getSize() / 2;
+		
+		if( (bCol <= midBoard) && (bCol > 0) && ((bCol - 0) < (board.getSize() - eCol)) )
+		{
+			//vector<int> neighbors = board.getCellNeighbors(bCell, 1, true);
+			vector<int> neighbors = board.getCellNeighbors(bCell);
+			
+			for(auto& N: neighbors)
+			{
+				row = N / board.getSize();
+				col = N % board.getSize();
+					
+				if( board.getCellColor(row, col) == hexColors::NONE )
+				{
+					board.setCellColor(row, col, hexColors::RED);
+					break;
+				}
+			}
+		}
+		else
+		{
+			//vector<int> neighbors = board.getCellNeighbors(eCell, 1, true);
+			vector<int> neighbors = board.getCellNeighbors(eCell);
+			
+			for(auto& N: neighbors)
+			{
+				row = N / board.getSize();
+				col = N % board.getSize();
+					
+				if( board.getCellColor(row, col) == hexColors::NONE )
+				{
+					board.setCellColor(row, col, hexColors::RED);
+					break;
+				}
+			}
+		}
+	}
+
+	return pair<int, int>{row, col};
+}
+
 pair<int, int> HexGameEngine::colorCellNeighbor(int Cell)
 {
 	int row{-1}, col{-1};
 
-	auto bSize{ board.getSize() };
-	
+	//vector<int> neighbors = board.getCellNeighbors(Cell, 1, true);
 	vector<int> neighbors = board.getCellNeighbors(Cell);
 		
 	for(auto& N: neighbors)
 	{
-		row = N / bSize;
-		col = N % bSize;
+		row = N / board.getSize();
+		col = N % board.getSize();
 				
 		if( board.getCellColor(row, col) == hexColors::NONE )
 		{
-			board.setCellColor( row, col, computer.getColor() );
-			break;
+			if(computer.getColor() == hexColors::BLUE)
+			{
+				if( (row > ( Cell / board.getSize() )) || (row < ( Cell / board.getSize() )) )
+				{
+					board.setCellColor( row, col, computer.getColor() );
+					break;
+				}
+			}
+				
+			if(computer.getColor() == hexColors::RED)
+			{
+				if( (col > ( Cell % board.getSize() )) || (col < ( Cell % board.getSize() )) )
+				{
+					board.setCellColor( row, col, computer.getColor() );
+					break;
+				}
+			}
 		}
 	}
-
+	
 	return pair<int, int>{row, col};
 } 
 	
 void HexGameEngine::playComputer()
 {
 	cout << "\nComputer Takes It's Turn\n";
-	
-	static int firstCell{-1};
+		
+	//int max{0}; int mEnd; /* node at end of longest path */ int pSize; // path size
 	
 	int row, col;
 	
-	auto bSize{ board.getSize() };
+	int cellCount = board.getSize()*board.getSize();
 	
-		// find longest path on either side of firstCell
-	if(firstCell > 0)
+	vector<int> cpCells = vector<int>();  // cells belonging to computer player
+		
+		// find all of computer's cells
+	for(int c = 0; c < cellCount; c++)
 	{
-		vector<int> cells = computer.getCurrentCells(firstCell); // account for just one cell colored, and if longest path is at an edge
-		
-		if(computer.getColor() == hexColors::BLUE)
-		{
-			bool top; int maxPath{0}; int eNode;
-			
-			if(top)
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell / bSize) > (c / bSize) ) // comparing rows
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			else
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell / bSize) < (c / bSize) ) // comparing rows
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			
-			pair<int, int> pos = colorCellNeighbor(eNode); // all neighbors could be colored
-			row = pos.first; col = pos.second;
-		}
-		
-		if(computer.getColor() == hexColors::RED)
-		{
-			bool right; int maxPath{0}; int eNode;
-			
-			if(right)
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell % bSize) < (c % bSize) ) // comparing columns
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			else
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell % bSize) > (c % bSize) ) // comparing columns
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			
-			pair<int, int> pos = colorCellNeighbor(eNode); // all neighbors could be colored
-			row = pos.first; col = pos.second;
-		}
+		if( board.getCellColor(c) == computer.getColor() )
+			cpCells.push_back(c);
 	}
-	else  // if computer has no cells, then check to see if center cell, is colored, and if not color it
+	
+		// if computer has no cells, then check to see if center cell, is colored, and if not color it
+	if(cpCells.size() == 0)
 	{
-		row = col = bSize / 2;
+		row = col = board.getSize() / 2;
 		
 				// if center cell is not colored, color it, else color a non-colored neighbor
 		if( board.getCellColor(row, col) == hexColors::NONE )
-		{
 			board.setCellColor( row, col, computer.getColor() );
-			firstCell = row*bSize + col;
-		}
 		else 
 		{
-			int center = row*bSize + col;
+			int center = row*board.getSize() + col;
 			pair<int, int> pos = colorCellNeighbor(center); // all neighbors could be colored
 			row = pos.first; col = pos.second;
-			
-			firstCell = row*bSize + col;
 		}
 	}
+	else
+	{
+		//int max{0}; int mEnd; /* node at end of longest path */ int pSize; // path size
+		
+			// if only one cell is colored so far, color a neighbor
+		if(cpCells.size() == 1)
+		{
+			pair<int, int> pos = colorCellNeighbor( cpCells[0] ); // what if all neighbors are colored
+			row = pos.first; col = pos.second;
+		}
+		else // if more than one cell colored, find max path and color an end node neighbor
+		{	
+			int max{0};
+			int mEnd, mBegin; /* nodes of the beginning & end of the longest path */
+			int pSize; // path size
+
+			auto itr = cpCells.begin();
+			
+			for(auto& B: cpCells)
+			{ 
+				for(auto E = itr; E < cpCells.end(); E++)
+				{
+					if( B != *E)
+					{ 
+						pSize = computer.findNextPathSize(B, *E);
+				
+						if(pSize > max)
+						{
+							max = pSize;
+							mEnd = *E; mBegin = B;
+						}
+					}
+				}
+				itr++;
+			}
+			pair<int, int> pos;
+			
+			pos = colorCellNeighbor(mBegin, mEnd); 
+			row = pos.first; col = pos.second; 			
+		}
+	}	
 		// create edge between cell neighbors that are the same color
 	int cell{ row*board.getSize() + col };
-
+		
+	//vector<int> neighbors = board.getCellNeighbors(cell, 1, true);
 	vector<int> neighbors = board.getCellNeighbors(cell);
 		
 	for(auto& N: neighbors)

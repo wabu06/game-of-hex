@@ -39,13 +39,19 @@ class HexPlayer
 		graph getGraph() { return playGraph; }
 		//dsPath& getPath() { return playPath; }
 		
-		int findNextPathSize(int c1, int c2)
+		int findPathSize(int c1, int c2)
 		{
 			dsPath playPath{playGraph};
 			return playPath.getPathSize(c1, c2);
 		}
 		
 		void connectCells(int c1, int c2) { playGraph.addEdge(c1, c2, 1); }
+		
+		vector<int> getCurrentCells(int start)
+		{
+			Bfs playBFS{bSize*bSize, playGraph};
+			return playBFS.getCurrentCells(start);
+		}
 		
 		bool win()
 		{

@@ -13,7 +13,7 @@ all: hex
 hex: main.o dPath.o HexBoard.o HexGameEngine.o
 	${CC} main.o dPath.o HexBoard.o HexGameEngine.o -o hex
 
-main.o: hex.h dPath.h graph.h HexGameEngine.h HexPlayer.h HexBoard.h main.cpp
+main.o: hex.h bfs.h dPath.h graph.h HexGameEngine.h HexPlayer.h HexBoard.h main.cpp
 	${CC} -c main.cpp
 
 #graph.o: graph.h graph.cpp
