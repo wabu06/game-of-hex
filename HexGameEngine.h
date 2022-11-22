@@ -6,6 +6,7 @@
 #include<stdexcept>
 #include<utility>
 #include<algorithm>
+#include<random>
 
 //#include "graph.h"
 //#include "hex.h"
@@ -61,8 +62,7 @@ class HexGameEngine
 	
 	void generateOutput();
 
-	pair<int, int> colorCellNeighbor(int Cell);
-	pair<int, int> colorCellNeighbor(int bCell, int eCell);
+	pair<int, int> colorCellNeighbor(int Cell, bool topORright);
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), isInitialized(false), run(true) {}

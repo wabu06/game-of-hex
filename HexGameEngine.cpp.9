@@ -1,7 +1,7 @@
 #include "HexGameEngine.h"
 
 		
-pair<int, int> HexGameEngine::colorCellNeighbor(int Cell, bool topORright)
+pair<int, int> HexGameEngine::colorCellNeighbor(int Cell)
 {
 	int row{-1}, col{-1};
 
@@ -16,46 +16,8 @@ pair<int, int> HexGameEngine::colorCellNeighbor(int Cell, bool topORright)
 				
 		if( board.getCellColor(row, col) == hexColors::NONE )
 		{
-			if(computer.getColor() == hexColors::BLUE)
-			{
-				if(topORright)
-				{
-					if( row < (Cell / bSize) )
-					{
-						board.setCellColor( row, col, computer.getColor() );
-						break;
-					}
-				}
-				else
-				{
-					if( row > (Cell / bSize) )
-					{
-						board.setCellColor( row, col, computer.getColor() );
-						break;
-					}
-					
-				}
-			}
-			
-			if(computer.getColor() == hexColors::RED)
-			{
-				if(topORright)
-				{
-					if( col > (Cell % bSize) )
-					{
-						board.setCellColor( row, col, computer.getColor() );
-						break;
-					}
-				}
-				else
-				{
-					if( col < (Cell % bSize) )
-					{
-						board.setCellColor( row, col, computer.getColor() );
-						break;
-					}
-				}
-			}
+			board.setCellColor( row, col, computer.getColor() );
+			break;
 		}
 	}
 
@@ -120,9 +82,9 @@ void HexGameEngine::playComputer()
 			pair<int, int> pos;
 			
 			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, top);
+				pos = colorCellNeighbor(firstCell);
 			else
-				pos = colorCellNeighbor(eNode, top); // all neighbors could be colored
+				pos = colorCellNeighbor(eNode); // all neighbors could be colored
 			
 			row = pos.first; col = pos.second;
 		}
@@ -167,9 +129,9 @@ void HexGameEngine::playComputer()
 			pair<int, int> pos;
 			 
 			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, right);
+				pos = colorCellNeighbor(firstCell);
 			else
-				pos = colorCellNeighbor(eNode, right); // all neighbors could be colored
+				pos = colorCellNeighbor(eNode); // all neighbors could be colored
 			
 			row = pos.first; col = pos.second;
 		}
@@ -187,7 +149,7 @@ void HexGameEngine::playComputer()
 		else 
 		{
 			int center = row*bSize + col;
-			pair<int, int> pos = colorCellNeighbor( center, dist(rd) ); // all neighbors could be colored
+			pair<int, int> pos = colorCellNeighbor(center); // all neighbors could be colored
 			row = pos.first; col = pos.second;
 			
 			firstCell = row*bSize + col;
