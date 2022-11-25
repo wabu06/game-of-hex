@@ -10,15 +10,20 @@
 #include "hex.h"
 
 
-enum class sides: unsigned {L, R, UL, LL, UR, LR};
-
 class HexBoard
 {
 	int size;
 	vector< vector<hexColors> > boardCell;
 	
+	enum class sides: unsigned {L, R, UL, LL, UR, LR};
+	
 	public:
-		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
+		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) //boardCell( vector< vector<hexColors> >() ) 
+		{
+			//for(int r = 0; r < size; ++r)
+				//boardCell.push_back( vector<hexColors>(size, hexColors::NONE) );
+				//boardCell[r] = vector<hexColors>(size, hexColors::NONE);
+		}
 
 		int getSize() { return size; }
 		
@@ -54,10 +59,6 @@ class HexBoard
 	
 			return neighbors;
 		}
-		
-		vector<int> getBlueNeighbors(int cell, bool top);
-		
-		vector<int> getRedNeighbors(int cell, bool right);
 		
 		int getCellNeighbor(int n, sides);
 };

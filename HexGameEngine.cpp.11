@@ -1,32 +1,47 @@
 #include "HexGameEngine.h"
 
 		
-pair<int, int> HexGameEngine::colorCellNeighbor(int Cell, bool topORright)
+pair<int, int> HexGameEngine::colorCellNeighbor(int Cell, random_device& rd)
 {
 	int row{-1}, col{-1};
 
 	auto bSize{ board.getSize() };
 	
-	vector<int> neighbors;
+	vector<int> neighbors = board.getCellNeighbors(Cell);
 	
-	if(computer.getColor() == hexColors::BLUE)
-		neighbors = board.getBlueNeighbors(Cell, topORright);
-	
-	if(computer.getColor() == hexColors::RED)
-		neighbors = board.getRedNeighbors(Cell, topORright);
-	
+	shuffle(neighbors.begin(), neighbors.end(), rd);
+		
 	for(auto& N: neighbors)
 	{
 		row = N / bSize;
 		col = N % bSize;
-		
+				
 		if( board.getCellColor(row, col) == hexColors::NONE )
 		{
-			board.setCellColor( row, col, computer.getColor() );
-			break;
+			if(computer.getColor() == hexColors::BLUE)
+			{
+				auto cRow = Cell / bSize;
+
+				if( (row < cRow) || (row > cRow) )
+				{
+					board.setCellColor( row, col, computer.getColor() );
+					break;
+				}
+				
+			}
+			
+			if(computer.getColor() == hexColors::RED)
+			{
+				auto cCol = Cell % bSize;
+
+				if( (col > cCol) ||  (col < cCol) )
+				{
+					board.setCellColor( row, col, computer.getColor() );
+					break;
+			
+				}
+			}
 		}
-		
-		row = col = -1;
 	}
 
 	return pair<int, int>{row, col};
@@ -36,9 +51,10 @@ void HexGameEngine::playComputer()
 {
 	cout << "\nComputer Takes It's Turn\n";
 	
-	static int firstCell{-1};
+	static random_device rd{"/dev/urandom"}; 
+	static bernoulli_distribution dist{0.5};
 	
-	static bool topORright;
+	static int firstCell{-1};
 	
 	int row, col;
 	
@@ -47,13 +63,15 @@ void HexGameEngine::playComputer()
 		// find longest path on either side of firstCell
 	if(firstCell > 0)
 	{
-		vector<int> cells = computer.getCurrentCells(firstCell);
+		vector<int> cells = computer.getCurrentCells(firstCell); // account for just one cell colored, and if longest path is at an edge
+		
+		shuffle(cells.begin(), cells.end(), rd);
 		
 		if(computer.getColor() == hexColors::BLUE)
 		{
-			int maxPath{0}; int eNode; cout << boolalpha << '\n' << topORright;
+			bool top = dist(rd); int maxPath{0}; int eNode; cout << boolalpha << '\n' << top;
 			
-			if(topORright)
+			if(top)
 			{
 				for(auto& c: cells)
 				{
@@ -89,21 +107,19 @@ void HexGameEngine::playComputer()
 			pair<int, int> pos;
 			
 			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, topORright);
+				pos = colorCellNeighbor(firstCell, rd);
 			else
-				pos = colorCellNeighbor(eNode, topORright); // all neighbors could be colored
+				pos = colorCellNeighbor(eNode, rd); // all neighbors could be colored
 			
 			row = pos.first; col = pos.second;
-			
-			topORright = topORright ? false: true;
 		}
 		
 		if(computer.getColor() == hexColors::RED)
 		{
-			int maxPath{0}; int eNode;
+			bool right = dist(rd); int maxPath{0}; int eNode;
 			
-			if(topORright)
-			{	
+			if(right)
+			{
 				for(auto& c: cells)
 				{
 					int pSize; int prevMax;
@@ -138,22 +154,15 @@ void HexGameEngine::playComputer()
 			pair<int, int> pos;
 			 
 			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, topORright);
+				pos = colorCellNeighbor(firstCell, rd);
 			else
-				pos = colorCellNeighbor(eNode, topORright); // all neighbors could be colored
+				pos = colorCellNeighbor(eNode, rd); // all neighbors could be colored
 			
 			row = pos.first; col = pos.second;
-			
-			topORright = topORright ? false: true;
 		}
 	}
 	else  // if computer has no cells, then check to see if center cell, is colored, and if not color it
 	{
-		random_device rd{"/dev/urandom"}; 
-		bernoulli_distribution dist{0.5};
-		
-		topORright = dist(rd);
-		
 		row = col = bSize / 2;
 		
 				// if center cell is not colored, color it, else color a non-colored neighbor
@@ -165,7 +174,7 @@ void HexGameEngine::playComputer()
 		else 
 		{
 			int center = row*bSize + col;
-			pair<int, int> pos = colorCellNeighbor(center, topORright); // all neighbors could be colored
+			pair<int, int> pos = colorCellNeighbor(center, rd); // all neighbors could be colored
 			row = pos.first; col = pos.second;
 			
 			firstCell = row*bSize + col;
@@ -192,16 +201,14 @@ void HexGameEngine::playComputer()
 		currentPlayer = &human; // computer just played so human plays next
 }
 
-void HexGameEngine::playHuman(pair<int, int> position)
+void HexGameEngine::playHuman()
 {
-	if(!run) return;
+	//int row, col;
 	
-	int row{position.first}, col{position.second};
-	
-	board.setCellColor( row, col, human.getColor() );
+	board.setCellColor( hRow, hCol, human.getColor() );
 		
 			// create edge between cell neighbors that are the same color
-	int cell{ row*board.getSize() + col };
+	int cell{ hRow*board.getSize() + hCol };
 		
 	vector<int> neighbors = board.getCellNeighbors(cell);
 		
@@ -272,46 +279,42 @@ int HexGameEngine::parseInput()
 	return coord;
 }
 
-pair<int, int> HexGameEngine::processInput()
+void HexGameEngine::getHumanInput()
 {
 	hexColors cc; // cell color
 	
 	bool legal; int coord, size{ board.getSize() - 1 };
-	
-	int row, col;
 	 
 	do
 	{	coord = parseInput(); if(!run) break;
 		
 		legal = true;
 		
-		row = coord / 10; col = coord % 10;
+		hRow = coord / 10; hCol = coord % 10;
 		
-		if( row < 0 || row > size )
+		if( hRow < 0 || hRow > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 			continue;
 		}
 		
-		if( col < 0 || col > size )
+		if( hCol < 0 || hCol > size )
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 			continue;
 		}
 		
-		cc = board.getCellColor(row, col);
+		cc = board.getCellColor(hRow, hCol);
 		
 		if(cc != hexColors::NONE)
 		{
 			cout << "ILLEGAL MOVE!\n";
 			legal = false;
 		}
-	}
-	while(!legal);
-	
-	return pair<int, int>{row, col};
+		
+	} while(!legal);
 }
 
 void HexGameEngine::drawHexBoard()
@@ -376,10 +379,38 @@ void HexGameEngine::drawHexBoard()
 
 void HexGameEngine::generateOutput()
 {
-	if( (winner == nullptr) && !run ) // if there's no winner, and run is false it's time quit
+	if( (winner == nullptr) && !run )
 		return;
 	
+	//int bSize = board.getSize();
+	//hexColors cc; // board cell color
+	
 	cout << endl; drawHexBoard();
+	
+	/*for(int r = 0; r < bSize; r++)
+	{
+		for(int c = 0; c < bSize; c++)
+		{
+			cc = board.getCellColor(r, c);
+			
+			switch(cc)
+			{
+				case hexColors::NONE:
+					cout << "[" << r << ", " << c << ", NONE]\t";
+				break;
+				
+				case hexColors::BLUE:
+					cout << "[" << r << ", " << c << ", BLUE\u2650]\t";
+				break;
+				
+				case hexColors::RED:
+					cout << "[" << r << ", " << c << ", RED\u2648]\t";
+				break;
+			}
+		}
+		
+		cout << endl;
+	}*/
 	
 	if(winner == &human)
 		cout << "\nHuman Wins\n";
@@ -396,40 +427,35 @@ void HexGameEngine::shutdown()
 
 bool HexGameEngine::initialize()
 {	
-	//cout << "A Game Of Hex\n";
+	cout << "A Game Of Hex\n";
 	
-	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
-	cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
-	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
+	/*cout <<	"    _       ____    _    __  __ _____    ___  _____   _   _ _______  __\n";
+	cout << "   / \     / ___|  / \  |  \/  | ____|  / _ \|  ___| | | | | ____\ \/ /\n";
+	cout << "  / _ \   | |  _  / _ \ | |\/| |  _|   | | | | |_    | |_| |  _|  \  / \n";
+	cout << " / ___ \  | |_| |/ ___ \| |  | | |___  | |_| |  _|   |  _  | |___ /  \ \n";
+	cout << "/_/   \_\ \____/_/   \_\_|  |_|_____|  \___/|_|     |_| |_|_____/_/\_\\\n";*/
+
 
 	int player;
 	
-	do
-	{	cout << "\n1) Blue Player\n2) Red Player\n" << string(16, '=') << ">Enter 1 or 2: ";
+	do {
+		cout << "\n1) Red Player\n2) Blue Player\n\u2193\u2192Enter 1 or 2: ";
 		cin >> player;
-	}
-	while( player != 1 && player != 2 );
+	} while( player != 1 && player != 2 );
 	
 	int size{ board.getSize() };
 	
-	/*if (player == 1)
+	if (player == 1)
 	{
 		human = HexPlayer(hexColors::RED, size);
 		computer = HexPlayer(hexColors::BLUE, size);
 		currentPlayer = &computer;
-	}*/
-	
-	if (player == 1)
+	}
+	else
 	{
 		human = HexPlayer(hexColors::BLUE, size);
 		currentPlayer = &human;
 		computer = HexPlayer(hexColors::RED, size);
-	}
-	else
-	{
-		human = HexPlayer(hexColors::RED, size);
-		computer = HexPlayer(hexColors::BLUE, size);
-		currentPlayer = &computer;
 	}
 	
 	isInitialized = true;

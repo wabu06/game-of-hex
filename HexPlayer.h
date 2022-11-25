@@ -45,7 +45,28 @@ class HexPlayer
 			return playPath.getPathSize(c1, c2);
 		}
 		
-		void connectCells(int c1, int c2) { playGraph.addEdge(c1, c2, 1); }
+		void connectCells(int c1, int c2)
+		{ 
+			if(color == hexColors::BLUE) // if cell 1 and 2 are in the same column, add edge weight as 2 instead of 1
+			{
+				auto col1 = c1 % bSize, col2 = c2 % bSize;
+				
+				if(col1 == col2)
+					playGraph.addEdge(c1, c2, 2);
+				else
+					playGraph.addEdge(c1, c2, 1);
+			}
+			
+			if(color == hexColors::RED) // if cell 1 and cell 2 are in the same row, add edge weight as 2 instead of 1
+			{
+				auto row1 = c1 / bSize, row2 = c2 / bSize;
+				
+				if(row1 == row2)
+					playGraph.addEdge(c1, c2, 2);
+				else
+					playGraph.addEdge(c1, c2, 1);
+			}
+		}
 		
 		vector<int> getCurrentCells(int start)
 		{

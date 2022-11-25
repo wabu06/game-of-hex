@@ -31,31 +31,27 @@ class HexGameEngine
 	int hRow{}, hCol{}; // row & column selection of human player
 	
 	int parseInput();
-	void getHumanInput();
+	//void getHumanInput();
 	
-	void processInput()
-	{
-		if(currentPlayer == &human)
-			getHumanInput();
-	}
+	pair<int, int> processInput();
+	//{
+		//if(currentPlayer == &human)
+			//getHumanInput();
+	//}
 
-	void playHuman();
+	void playHuman(pair<int, int> position);
 	void playComputer();
 	
 	void executeGamePlay()
 	{
 		if(currentPlayer == &human)
 		{
-			playHuman();
-			//currentPlayer = &computer;
+			playHuman( processInput() );
 			return;
 		}
 		
 		if(currentPlayer == &computer)
-		{
 			playComputer();
-			//currentPlayer = &human;
-		}
 	}
 	
 	void drawHexBoard();
@@ -78,7 +74,7 @@ class HexGameEngine
 
 			while(run)
 			{
-				processInput();
+				//processInput();
 				executeGamePlay(); // update player graphs and gameBoard
 				generateOutput();
 			}
