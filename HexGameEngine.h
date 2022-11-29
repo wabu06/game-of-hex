@@ -2,17 +2,14 @@
 
 
 #include<iostream>
-//#include<string>
+#include<string>
 #include<stdexcept>
 #include<utility>
 #include<algorithm>
 #include<random>
+#include<locale>
 
-//#include "graph.h"
-//#include "hex.h"
-//#include "bfs.h"
-//#include "dfs.h"
-#include "HexPlayer.h"
+//#include "HexPlayer.h"
 #include "HexBoard.h"
 //#include "HexUI.h"
 
@@ -23,21 +20,12 @@ class HexGameEngine
 	HexBoard board;
 	//HexUI* ui;
 	
-	//ComputerPlayer* CP = new ComputerPlayerLP(board, computer); // use smart pointer
-	
 	bool isInitialized;
-	bool run; //stop
+	bool run;
 	
-	int hRow{}, hCol{}; // row & column selection of human player
-	
-	int parseInput();
-	//void getHumanInput();
+	pair<int, int> parseInput();
 	
 	pair<int, int> processInput();
-	//{
-		//if(currentPlayer == &human)
-			//getHumanInput();
-	//}
 
 	void playHuman(pair<int, int> position);
 	void playComputer();
@@ -58,24 +46,32 @@ class HexGameEngine
 	
 	void generateOutput();
 
-	pair<int, int> colorCellNeighbor(int Cell, bool topORright);
+	//pair<int, int> colorCellNeighbor(int Cell, bool topORright);
+	pair<int, int> colorCellNeighbor(int cell);
+	
+	pair<int, int> findLongestPath(int cell);
+	
+	pair<int, int> extendLongestPath();
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), isInitialized(false), run(true) {}
 
 		bool initialize();
 		
-		void runLoop() // or run()
+		void runLoop()
 		{
-			if(!isInitialized)
+			if(!isInitialized) // insures initialize method is called first
 				return;
-
-			generateOutput();
+	
+			if(currentPlayer == &human)
+				generateOutput();
 
 			while(run)
 			{
-				//processInput();
 				executeGamePlay(); // update player graphs and gameBoard
+				
+				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
+				
 				generateOutput();
 			}
 		}

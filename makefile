@@ -2,36 +2,29 @@
 CC = clang++ -std=gnu++17 -g -O0
 #CC = g++
 
+
+hpINC = graph.h dPath.h bfs.h dfs.h HexPlayer.h
+hbINC = ${hpINC} HexBoard.h
+geINC = ${hbINC} HexGameEngine.h
+
 all: hex
 
-#hex: main.o graph.o priorityQueue.o dPath.o HexBoard.o HexGameEngine.o
-#	${CC} main.o graph.o priorityQueue.o dPath.o HexBoard.o HexGameEngine.o -o hex
+hex: main.o dPath.o HexBoard.o ComputerPlayer.o HexGameEngine.o
+	${CC} main.o dPath.o HexBoard.o ComputerPlayer.o HexGameEngine.o -o hex
 
-#hex: main.o priorityQueue.o dPath.o HexBoard.o HexGameEngine.o
-#	${CC} main.o priorityQueue.o dPath.o HexBoard.o HexGameEngine.o -o hex
-
-hex: main.o dPath.o HexBoard.o HexGameEngine.o
-	${CC} main.o dPath.o HexBoard.o HexGameEngine.o -o hex
-
-main.o: hex.h bfs.h dPath.h graph.h HexGameEngine.h HexPlayer.h HexBoard.h main.cpp
+main.o: ${geINC} main.cpp
 	${CC} -c main.cpp
-
-#graph.o: graph.h graph.cpp
-#	${CC} -c graph.cpp
-
-#priorityQueue.o: priorityQueue.h priorityQueue.cpp
-#		${CC} -c priorityQueue.cpp
 
 dPath.o: graph.h dPath.h dPath.cpp
 		${CC} -c dPath.cpp
 
-#HexPlayer.o:	hex.h graph.h priorityQueue.h dPath.h HexPlayer.h HexPlayer.cpp
-#	${CC} -c HexPlayer.cpp
-
-HexBoard.o:	hex.h HexBoard.h HexBoard.cpp
+HexBoard.o:	${hbINC} HexBoard.cpp
 	${CC} -c HexBoard.cpp
 
-HexGameEngine.o:	hex.h bfs.h dPath.h graph.h HexPlayer.h HexBoard.h HexGameEngine.h HexGameEngine.cpp
+ComputerPlayer.o:	${geINC} ComputerPlayer.cpp
+	${CC} -c ComputerPlayer.cpp
+
+HexGameEngine.o:	${geINC} HexGameEngine.cpp
 	${CC} -c HexGameEngine.cpp
 
 clean:

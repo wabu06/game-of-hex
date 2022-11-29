@@ -4,34 +4,27 @@
 #include "dPath.h"
 #include "bfs.h"
 #include "dfs.h"
-//#include "graph.h"
 
 #define _HEX
-#include "hex.h"
 
 // 1. start with graph of unconnected nodes
 // 2. everytime a node is colored, check for which neighbors are the same color
 // 3. create an edge to every neighbor that is same color
 // n = r*size + c
 
+using namespace std;
+
+enum class hexColors: unsigned {NONE, RED, BLUE};
 
 class HexPlayer
 {
-	hexColors color;
-	graph playGraph;
-	//dsPath playPath;
-	//Bfs playBFS;
-	
 	int bSize;
 	
+	hexColors color;
+	graph playGraph;
+	
 	public:
-		HexPlayer(hexColors c = hexColors::NONE, int size = 0): color(c)
-		{
-			bSize = size;
-			playGraph = graph{size*size};
-			//playPath = dsPath{playGraph}; // will need to implement the same as bfs
-			//playBFS = Bfs{size*size, playGraph};
-		}
+		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ) {}
 		
 		hexColors getColor() { return color; }
 		void setColor(hexColors c) { color = c; }
@@ -107,7 +100,7 @@ class HexPlayer
 		{
 			Bfs playBFS{bSize*bSize, playGraph};
 			
-			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize + bSize;
+			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;//int elimit = bSize*bSize + bSize;
 			
 			for(int start = 0; start <= slimit; start += bSize)
 			{

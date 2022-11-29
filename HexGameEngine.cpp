@@ -1,196 +1,5 @@
 #include "HexGameEngine.h"
 
-		
-pair<int, int> HexGameEngine::colorCellNeighbor(int Cell, bool topORright)
-{
-	int row{-1}, col{-1};
-
-	auto bSize{ board.getSize() };
-	
-	vector<int> neighbors;
-	
-	if(computer.getColor() == hexColors::BLUE)
-		neighbors = board.getBlueNeighbors(Cell, topORright);
-	
-	if(computer.getColor() == hexColors::RED)
-		neighbors = board.getRedNeighbors(Cell, topORright);
-	
-	for(auto& N: neighbors)
-	{
-		row = N / bSize;
-		col = N % bSize;
-		
-		if( board.getCellColor(row, col) == hexColors::NONE )
-		{
-			board.setCellColor( row, col, computer.getColor() );
-			break;
-		}
-		
-		row = col = -1;
-	}
-
-	return pair<int, int>{row, col};
-} 
-	
-void HexGameEngine::playComputer()
-{
-	cout << "\nComputer Takes It's Turn\n";
-	
-	static int firstCell{-1};
-	
-	static bool topORright;
-	
-	int row, col;
-	
-	auto bSize{ board.getSize() };
-	
-		// find longest path on either side of firstCell
-	if(firstCell > 0)
-	{
-		vector<int> cells = computer.getCurrentCells(firstCell);
-		
-		if(computer.getColor() == hexColors::BLUE)
-		{
-			int maxPath{0}; int eNode; cout << boolalpha << '\n' << topORright;
-			
-			if(topORright)
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell / bSize) > (c / bSize) ) // comparing rows
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			else
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell / bSize) < (c / bSize) ) // comparing rows
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			
-			pair<int, int> pos;
-			
-			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, topORright);
-			else
-				pos = colorCellNeighbor(eNode, topORright); // all neighbors could be colored
-			
-			row = pos.first; col = pos.second;
-			
-			topORright = topORright ? false: true;
-		}
-		
-		if(computer.getColor() == hexColors::RED)
-		{
-			int maxPath{0}; int eNode;
-			
-			if(topORright)
-			{	
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell % bSize) < (c % bSize) ) // comparing columns
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			else
-			{
-				for(auto& c: cells)
-				{
-					int pSize; int prevMax;
-					
-					if( (firstCell % bSize) > (c % bSize) ) // comparing columns
-					{
-						pSize = computer.findPathSize(firstCell, c);
-						prevMax = maxPath; maxPath = max(maxPath, pSize);
-						
-						if(maxPath > prevMax)
-							eNode = c;
-					}
-				}
-			}
-			
-			pair<int, int> pos;
-			 
-			if(maxPath == 0)
-				pos = colorCellNeighbor(firstCell, topORright);
-			else
-				pos = colorCellNeighbor(eNode, topORright); // all neighbors could be colored
-			
-			row = pos.first; col = pos.second;
-			
-			topORright = topORright ? false: true;
-		}
-	}
-	else  // if computer has no cells, then check to see if center cell, is colored, and if not color it
-	{
-		random_device rd{"/dev/urandom"}; 
-		bernoulli_distribution dist{0.5};
-		
-		topORright = dist(rd);
-		
-		row = col = bSize / 2;
-		
-				// if center cell is not colored, color it, else color a non-colored neighbor
-		if( board.getCellColor(row, col) == hexColors::NONE )
-		{
-			board.setCellColor( row, col, computer.getColor() );
-			firstCell = row*bSize + col;
-		}
-		else 
-		{
-			int center = row*bSize + col;
-			pair<int, int> pos = colorCellNeighbor(center, topORright); // all neighbors could be colored
-			row = pos.first; col = pos.second;
-			
-			firstCell = row*bSize + col;
-		}
-	}
-		// create edge between cell neighbors that are the same color
-	int cell{ row*board.getSize() + col };
-
-	vector<int> neighbors = board.getCellNeighbors(cell);
-		
-	for(auto& N: neighbors)
-	{
-		if( board.getCellColor(N) == computer.getColor() )
-			computer.connectCells(cell, N);
-	}
-	
-	if( computer.win() )
-	{
-		winner = &computer;
-		run = false;
-		currentPlayer = nullptr;
-	}
-	else
-		currentPlayer = &human; // computer just played so human plays next
-}
 
 void HexGameEngine::playHuman(pair<int, int> position)
 {
@@ -220,72 +29,76 @@ void HexGameEngine::playHuman(pair<int, int> position)
 	else
 		currentPlayer = &computer; // human just played so computer plays next
 	
-	cout << boolalpha << "win " << human.win();
+	//cout << boolalpha << "win " << human.win();
 }
 
-int HexGameEngine::parseInput()
+pair<int, int> HexGameEngine::parseInput()
 {
-	string input; size_t pos{}; int coord{};
+	string input; pair<int, int> position;
 
 	while(true)
 	{
-		cout << "\nEnter your move, or <q> to quit: "; cin >> input;
+		cout << "\nEnter selection for your move, or <q> to quit: "; getline(cin, input); //cin >> input;
 		
-		//if( (input.size() == 1) && (input.front() == 'q') || (input.front() == 'Q') )
-		//{
-			//currentPlayer = nullptr;
-			//run = false;
-			//throw exception();
-		//}
+		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
+	
+		for_each(input.begin(), input.end(), toLowerCase);
 		
-		if( (input.size() == 1) && ( (input.front() == 'q') || (input.front() == 'Q')) )
+		bool allAlpha = all_of(input.begin(), input.end(), [](char c) { return isalpha( c, locale("en_US.UTF8") ); });
+		
+		if(allAlpha)
 		{
-			currentPlayer = nullptr;
-			run = false;
-			coord = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
-			break;
+			if( (input == "q") || (input == "quit") || (input == "exit") || (input == "end") )
+			{
+				currentPlayer = nullptr;
+				run = false;
+				position.first = position.second = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
+				break;
+			}
 		}
 		
-		try
-		{
-			coord = stoi(input, &pos);
+		bool allDigits = all_of(input.begin(), input.end(), [](char c) { return isdigit( c, locale("en_US.UTF8") ); });
 		
-			if( (pos == 0) || (pos != input.size()) )
-				throw runtime_error("ILLEGAL ENTRY");
+		if(allDigits)
+		{
+			int number = stoi(input, nullptr);
+			
+			if(input.size() > 3)
+			{
+				position.first = number / 100;
+				position.second = number % 100;
+			}
+			else
+			{
+				position.first = number / 10;
+				position.second = number % 10;
+			}
 			
 			break;
 		}
-		catch(invalid_argument const& exp)
-		{
-			cout << "ILLEGAL ENTRY" << endl;
-		}
-		catch(out_of_range const& exp)
-		{
-			cout << "ILLEGAL ENTRY" << endl;
-		}
-		catch(runtime_error const& exp)
-		{
-			cout << "ILLEGAL ENTRY" << endl;
-		}
+		else
+			cout << "INVALID ENTRY" << endl;
 	}
 	
-	return coord;
+	return position;
 }
 
 pair<int, int> HexGameEngine::processInput()
 {
 	hexColors cc; // cell color
 	
-	bool legal; int coord, size{ board.getSize() - 1 };
+	bool legal; int size{ board.getSize() - 1 };
 	
 	int row, col;
 	 
 	do
-	{	coord = parseInput(); if(!run) break;
+	{	pair<int, int> position = parseInput();
+	
+		if(!run) break;
 		
 		legal = true;
 		
-		row = coord / 10; col = coord % 10;
+		row = position.first; col = position.second;
 		
 		if( row < 0 || row > size )
 		{
@@ -331,11 +144,11 @@ void HexGameEngine::drawHexBoard()
 				switch( board.getCellColor(r, col) )
 				{
 					case hexColors::BLUE:
-						cout << "b"; //cout << "B\u2650";
+						cout << "B"; //cout << "B\u2650";
 					break;
 					
 					case hexColors::RED:
-						cout << "r"; //cout << "R\u2648";
+						cout << "R"; //cout << "R\u2648";
 					break;
 					
 					default:
@@ -376,10 +189,10 @@ void HexGameEngine::drawHexBoard()
 
 void HexGameEngine::generateOutput()
 {
-	if( (winner == nullptr) && !run ) // if there's no winner, and run is false it's time quit
-		return;
+	//if( (winner == nullptr) && !run ) // if there's no winner, and run is false it's time quit
+		//return;
 	
-	cout << endl; drawHexBoard();
+	cout << '\n'; drawHexBoard();
 	
 	if(winner == &human)
 		cout << "\nHuman Wins\n";
@@ -402,24 +215,18 @@ bool HexGameEngine::initialize()
 	cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
 	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 
-	int player;
+	string player;
 	
 	do
-	{	cout << "\n1) Blue Player\n2) Red Player\n" << string(16, '=') << ">Enter 1 or 2: ";
-		cin >> player;
+	{	//cout << "\n1) Blue Player\n2) Red Player\n" << string(14, '=') << ">Enter 1 or 2: ";
+		cout << "\n1) Blue Player\n2) Red Player\n" << "\u2016\n====>Enter 1 or 2: ";
+		getline(cin, player); //cin >> player;
 	}
-	while( player != 1 && player != 2 );
+	while( (player.size() > 1) || (player[0] != '1') && (player[0] != '2') );
 	
 	int size{ board.getSize() };
 	
-	/*if (player == 1)
-	{
-		human = HexPlayer(hexColors::RED, size);
-		computer = HexPlayer(hexColors::BLUE, size);
-		currentPlayer = &computer;
-	}*/
-	
-	if (player == 1)
+	if (player[0] == '1')
 	{
 		human = HexPlayer(hexColors::BLUE, size);
 		currentPlayer = &human;
