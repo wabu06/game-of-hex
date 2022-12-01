@@ -7,7 +7,7 @@ void HexGameEngine::playHuman(pair<int, int> position)
 	
 	int row{position.first}, col{position.second};
 	
-	board.setCellColor( row, col, human.getColor() );
+	board.setCellColor(row, col, human.getColor(), human);
 		
 			// create edge between cell neighbors that are the same color
 	int cell{ row*board.getSize() + col };

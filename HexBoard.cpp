@@ -63,7 +63,7 @@ vector<int> HexBoard::getRedNeighbors(int cell)
 		auto n = getCellNeighbor(cell, s);
 				
 		if(n > -1)
-		neighbors.push_back(n);
+			neighbors.push_back(n);
 	}
 			
 	return neighbors;

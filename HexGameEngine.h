@@ -73,6 +73,8 @@ class HexGameEngine
 				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
 				
 				generateOutput();
+				
+				auto cc{ computer.getCellCount() };
 			}
 		}
 		

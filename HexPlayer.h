@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include<unordered_set>
+
 #include "dPath.h"
 #include "bfs.h"
 #include "dfs.h"
@@ -22,9 +24,11 @@ class HexPlayer
 	
 	hexColors color;
 	graph playGraph;
+	unordered_set<int> cellSet; // players current cells
 	
 	public:
-		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ) {}
+		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ),
+																cellSet( unordered_set<int>{} ) {}
 		
 		hexColors getColor() { return color; }
 		void setColor(hexColors c) { color = c; }
@@ -32,6 +36,9 @@ class HexPlayer
 		graph getGraph() { return playGraph; }
 		//dsPath& getPath() { return playPath; }
 		
+		int getCellCount() { return cellSet.size(); }
+		void addCell(int c) { cellSet.insert(c); }
+
 		int findPathSize(int c1, int c2)
 		{
 			dsPath playPath{playGraph};
@@ -66,6 +73,8 @@ class HexPlayer
 			Bfs playBFS{bSize*bSize, playGraph};
 			return playBFS.getCurrentCells(start);
 		}
+		
+		unordered_set<int> getCurrentCells() { return cellSet; }
 		
 		bool win()
 		{

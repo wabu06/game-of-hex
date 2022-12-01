@@ -86,51 +86,52 @@ pair<int, int> HexGameEngine::extendLongestPath()
 	
 	int row, col;
 	
-	//if(prevCell > 0)
-	if(computer.getCellCount() > 1)
+	if(prevCell > 0) // if(computer.getCellCount() > 0)
 	{
 		pair<int, int> endpoints{ findLongestPath(prevCell) };
 		
-		pair<int, int> position; position = colorCellNeighbor(endpoints.second);
+		pair<int, int> position;
 		
-		prevCell = endpoints.second;
-		
-		row = position.first; col = position.second;
-		
-		if(row == -1 && col == -1)
+		if(endpoints.first == -1 && endpoints.second == -1)
 		{
-			position = colorCellNeighbor(endpoints.first);
-
-			prevCell = endpoints.first;
+			position = colorCellNeighbor(prevCell);
+			row = position.first; col = position.second;
+		}
+		else
+		{
+			position = colorCellNeighbor(endpoints.second);
+		
+			prevCell = endpoints.second;
 		
 			row = position.first; col = position.second;
+		
+			if(row == -1 && col == -1)
+			{
+				position = colorCellNeighbor(endpoints.first);
+
+				prevCell = endpoints.first;
+		
+				row = position.first; col = position.second;
+			}
 		}
 	}
-	else  
+	else  // if computer has no cells, then check to see if center cell, is colored, and if not color it
 	{
-		if(computer.getCellCount() == 1)
-		{
-			pair<int, int> position = colorCellNeighbor(prevCell);
-			row = position.first; col = position.second;
-		}
-		else // if computer has no cells, then check to see if center cell, is colored, and if not color it
-		{
-			row = col = bSize / 2;
+		row = col = bSize / 2;
 		
 				// if center cell is not colored, color it, else color a non-colored neighbor
-			if( board.getCellColor(row, col) == hexColors::NONE )
-			{
-				board.setCellColor(row, col, computer.getColor(), computer);
-				prevCell = row*bSize + col;
-			}
-			else 
-			{
-				int center = row*bSize + col;
-				pair<int, int> position = colorCellNeighbor(center); // all neighbors could be colored
-				row = position.first; col = position.second;
+		if( board.getCellColor(row, col) == hexColors::NONE )
+		{
+			board.setCellColor(row, col, computer.getColor(), computer);
+			prevCell = row*bSize + col;
+		}
+		else 
+		{
+			int center = row*bSize + col;
+			pair<int, int> position = colorCellNeighbor(center); // all neighbors could be colored
+			row = position.first; col = position.second;
 			
-				prevCell = row*bSize + col;
-			}
+			prevCell = row*bSize + col;
 		}
 	}
 	

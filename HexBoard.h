@@ -30,12 +30,17 @@ class HexBoard
 			return boardCell[r][c];
 		}
 		
-		void setCellColor(int r, int c, hexColors hCC) { boardCell[r][c] = hCC; }
+		void setCellColor(int r, int c, hexColors hCC, HexPlayer& player)
+		{
+			boardCell[r][c] = hCC;
+			player.addCell( r*size + c );
+		}
 		
-		void setCellColor(int n, hexColors hCC)
+		void setCellColor(int n, hexColors hCC, HexPlayer& player)
 		{
 			int r{ n/size }, c{ n%size };
 			boardCell[r][c] = hCC;
+			player.addCell(n);
 		}
 		
 		vector<int> getCellNeighbors(int cell)
@@ -55,10 +60,8 @@ class HexBoard
 			return neighbors;
 		}
 		
-		//vector<int> getBlueNeighbors(int cell, bool top);
 		vector<int> getBlueNeighbors(int cell);
 		
-		//vector<int> getRedNeighbors(int cell, bool right);
 		vector<int> getRedNeighbors(int cell);
 		
 		int getCellNeighbor(int n, sides);
