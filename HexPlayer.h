@@ -76,6 +76,12 @@ class HexPlayer
 		
 		unordered_set<int> getCurrentCells() { return cellSet; }
 		
+		bool hasPath(int c1, int c2)
+		{
+			Bfs playBFS{bSize*bSize, playGraph};
+			return playBFS.hasPath(c1, c2);
+		}
+		
 		bool win()
 		{
 			bool pWin;

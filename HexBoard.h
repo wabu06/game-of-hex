@@ -64,5 +64,5 @@ class HexBoard
 		
 		vector<int> getRedNeighbors(int cell);
 		
-		int getCellNeighbor(int n, sides);
+		int getCellNeighbor(int n, sides S);
 };

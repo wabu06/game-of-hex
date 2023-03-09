@@ -18,33 +18,23 @@ class HexGameEngine
 {
 	HexPlayer computer, human, *currentPlayer, *winner;
 	HexBoard board;
-	HexUI* ui;
+	//HexUI* ui;
 	
 	bool isInitialized;
 	bool run;
+	
+	pair<int, int> parseInput();
+	
+	pair<int, int> processInput();
 
-	bool isMoveLegal();
-
-	void playHuman(pair<int, int> move);
+	void playHuman(pair<int, int> position);
 	void playComputer();
 	
 	void executeGamePlay()
 	{
 		if(currentPlayer == &human)
 		{
-			pair<int, int> move;
-			bool legal;
-			
-			do
-			{	move = ui->getHumanMove();
-			
-				if(!run) return; // end game if human choose to quit instead of entering a move
-			
-				legal = isMoveLegal(move);
-			}
-			while(!legal);
-			
-			playHuman(move);
+			playHuman( processInput() );
 			return;
 		}
 		
@@ -52,6 +42,11 @@ class HexGameEngine
 			playComputer();
 	}
 	
+	void drawHexBoard();
+	
+	void generateOutput();
+
+	//pair<int, int> colorCellNeighbor(int Cell, bool topORright);
 	pair<int, int> colorCellNeighbor(int cell);
 	
 	pair<int, int> findLongestPath(int cell);
@@ -61,7 +56,7 @@ class HexGameEngine
 	pair<int, int> makeWinMove(HexPlayer player);
 	
 	public:
-		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), run(true) {}
+		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), isInitialized(false), run(true) {}
 
 		bool initialize();
 		
@@ -71,7 +66,7 @@ class HexGameEngine
 				return;
 	
 			if(currentPlayer == &human)
-				ui->generateOutput();
+				generateOutput();
 
 			while(run)
 			{
@@ -79,17 +74,12 @@ class HexGameEngine
 				
 				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
 				
-				ui->generateOutput();
+				generateOutput();
+				
+				//auto cc{ computer.getCellCount() };
 			}
 		}
 		
-		void shutdown()
-		{
-			if(!isInitialized)
-				cout << "\nGame Engine Was Not Initialized" << endl;
-	
-			if(ui != nullptr)
-				delete ui;
-		}
+		void shutdown();
 };
 
