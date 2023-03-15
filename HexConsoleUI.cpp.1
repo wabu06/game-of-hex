@@ -3,7 +3,7 @@
 #include "HexGameEngine.h"
 
 
-pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
+pair<int, int> HexConsoleUI::getHumanMove(HexPlayer* currentPlayer, bool& run)
 {
 	string input; pair<int, int> position;
 
@@ -21,8 +21,8 @@ pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 		{
 			if( (input == "q") || (input == "quit") || (input == "exit") || (input == "end") )
 			{
-				hge->setCurrentPlayer(nullptr);
-				hge->setRun(false);
+				currentPlayer = nullptr;
+				run = false;
 				position.first = position.second = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
 				break;
 			}
@@ -122,14 +122,14 @@ void HexConsoleUI::drawHexBoard(HexBoard& board)
 	cout << endl;
 }
 
-void HexConsoleUI::generateOutput(HexGameEngine* hge)
+void HexConsoleUI::generateOutput(HexGameEngine& hge)
 {
-	cout << '\n'; drawHexBoard( hge->getBoard() );
+	cout << '\n'; drawHexBoard( hge.getBoard() );
 	
-	if( hge->getWinner() == &hge->getHuman() )
+	if( hge.getWinner() == &hge.getHuman() )
 		cout << "\nHuman Wins\n";
 	
-	if( hge->getWinner() == &hge->getComputer() )
+	if( hge.getWinner() == &hge.getComputer() )
 		cout << "\nComputer Wins\n";
 }
 

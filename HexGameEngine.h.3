@@ -36,7 +36,7 @@ class HexGameEngine
 			bool legal;
 			
 			do
-			{	move = ui->getHumanMove(this);
+			{	move = ui->getHumanMove(currentPlayer, run);
 			
 				if(!run) return; // end game if human choose to quit instead of entering a move
 			
@@ -75,20 +75,12 @@ class HexGameEngine
 			return currentPlayer;
 		}
 		
-		void setCurrentPlayer(HexPlayer* p) {
-			currentPlayer = p;
-		}
-		
 		HexPlayer* getWinner() {
 			return winner;
 		}
 
 		HexBoard& getBoard() {
 			return board;
-		}
-		
-		void setRun(bool r) {
-			run = r;
 		}
 
 		bool initialize();
@@ -99,7 +91,7 @@ class HexGameEngine
 				return;
 	
 			if(currentPlayer == &human)
-				ui->generateOutput(this);
+				ui->generateOutput(board, winner, human, computer);
 
 			while(run)
 			{
@@ -107,7 +99,7 @@ class HexGameEngine
 				
 				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
 				
-				ui->generateOutput(this);
+				ui->generateOutput(board, winner, human, computer);
 			}
 		}
 		

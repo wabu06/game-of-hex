@@ -21,7 +21,8 @@ dPath.o: graph.h dPath.h dPath.cpp
 HexBoard.o:	${hbINC} HexBoard.cpp
 	${CC} -c HexBoard.cpp
 
-HexConsoleUI.o:	HexUI.h HexConsoleUI.h HexConsoleUI.cpp
+HexConsoleUI.o:	${hbINC} HexUI.h HexConsoleUI.h HexGameEngine.h HexConsoleUI.cpp
+	${CC} -c HexConsoleUI.cpp
 
 ComputerPlayer.o:	${geINC} ComputerPlayer.cpp
 	${CC} -c ComputerPlayer.cpp
