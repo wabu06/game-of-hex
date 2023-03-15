@@ -137,6 +137,122 @@ pair<int, int> HexGameEngine::extendLongestPath()
 	return pair<int, int>{row,col};
 }
 
+pair<int, int> HexGameEngine::makeWinMove(HexPlayer player)
+{
+	auto bSize{ board.getSize() };
+	
+	int row{-1}, col{-1};
+	
+	auto color = player.getColor();
+	
+	bool first{true}, second{false}, pathFound{false};
+	//if(computer.getColor() == hexColors::BLUE)
+	do
+	{	
+		int start, end, delta;
+		
+		int pStart, pEnd;
+		
+		array<sides, 2> sideAR;
+		
+		if(color == hexColors::BLUE)
+		{
+			if(first) // top
+			{
+				start = bSize; end = 2*bSize; delta = 1;
+				
+				pStart = bSize*bSize - bSize; pEnd = bSize*bSize;
+				
+				first = false; second = true;
+				
+				sideAR[0] = sides::UL; sideAR[1] = sides::UR; 
+			}
+			
+			if(second) // bottom
+			{
+				start = (bSize - 2) * bSize; end = start + bSize - 1; delta = 1;
+				
+				pStart = 0; pEnd = bSize;
+				
+				sideAR[0] = sides::LL; sideAR[1] = sides::LR; 
+			}
+		}
+		
+		if(color == hexColors::RED)
+		{
+			if(first) // left
+			{
+				start = 1; end = bSize*bSize - (bSize - 1); delta = 7;
+				
+				pStart = bSize - 1; pEnd = bSize*bSize;
+				
+				first = false; second = true;
+				
+				sideAR[0] = sides::L; sideAR[1] = sides::LL; 
+			}
+			
+			if(second) // right
+			{
+				start = bSize - 2; end = bSize*bSize - 2; delta = 7;
+				
+				pStart = 0; pEnd = bSize*bSize - bSize;
+				
+				sideAR[0] = sides::R; sideAR[1] = sides::UR; 
+			}
+		}
+		
+		for(auto c{start}; c < end; c += delta) // iterate through second row of cells
+		{	
+			if(player.getCurrentCells().count(c) == 1) // is a cell from second row a computer cell
+			{
+				auto ulColor = board.getCellColor( board.getCellNeighbor(c, sideAR[0]) );
+				auto urColor = board.getCellColor( board.getCellNeighbor(c, sideAR[1]) );
+				
+					// if cell from second row is a computer cell check it's upper edge neighbors
+				if(ulColor == hexColors::NONE || urColor == hexColors::NONE)
+				{
+						// if an upper edge neighbor is uncolored, see if there's a path to a cell on the bottom edge
+					for(auto be{pStart}; be < pEnd; be++)
+					{
+						pathFound = player.hasPath(c, be);
+						
+						if(pathFound)
+							break;
+					}
+				}
+			}
+				// if there is a path to a bottom edge cell, color edge neighbor of second row cell
+			if(pathFound)
+			{
+				auto ulColor = board.getCellColor( board.getCellNeighbor(c, sideAR[0]) );
+				auto urColor = board.getCellColor( board.getCellNeighbor(c, sideAR[1]) );
+				
+				if(ulColor == hexColors::NONE) //|| urColor == hexColors::NONE)
+				{
+					auto ulNeighbor = board.getCellNeighbor(c, sideAR[0]);
+					
+					row = ulNeighbor / bSize; col = ulNeighbor % bSize;
+					
+					board.setCellColor(row, col, color, player);
+				}
+				else
+				{
+					auto urNeighbor = board.getCellNeighbor(c, sideAR[1]);
+					
+					row = urNeighbor / bSize; col = urNeighbor % bSize;
+					
+					board.setCellColor(row, col, color, player);
+				}
+				
+				break;
+			}
+		}
+	}
+	while(!pathFound || !second);
+	
+	return pair<int, int>{row,col};
+}
+
 void HexGameEngine::playComputer()
 {
 	cout << "\nComputer Takes It's Turn\n";

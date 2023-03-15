@@ -58,7 +58,7 @@ class HexGameEngine
 	
 	pair<int, int> extendLongestPath();
 	
-	pair<int, int> makeWinMove(HexPlayer player);
+	// pair<int, int> makeWinMove(HexPlayer player);
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), run(true) {}
