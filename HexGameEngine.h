@@ -58,8 +58,6 @@ class HexGameEngine
 	
 	pair<int, int> extendLongestPath();
 	
-	// pair<int, int> makeWinMove(HexPlayer player);
-	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), run(true) {}
 
@@ -99,7 +97,7 @@ class HexGameEngine
 				return;
 	
 			if(currentPlayer == &human)
-				ui->generateOutput(this);
+				ui->updateUI(this);
 
 			while(run)
 			{
@@ -107,7 +105,7 @@ class HexGameEngine
 				
 				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
 				
-				ui->generateOutput(this);
+				ui->updateUI(this);
 			}
 		}
 		

@@ -122,7 +122,7 @@ void HexConsoleUI::drawHexBoard(HexBoard& board)
 	cout << endl;
 }
 
-void HexConsoleUI::generateOutput(HexGameEngine* hge)
+void HexConsoleUI::updateUI(HexGameEngine* hge)
 {
 	cout << '\n'; drawHexBoard( hge->getBoard() );
 	

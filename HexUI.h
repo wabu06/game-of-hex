@@ -1,3 +1,5 @@
+// User Interface
+
 #pragma once
 
 #include "HexBoard.h"
@@ -9,12 +11,11 @@ class HexUI
 {
 	public:
 		HexUI() {}
+		virtual ~HexUI() {}
 	
-		virtual int getHumanPlayer() { return -1; }
-		//virtual pair<int, int> getHumanMove(HexPlayer* currentPlayer, bool& run) { return pair{-1, -1}; }
-		virtual pair<int, int> getHumanMove(HexGameEngine* hge) { return pair<int, int>(-1,-1); }
-		virtual void badMoveMsg() {}
-		//virtual void generateOutput(HexBoard& board, HexPlayer* winner, HexPlayer& human, HexPlayer& computer) {}
-		virtual void generateOutput(HexGameEngine* hge) {}
+		virtual int getHumanPlayer() = 0;
+		virtual pair<int, int> getHumanMove(HexGameEngine* hge) = 0;
+		virtual void badMoveMsg() = 0;
+		virtual void updateUI(HexGameEngine* hge) = 0;
 };
 

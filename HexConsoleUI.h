@@ -41,25 +41,12 @@ class HexConsoleUI : public HexUI
 				return 2;
 		}
 		
-		// pair<int, int> getHumanMove(HexPlayer* currentPlayer, bool& run) override;
-		
-		pair<int, int> getHumanMove(HexGameEngine* hge) override; // {return pair<int, int>(-12,-14);}
+		pair<int, int> getHumanMove(HexGameEngine* hge) override;
 		
 		void badMoveMsg() override {
 			cout << "ILLEGAL MOVE!\n";
 		}
 		
-		/*void generateOutput(HexBoard& board, HexPlayer* winner, HexPlayer& human, HexPlayer& computer) override
-		{
-			cout << '\n'; drawHexBoard(board);
-	
-			if(winner == &human)
-				cout << "\nHuman Wins\n";
-	
-			if(winner == &computer)
-				cout << "\nComputer Wins\n";
-		}*/
-		
-		void generateOutput(HexGameEngine* hge) override;
+		void updateUI(HexGameEngine* hge) override;
 };
 
