@@ -7,3 +7,5 @@ hex
 core
 *.pdf
 test/
+monte/*.o
+monte/hex

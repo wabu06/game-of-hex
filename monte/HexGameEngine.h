@@ -5,8 +5,9 @@
 //#include<string>
 //#include<stdexcept>
 //#include<utility>
-//#include<algorithm>
-//#include<random>
+#include<algorithm>
+#include<random>
+#include<chrono>
 //#include<locale>
 
 //#include "HexPlayer.h"
@@ -17,6 +18,7 @@
 class HexGameEngine
 {
 	HexPlayer computer, human, *currentPlayer, *winner;
+
 	HexBoard board;
 	HexUI* ui;
 	
@@ -27,16 +29,54 @@ class HexGameEngine
 
 	void playHuman();
 	void playComputer();
+	
+	void executeGamePlay()
+	{
+		if(currentPlayer == &human) {
+			playHuman();
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}
 
-	pair<int, int> colorCellNeighbor(int cell);
-	
-	pair<int, int> findLongestPath(int cell);
-	
-	pair<int, int> extendLongestPath();
+	int genMonteMove();
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false) {}
+		
+		HexGameEngine(HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer), winner(hge.winner),
+										   board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized), done(hge.done) {}
 
+		HexGameEngine operator=(HexGameEngine&& hge)
+		{
+			this->computer = hge.computer;
+			this->human = hge.human;
+			this->currentPlayer = hge.currentPlayer;
+			this->winner = hge.winner;
+			this->board = hge.board;
+			this->ui = hge.ui;
+			this->isInitialized = hge.isInitialized;
+			this->done = hge.done;
+			
+			return *this;
+		}
+		
+		HexGameEngine operator=(HexGameEngine& hge)
+		{
+			this->computer = hge.computer;
+			this->human = hge.human;
+			this->currentPlayer = hge.currentPlayer;
+			this->winner = hge.winner;
+			this->board = hge.board;
+			this->ui = hge.ui;
+			this->isInitialized = hge.isInitialized;
+			this->done = hge.done;
+			
+			return *this;
+		}
+		
 		HexPlayer& getComputer() {
 			return computer;
 		}
@@ -81,12 +121,8 @@ class HexGameEngine
 
 			while(!done)
 			{
-				if(currentPlayer == &human)
-					playHuman();
-		
-				if(currentPlayer == &computer)
-					playComputer();
-					
+				executeGamePlay(); // update player graphs and gameBoard
+				
 				if(done)
 				{
 					if(winner == nullptr) // if there's no winner, and done is true then exit

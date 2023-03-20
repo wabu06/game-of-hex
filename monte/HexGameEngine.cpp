@@ -4,6 +4,7 @@
 void HexGameEngine::playHuman()
 {
 	pair<int, int> move;
+
 	bool legal;
 			
 	do
@@ -11,14 +12,14 @@ void HexGameEngine::playHuman()
 			
 		if(done)
 		{
-			currentPlayer = nullptr;	
+			currentPlayer = nullptr;
 			return; // end game if human choose to quit instead of entering a move
 		}
 			
 		legal = isMoveLegal(move);
 	}
 	while(!legal);
-	
+
 	int row{move.first}, col{move.second};
 	
 	board.setCellColor(row, col, human.getColor(), human);
@@ -42,8 +43,6 @@ void HexGameEngine::playHuman()
 	}
 	else
 		currentPlayer = &computer; // human just played so computer plays next
-	
-	//cout << boolalpha << "win " << human.win();
 }
 
 bool HexGameEngine::isMoveLegal(pair<int, int> move)

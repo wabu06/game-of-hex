@@ -15,7 +15,7 @@ pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 	
 		for_each(input.begin(), input.end(), toLowerCase);
 		
-		bool allAlpha = all_of(input.begin(), input.end(), [](char c) { return isalpha( c, locale("en_US.UTF8") ); });
+		bool allAlpha = all_of(input.begin(), input.end(), [](char& c) { return isalpha( c, locale("en_US.UTF8") ); });
 		
 		if(allAlpha)
 		{
@@ -127,9 +127,9 @@ void HexConsoleUI::updateUI(HexGameEngine* hge)
 	cout << '\n'; drawHexBoard( hge->getBoard() );
 	
 	if( hge->getWinner() == &hge->getHuman() )
-		cout << "\nHuman Wins\n";
+		cout << "\nHuman Wins, Game Over\n";
 	
 	if( hge->getWinner() == &hge->getComputer() )
-		cout << "\nComputer Wins\n";
+		cout << "\nComputer Wins, Game Over\n";
 }
 

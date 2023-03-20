@@ -5,8 +5,8 @@
 //#include<string>
 //#include<stdexcept>
 //#include<utility>
-//#include<algorithm>
-//#include<random>
+#include<algorithm>
+#include<random>
 //#include<locale>
 
 //#include "HexPlayer.h"
@@ -21,21 +21,47 @@ class HexGameEngine
 	HexUI* ui;
 	
 	bool isInitialized;
-	bool done;
+	bool run;
 
 	bool isMoveLegal(pair<int, int> move);
 
-	void playHuman();
+	void playHuman(pair<int, int> move);
 	void playComputer();
-
+	
+	void executeGamePlay()
+	{
+		if(currentPlayer == &human)
+		{
+			pair<int, int> move;
+			bool legal;
+			
+			do
+			{	move = ui->getHumanMove(this);
+			
+				if(!run) return; // end game if human choose to quit instead of entering a move
+			
+				legal = isMoveLegal(move);
+			}
+			while(!legal);
+			
+			playHuman(move);
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}
+	
 	pair<int, int> colorCellNeighbor(int cell);
+	
+	pair<int, int> genMonteMove();
 	
 	pair<int, int> findLongestPath(int cell);
 	
 	pair<int, int> extendLongestPath();
 	
 	public:
-		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false) {}
+		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), run(true) {}
 
 		HexPlayer& getComputer() {
 			return computer;
@@ -61,12 +87,8 @@ class HexGameEngine
 			return board;
 		}
 		
-		void setDone(bool d) {
-			done = d;
-		}
-		
-		void endGame() {
-			done = true;
+		void setRun(bool r) {
+			run = r;
 		}
 
 		bool initialize();
@@ -79,23 +101,13 @@ class HexGameEngine
 			if(currentPlayer == &human)
 				ui->updateUI(this);
 
-			while(!done)
+			while(run)
 			{
-				if(currentPlayer == &human)
-					playHuman();
-		
-				if(currentPlayer == &computer)
-					playComputer();
-					
-				if(done)
-				{
-					if(winner == nullptr) // if there's no winner, and done is true then exit
-						ui->displayMsg("\nExiting ....\n");
-					else
-						ui->updateUI(this);
-				}
-				else
-					ui->updateUI(this);
+				executeGamePlay(); // update player graphs and gameBoard
+				
+				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
+				
+				ui->updateUI(this);
 			}
 		}
 		

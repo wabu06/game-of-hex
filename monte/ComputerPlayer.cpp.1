@@ -137,23 +137,99 @@ pair<int, int> HexGameEngine::extendLongestPath()
 	return pair<int, int>{row,col};
 }
 
+	// generates moves via monte carlo simulation
+int HexGameEngine::genMonteMove()
+{
+	int size{ board.getSize() }, cells{size*size};
+	//int row{-5}, col{-5};
+	
+	vector<int> vacancies;
+	
+	for(int c = 0; c < cells; c++)
+	{
+		if( board.getCellColor(c) == hexColors::NONE )
+			vacancies.push_back(c);
+	}
+	
+	hexColors simColor = computer.getColor();
+	
+	HexPlayer simPlayer(computer);
+	HexBoard simBoard(board);
+	
+	vector<int> simVacancies = vector<int>();
+	
+	random_device rd{"hw"};
+	
+	hexColors current{ human.getColor() };
+	
+	unordered_map<int,int> winMap; // frequency map of winnning moves
+	
+	for(auto& c: vacancies)
+	{
+		for(int reps = 0; reps < 1000; reps++)
+		{
+			simBoard.setCellColor(c, simColor); // cell currently under consideration
+		
+			simVacancies = vacancies;
+			remove(simVacancies.begin(), simVacancies.end(), c); // remove cell currently under consideration
+		
+			shuffle(simVacancies.begin(), simVacancies.end(), rd);
+
+			for(auto& sc: simVacancies)
+			{
+				simBoard.setCellColor(sc, current);
+			
+				if( current == human.getColor() )
+					current = simColor;
+				else
+				{
+					vector<int> neighbors = simBoard.getCellNeighbors(sc);
+							
+					for(auto& N: neighbors) // update computer sim player graph
+					{
+						if( simBoard.getCellColor(N) == simPlayer.getColor() )
+							simPlayer.connectCells(sc, N);
+					}
+					current = human.getColor();
+				}
+			}
+
+			if( simPlayer.win() )
+				++winMap[c];
+
+				// reset board & player for next round of simulation
+			simPlayer = computer;
+			simBoard = board;
+		}
+	}
+	
+	auto lessThan = [](const pair<int, int> &e1, const pair<int, int> &e2)->bool { return e1.second < e2.second; };
+	
+	auto mapMax = max_element(winMap.begin(), winMap.end, lessThan); // get move with the most wins
+	
+	return mapMax->first;
+}
+
 void HexGameEngine::playComputer()
 {
 	ui->displayMsg("\nComputer Takes It's Turn\n");
 	
-	//static int prevCell{-1};
+	// pair<int, int> position { extendLongestPath() };
 	
-	pair<int, int> position { extendLongestPath() };
+	int cell { genMonteMove() };
 	
-	auto row{ position.first }, col{ position.second };
+	// auto row{ position.first }, col{ position.second };
 	
-	auto bSize{ board.getSize() };
+	// auto bSize{ board.getSize() };
 
 		// create edge between cell neighbors that are the same color
-	int cell{ row*bSize + col };
+	//int cell{ row*bSize + col };
+	
+	board.setCellColor(cell, computer.getColor(), computer);
 
 	vector<int> neighbors = board.getCellNeighbors(cell);
 		
+		// update computer player graph
 	for(auto& N: neighbors)
 	{
 		if( board.getCellColor(N) == computer.getColor() )
