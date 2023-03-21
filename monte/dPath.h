@@ -112,7 +112,7 @@ class dsPath
 	
 	public:
 			// constructor takes a graph object as input, and appropriately initializes the open and closed set
-		dsPath( graph G = graph() ): spGraph(G), openSet( maxPQ() ), closedSet( unordered_map<int, nodePath>{} ) {}
+		dsPath( const graph& G /*= graph()*/ ): spGraph(G), openSet( maxPQ() ), closedSet( unordered_map<int, nodePath>{} ) {}
 					
 		 	// find shortest path between from node u to node w and returns the sequence of vertices representing shortest
 			// path between them

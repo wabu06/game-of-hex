@@ -8,6 +8,7 @@
 #include<algorithm>
 #include<random>
 #include<chrono>
+#include<unordered_set>
 //#include<locale>
 
 //#include "HexPlayer.h"
@@ -42,28 +43,20 @@ class HexGameEngine
 	}
 
 	int genMonteMove();
+	int genMonteMove(int shuffleMax);
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false) {}
 		
-		HexGameEngine(HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer), winner(hge.winner),
-										   board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized), done(hge.done) {}
-
-		HexGameEngine operator=(HexGameEngine&& hge)
-		{
-			this->computer = hge.computer;
-			this->human = hge.human;
-			this->currentPlayer = hge.currentPlayer;
-			this->winner = hge.winner;
-			this->board = hge.board;
-			this->ui = hge.ui;
-			this->isInitialized = hge.isInitialized;
-			this->done = hge.done;
-			
-			return *this;
-		}
+		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer), winner(hge.winner),
+												 board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized), done(hge.done) {}
 		
-		HexGameEngine operator=(HexGameEngine& hge)
+		~HexGameEngine() {
+			if(ui != nullptr)
+				delete ui;
+		}
+
+		/*HexGameEngine operator=(HexGameEngine&& hge)
 		{
 			this->computer = hge.computer;
 			this->human = hge.human;
@@ -75,7 +68,21 @@ class HexGameEngine
 			this->done = hge.done;
 			
 			return *this;
-		}
+		}*/
+		
+		/*HexGameEngine operator=(HexGameEngine& hge)
+		{
+			this->computer = hge.computer;
+			this->human = hge.human;
+			this->currentPlayer = hge.currentPlayer;
+			this->winner = hge.winner;
+			this->board = hge.board;
+			this->ui = hge.ui;
+			this->isInitialized = hge.isInitialized;
+			this->done = hge.done;
+			
+			return *this;
+		}*/
 		
 		HexPlayer& getComputer() {
 			return computer;
@@ -139,9 +146,6 @@ class HexGameEngine
 		{
 			if(!isInitialized)
 				ui->displayMsg("\nGame Engine Was Not Initialized\n");
-	
-			if(ui != nullptr)
-				delete ui;
 		}
 };
 

@@ -17,8 +17,8 @@ int main (int argc, char* argv[])
 			
 			if( (cc == 0) || (cc != arg1.size()) )
 				throw invalid_argument("not all characters were digits");
-			
-			game = HexGameEngine{bSize};
+
+			game = HexGameEngine(bSize);
 		}
 		catch(exception const& exp) {}
 	}

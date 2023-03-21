@@ -17,7 +17,7 @@ class HexUI
 	
 		virtual int getHumanPlayer() = 0;
 		virtual pair<int, int> getHumanMove(HexGameEngine* hge) = 0;
-		virtual void displayMsg(string&& msg) = 0;
+		virtual void displayMsg(const string& msg) = 0;
 		virtual void updateUI(HexGameEngine* hge) = 0;
 };
 

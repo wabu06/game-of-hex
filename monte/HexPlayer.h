@@ -30,9 +30,9 @@ class HexPlayer
 		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ),
 																cellSet( unordered_set<int>{} ) {}
 		
-		HexPlayer(HexPlayer& P) : bSize(P.bSize), color(P.color), playGraph(P.playGraph), cellSet(P.cellSet) {}
+		HexPlayer(const HexPlayer& P) : bSize(P.bSize), color(P.color), playGraph(P.playGraph), cellSet(P.cellSet) {}
 		
-		HexPlayer operator=(HexPlayer& P)
+		/*HexPlayer operator=(HexPlayer& P)
 		{
 			this->bSize = P.bSize;
 			this->color = P.color;
@@ -50,7 +50,7 @@ class HexPlayer
 			this->cellSet = P.cellSet;
 			
 			return *this;
-		}
+		}*/
 		
 		hexColors getColor() { return color; }
 		void setColor(hexColors c) { color = c; }
@@ -59,7 +59,7 @@ class HexPlayer
 		//dsPath& getPath() { return playPath; }
 		
 		int getCellCount() { return cellSet.size(); }
-		void addCell(int c) { cellSet.insert(c); }
+		void addCell(int c) { cellSet.insert(c); } // a cell with neighbors is fully a part of graph
 
 		int findPathSize(int c1, int c2)
 		{
@@ -150,5 +150,61 @@ class HexPlayer
 			
 			return false;
 		}
+		
+		vector<int> winPath()
+		{
+			vector<int> path;
+
+			if( color == hexColors::BLUE )
+				path = blueWinPath();
+			
+			if( color == hexColors::RED )
+				path = redWinPath();
+			
+			return path;
+		}
+		
+		vector<int> blueWinPath()
+		{
+			vector<int> path = vector<int>();
+			
+			dsPath dsp{playGraph};
+			
+			for(int start = 0; start < bSize; start++)
+			{
+				for(int end = (bSize - 1)*bSize; end < bSize*bSize; end++)
+				{
+						path = dsp.getPath(start, end);
+						
+						if(path.size() > 0)
+							return path;
+				}
+			}
+			
+			return path;
+		}
+		
+		vector<int> redWinPath()
+		{
+			vector<int> path = vector<int>();
+			
+			dsPath dsp{playGraph};
+			
+			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;//int elimit = bSize*bSize + bSize;
+			
+			for(int start = 0; start <= slimit; start += bSize)
+			{
+				for(int end = bSize - 1; end < elimit; end += bSize)
+				{
+						path = dsp.getPath(start, end);
+						
+						if(path.size() > 0)
+							return path;
+				}
+			}
+			
+			return path;
+		}
+		
 };
 

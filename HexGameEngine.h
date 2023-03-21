@@ -27,6 +27,17 @@ class HexGameEngine
 
 	void playHuman();
 	void playComputer();
+	
+	void executeGamePlay()
+	{
+		if(currentPlayer == &human) {
+			playHuman();
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}
 
 	pair<int, int> colorCellNeighbor(int cell);
 	
@@ -81,11 +92,7 @@ class HexGameEngine
 
 			while(!done)
 			{
-				if(currentPlayer == &human)
-					playHuman();
-		
-				if(currentPlayer == &computer)
-					playComputer();
+				executeGamePlay();
 					
 				if(done)
 				{

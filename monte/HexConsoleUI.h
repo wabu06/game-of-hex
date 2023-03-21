@@ -43,7 +43,7 @@ class HexConsoleUI : public HexUI
 		
 		pair<int, int> getHumanMove(HexGameEngine* hge) override;
 		
-		void displayMsg(string&& msg) override {
+		void displayMsg(const string& msg) override {
 			cout << msg;
 		}
 		

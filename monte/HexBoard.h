@@ -22,7 +22,7 @@ class HexBoard
 		
 		HexBoard(const HexBoard& B) : size(B.size), boardCell(B.boardCell) {}
 		
-		HexBoard operator=(HexBoard& B) {
+		/*HexBoard operator=(HexBoard& B) {
 			this->size = B.size;
 			this->boardCell = B.boardCell;
 			
@@ -34,7 +34,7 @@ class HexBoard
 			this->boardCell = B.boardCell;
 			
 			return *this;
-		}
+		}*/
 
 		int getSize() {
 			return size;
