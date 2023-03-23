@@ -49,16 +49,8 @@ class HexBoard
 			return boardCell[r][c];
 		}
 		
-		void setCellColor(int r, int c, hexColors hCC, HexPlayer& player) {
+		void setCellColor(int r, int c, hexColors hCC) {
 			boardCell[r][c] = hCC;
-			player.addCell( r*size + c );
-		}
-		
-		void setCellColor(int n, hexColors hCC, HexPlayer& player)
-		{
-			int r{ n/size }, c{ n%size };
-			boardCell[r][c] = hCC;
-			player.addCell(n);
 		}
 		
 		void setCellColor(int n, hexColors hCC) {

@@ -3,7 +3,7 @@ CC = clang++ -std=gnu++17
 #CC = g++
 
 
-hpINC = graph.h dPath.h bfs.h dfs.h HexPlayer.h
+hpINC = graph.h MinPQ.h dPath.h bfs.h dfs.h HexPlayer.h
 hbINC = ${hpINC} HexBoard.h
 geINC = ${hbINC} HexUI.h HexConsoleUI.h HexGameEngine.h
 
@@ -15,7 +15,7 @@ hex: main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleUI.o HexGameEngine.o
 main.o: ${geINC} main.cpp
 	${CC} -c main.cpp
 
-dPath.o: graph.h dPath.h dPath.cpp
+dPath.o: graph.h MinPQ.h dPath.h dPath.cpp
 		${CC} -c dPath.cpp
 
 HexBoard.o:	${hbINC} HexBoard.cpp

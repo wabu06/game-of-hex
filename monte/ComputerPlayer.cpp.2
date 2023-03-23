@@ -29,14 +29,14 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	
 	random_device rd{"hw"}; mt19937 eng( rd() );
 	
-	//hexColors simColor = computer.getColor();
+	hexColors simColor = computer.getColor();
 	
-	hexColors manColor{ human.getColor() }, cmpColor{ computer.getColor() }, current{ manColor };
+	
 	
 	HexPlayer simPlayer(computer);
 	HexBoard simBoard(board);
 	
-	//hexColors current{ human.getColor() };
+	hexColors current{ human.getColor() };
 
 	vector< vector<int> > winPaths; // possible winning paths for computer player
 	
@@ -54,7 +54,9 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 		{
 			simBoard.setCellColor(c, current);
 			
-			if(current == cmpColor)
+			if( current == human.getColor() )
+				current = simColor;
+			else
 			{
 				vector<int> neighbors = simBoard.getCellNeighbors(c);
 							
@@ -63,9 +65,8 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 					if( simBoard.getCellColor(N) == simPlayer.getColor() )
 						simPlayer.connectCells(c, N);
 				}
+				current = human.getColor();
 			}
-			
-			current = current == manColor ? cmpColor: manColor;
 		}
 		
 		path = simPlayer.winPath();

@@ -12,15 +12,19 @@ nodePath dsPath::getNodePath( int sN, int dN)
 		return nodePath(dN, 0, vector<int>{sN, dN});
 	
 		// initialize open and closed sets, to empty
-	openSet.clear();
+	openSet.emptyPQ();
 	closedSet.clear();
 	
 		// place source node in open set
 	openSet.add( nodePath(sN, 0, vector<int>{sN}) );
+	
+	//vector<int> nodeNeighbors;
 		
-	while( !openSet.empty() )
+	while( openSet.notEmpty() )
 	{
-		nodePath np; np = openSet.getMin(); closedSet[np.eNode] = np;
+		//int cn, ev;
+
+		nodePath np; np = openSet.getMax(); closedSet[np.eNode] = np;
 			
 			// if destination node "dN" is in the closed set then longest path has been found
 		if ( closedSet.count(dN) == 1)
@@ -36,12 +40,17 @@ nodePath dsPath::getNodePath( int sN, int dN)
 
 		for(auto& N: nodeNeighbors)
 		{	
+			//int tempEV; vector<int> tempNP;
+					
 				// do not add a path to the open set if it's in the closed set
 			if( closedSet.count(N) == 1)
 				continue;
 			
 			int tempEV = np.ect;
 			vector<int> tempNP = np.nodeList;
+			
+				// returns the index of the node in the open set, if node is not in the open set return -1
+			//idx = openSet.contains(N);
 		
 			int ev = spGraph.getEdgeValue(cn, N);
 			
@@ -50,9 +59,9 @@ nodePath dsPath::getNodePath( int sN, int dN)
 			tempNP.push_back(N);
 			
 				// if current node is in openSet only add it, if it's edge value is greater
-			if( openSet.contains( nodePath(N, tempEV, tempNP) ) ) 
+			if( openSet.contains(N) ) 
 			{
-				nodePath npOS = openSet.getNodePath( nodePath(N, tempEV, tempNP) );
+				nodePath npOS = openSet.getNodePath(N);
 	
 				if(tempEV > npOS.ect)
 				{

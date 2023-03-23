@@ -22,7 +22,7 @@ void HexGameEngine::playHuman()
 
 	int row{move.first}, col{move.second};
 	
-	board.setCellColor(row, col, human.getColor(), human);
+	board.setCellColor( row, col, human.getColor() ); //, human);
 		
 			// create edge between cell neighbors that are the same color
 	int cell{ row*board.getSize() + col };

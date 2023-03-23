@@ -24,17 +24,20 @@ class HexPlayer
 	
 	hexColors color;
 	graph playGraph;
+	unordered_set<int> cellSet; // players current cells
 	
 	public:
-		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ) {}
+		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ),
+																cellSet( unordered_set<int>{} ) {}
 		
-		HexPlayer(const HexPlayer& P) : bSize(P.bSize), color(P.color), playGraph(P.playGraph) {}
+		HexPlayer(const HexPlayer& P) : bSize(P.bSize), color(P.color), playGraph(P.playGraph), cellSet(P.cellSet) {}
 		
 		/*HexPlayer operator=(HexPlayer& P)
 		{
 			this->bSize = P.bSize;
 			this->color = P.color;
 			this->playGraph = P.playGraph;
+			this->cellSet = P.cellSet;
 			
 			return *this;
 		}
@@ -44,6 +47,7 @@ class HexPlayer
 			this->bSize = P.bSize;
 			this->color = P.color;
 			this->playGraph = P.playGraph;
+			this->cellSet = P.cellSet;
 			
 			return *this;
 		}*/
@@ -53,6 +57,9 @@ class HexPlayer
 		
 		graph getGraph() { return playGraph; }
 		//dsPath& getPath() { return playPath; }
+		
+		int getCellCount() { return cellSet.size(); }
+		void addCell(int c) { cellSet.insert(c); } // a cell with neighbors is fully a part of graph
 
 		int findPathSize(int c1, int c2)
 		{
@@ -60,22 +67,36 @@ class HexPlayer
 			return playPath.getPathSize(c1, c2);
 		}
 		
-		void addCellNode(int c) {
-			playGraph.addNode(c);
+		void connectCells(int c1, int c2)
+		{ 
+			if(color == hexColors::BLUE) // if cell 1 and 2 are in the same column, add edge weight as 2 instead of 1
+			{
+				auto col1 = c1 % bSize, col2 = c2 % bSize;
+				
+				if(col1 == col2)
+					playGraph.addEdge(c1, c2, 2);
+				else
+					playGraph.addEdge(c1, c2, 1);
+			}
+			
+			if(color == hexColors::RED) // if cell 1 and cell 2 are in the same row, add edge weight as 2 instead of 1
+			{
+				auto row1 = c1 / bSize, row2 = c2 / bSize;
+				
+				if(row1 == row2)
+					playGraph.addEdge(c1, c2, 2);
+				else
+					playGraph.addEdge(c1, c2, 1);
+			}
 		}
 		
-		void connectCells(int c1, int c2) { 
-			playGraph.addEdge(c1, c2, 1);
-		}
-		
-		unordered_set<int> getCurrentCells(int start)
+		vector<int> getCurrentCells(int start)
 		{
 			Bfs playBFS{bSize*bSize, playGraph};
-			
-			vector<int> cells = playBFS.getCurrentCells(start);
-			
-			return unordered_set<int>( cells.begin(), cells.end() );
+			return playBFS.getCurrentCells(start);
 		}
+		
+		unordered_set<int> getCurrentCells() { return cellSet; }
 		
 		bool hasPath(int c1, int c2)
 		{
@@ -116,7 +137,7 @@ class HexPlayer
 		{
 			Bfs playBFS{bSize*bSize, playGraph};
 			
-			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;
+			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;//int elimit = bSize*bSize + bSize;
 			
 			for(int start = 0; start <= slimit; start += bSize)
 			{
@@ -169,7 +190,7 @@ class HexPlayer
 			
 			dsPath dsp{playGraph};
 			
-			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;
+			int slimit = bSize*bSize - bSize; int elimit = bSize*bSize;//int elimit = bSize*bSize + bSize;
 			
 			for(int start = 0; start <= slimit; start += bSize)
 			{
@@ -184,5 +205,6 @@ class HexPlayer
 			
 			return path;
 		}
+		
 };
 
