@@ -20,7 +20,7 @@ nodePath dsPath::getNodePath( int sN, int dN)
 		
 	while( !openSet.empty() )
 	{
-		nodePath np; np = openSet.getMin(); closedSet[np.eNode] = np;
+		nodePath np; np = openSet.getTop(); closedSet[np.eNode] = np;
 			
 			// if destination node "dN" is in the closed set then longest path has been found
 		if ( closedSet.count(dN) == 1)

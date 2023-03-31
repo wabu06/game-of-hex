@@ -14,6 +14,10 @@
 
 using namespace std::chrono;
 
+
+
+#if 1
+
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove(int shuffleMax)
 {
@@ -28,15 +32,11 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	}
 	
 	random_device rd{"hw"}; mt19937 eng( rd() );
-	
-	//hexColors simColor = computer.getColor();
-	
+
 	hexColors manColor{ human.getColor() }, cmpColor{ computer.getColor() }, current{ manColor };
 	
 	HexPlayer simPlayer(computer);
 	HexBoard simBoard(board);
-	
-	//hexColors current{ human.getColor() };
 
 	vector< vector<int> > winPaths; // possible winning paths for computer player
 	
@@ -110,6 +110,8 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	
 	return mapMax->first;
 }
+
+#else
 
 	// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove()
@@ -205,11 +207,17 @@ int HexGameEngine::genMonteMove()
 	return mapMax->first;
 }
 
+#endif
+
 void HexGameEngine::playComputer()
 {
 	ui->displayMsg("\nComputer Takes It's Turn\n");
 
-	int cell { genMonteMove(5000) };
+	int cell { genMonteMove() };
+	 
+	auto size{ board.getSize() };
+	
+	ui->displayMsg("\nComputer takes cell: (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")\n");
 	
 	board.setCellColor( cell, computer.getColor() ); //, computer);
 

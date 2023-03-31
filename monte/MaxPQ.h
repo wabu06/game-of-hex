@@ -6,7 +6,9 @@
 #include<vector>
 #include<unordered_set>
 
-using namespace std;
+#include "graph.h"
+
+//using namespace std;
 
 
 	// the "nodePath" class used to represent a list of nodes, corresponding
@@ -21,8 +23,8 @@ class nodePath
 		nodePath( int N = -1, int T = 0, vector<int> NL = vector<int>() ): eNode(N), ect(T), nodeList(NL) {}
 		nodePath( const nodePath& np): eNode(np.eNode), ect(np.ect), nodeList(np.nodeList) {}
 		
-		bool operator==(nodePath np) {
-			return this->eNode == np.eNode;
+		friend bool operator==(nodePath np1, nodePath np2) {
+			return np1.eNode == np2.eNode;
 		}
 		
 		friend bool operator<(nodePath np1, nodePath np2) { return np1.ect < np2.ect; }
@@ -60,7 +62,7 @@ class MaxPQ
 		}
 		
 		bool contains(nodePath node) {
-			unordered_set<nodePath> npSet( pqVector.begin(), pqVector.end() );
+			unordered_set<nodePath> npSet( npq.begin(), npq.end() );
 			return npSet.count(node) == 1;
 		}
 		
@@ -79,7 +81,9 @@ class MaxPQ
 			npq.push_back(np);
 			push_heap( npq.begin(), npq.end() );
 			
-			return np
+			//push_heap( npq.begin(), npq.end(), greater() );
+			
+			return np;
 		}
 
 		nodePath remove(const nodePath& np)
@@ -88,7 +92,9 @@ class MaxPQ
 			npSet.erase(np);
 			
 			npq = vector<nodePath>( npSet.begin(), npSet.end() );
-			make_heap( pqVector.begin(), pqVector.end() );
+			make_heap( npq.begin(), npq.end() );
+			
+			//make_heap( npq.begin(), npq.end(), greater() );
 			
 			return np;
 		}
@@ -101,8 +107,10 @@ class MaxPQ
 			return npq.front();
 		}
 		
-		nodePath getMax()
+		nodePath getTop()
 		{ 
+			//pop_heap( npq.begin(), npq.end(), greater() );
+			
 			pop_heap( npq.begin(), npq.end() );
 			nodePath np = npq.back();
 			npq.pop_back();
