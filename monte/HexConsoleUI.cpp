@@ -63,18 +63,20 @@ pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 
 void HexConsoleUI::drawHexBoard(HexBoard& board)
 {
-	int rows{ board.getSize() }, col{}, space{1};
-	
-	string dot{"."}, dash{"---"}; //dash{"---"}
-	string back{"\\"}, forward{"/"}; string curstr;
+	int rows{ board.getSize() };
+	int col, space{0}, slash;
+
+	bool dot, back;
 	
 	for(int r = 0; r < rows; r++)
 	{
-		curstr = dot; col = 0; // dot column, matches dot with board column
+		col = 0;
+		
+		dot = true;
 		
 		while(col < rows)
 		{		
-			if(curstr == dot)
+			if(dot)
 			{
 				switch( board.getCellColor(r, col) )
 				{
@@ -87,38 +89,40 @@ void HexConsoleUI::drawHexBoard(HexBoard& board)
 					break;
 					
 					default:
-						cout << curstr;
+						cout << '.';
 				}
-			
-				curstr = dash; col++;
+				dot = false;
+				col++;
 			}
-			else
-				{ cout << curstr; curstr = dot;}
+			else {
+				cout << "---";
+				dot = true;
+			}
 		}
 		
 		if( r == (rows-1) ) continue;
 	
-		cout << "\n"; curstr = back;
+		cout << "\n";
 
-		cout << string(space, ' ');
+		space++; cout << string(space, ' ');
 		
-		int slash{};
+		slash = 0; back = true;
 
 		while(slash < rows)
 		{
-			cout << curstr;
-		
-			if(curstr == back)
-				{ curstr = forward; slash++; }
-			else
-				curstr = back;
-		
-			cout << " "; //cout << string(2, ' ');
+			if(back) {
+				cout << "\\"; 
+				back = false;
+				slash++;
+			}
+			else {
+				cout << '/';
+				back = true;
+			}
+			cout << " ";
 		}
-	
-		cout << "\n"; cout << string(space, ' '); space++;
+		cout << "\n"; space++; cout << string(space, ' ');
 	}
-
 	cout << endl;
 }
 
