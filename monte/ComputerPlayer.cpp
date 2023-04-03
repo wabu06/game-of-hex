@@ -11,12 +11,12 @@
 
 #include<fstream>
 
+#define MONTE1 1
+
 
 using namespace std::chrono;
 
-
-
-#if 1
+#if MONTE1
 
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove(int shuffleMax)
@@ -100,7 +100,7 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	
 	duration<double> elapse = stop - start;
 	
-	ui->displayMsg("\nComputer's Elapsed Time: " + to_string( elapse.count() ) + " seconds\n");
+	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
 	auto lessThan = [](const pair<int, int> &e1, const pair<int, int> &e2)->bool { return e1.second < e2.second; };
 	
@@ -195,7 +195,7 @@ int HexGameEngine::genMonteMove()
 	duration<double> elapse = stop - start;
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
-	ui->displayMsg("\nComputer's Elapsed Time: " + to_string( elapse.count() ) + " seconds\n");
+	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 
 	if(winMap.size() < 1)
 		return vacancies.back();
@@ -211,13 +211,13 @@ int HexGameEngine::genMonteMove()
 
 void HexGameEngine::playComputer()
 {
-	ui->displayMsg("\nComputer Takes It's Turn\n");
+	ui->displayMsg("Computer Takes It's Turn");
 
 	int cell { genMonteMove() };
 	 
 	auto size{ board.getSize() };
 	
-	ui->displayMsg("\nComputer takes cell: (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")\n");
+	ui->displayMsg("Computer takes cell: (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")");
 	
 	board.setCellColor( cell, computer.getColor() ); //, computer);
 

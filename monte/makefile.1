@@ -5,12 +5,12 @@ CC = clang++ -std=gnu++17
 
 hpINC = graph.h MinPQ.h dPath.h bfs.h dfs.h HexPlayer.h
 hbINC = ${hpINC} HexBoard.h
-geINC = ${hbINC} HexUI.h HexConsoleUI.h HexCurseUI.h HexGameEngine.h
+geINC = ${hbINC} HexUI.h HexConsoleUI.h HexGameEngine.h
 
 all: hex
 
-hex: main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleUI.o HexCurseUI.o HexGameEngine.o
-	${CC} main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleUI.o HexCurseUI.o HexGameEngine.o -o hex -lncurses
+hex: main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleUI.o HexGameEngine.o
+	${CC} main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleUI.o HexGameEngine.o -o hex
 
 main.o: ${geINC} main.cpp
 	${CC} -c main.cpp
@@ -23,9 +23,6 @@ HexBoard.o:	${hbINC} HexBoard.cpp
 
 HexConsoleUI.o:	${hbINC} HexUI.h HexConsoleUI.h HexGameEngine.h HexConsoleUI.cpp
 	${CC} -c HexConsoleUI.cpp
-
-HexCurseUI.o:	${hbINC} HexUI.h HexCurseUI.h HexGameEngine.h HexCurseUI.cpp
-	${CC} -c HexCurseUI.cpp
 
 ComputerPlayer.o:	${geINC} ComputerPlayer.cpp
 	${CC} -c ComputerPlayer.cpp

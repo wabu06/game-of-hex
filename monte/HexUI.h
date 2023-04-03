@@ -7,6 +7,8 @@
 #include "HexBoard.h"
 
 
+enum class MSGTYPE: unsigned {INFO, WARN, ERROR};
+
 class HexGameEngine;
 
 class HexUI
@@ -16,8 +18,8 @@ class HexUI
 		virtual ~HexUI() {}
 	
 		virtual int getHumanPlayer() = 0;
-		virtual pair<int, int> getHumanMove(HexGameEngine* hge) = 0;
-		virtual void displayMsg(const string& msg) = 0;
-		virtual void updateUI(HexGameEngine* hge) = 0;
+		virtual pair<int, int> getHumanMove() = 0;
+		virtual void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO, bool replace = false) = 0;
+		virtual void updateUI() = 0;
 };
 

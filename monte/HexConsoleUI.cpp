@@ -1,9 +1,9 @@
-//#include "HexConsoleUI.h"
+#define CURSE
 
 #include "HexGameEngine.h"
 
 
-pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
+pair<int, int> HexConsoleUI::getHumanMove()
 {
 	string input; pair<int, int> position;
 
@@ -61,12 +61,14 @@ pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 	return position;
 }
 
-void HexConsoleUI::drawHexBoard(HexBoard& board)
+void HexConsoleUI::drawHexBoard()
 {
-	int rows{ board.getSize() };
-	int col, space{0}, slash;
+	int rows{ hge->getBoard().getSize() };
+	int col, space{2}, slash;
 
 	bool dot, back;
+	
+	cout << string(space, ' ');
 	
 	for(int r = 0; r < rows; r++)
 	{
@@ -78,7 +80,7 @@ void HexConsoleUI::drawHexBoard(HexBoard& board)
 		{		
 			if(dot)
 			{
-				switch( board.getCellColor(r, col) )
+				switch( hge->getBoard().getCellColor(r, col) )
 				{
 					case hexColors::BLUE:
 						cout << "B"; //cout << "B\u2650";
@@ -126,9 +128,9 @@ void HexConsoleUI::drawHexBoard(HexBoard& board)
 	cout << endl;
 }
 
-void HexConsoleUI::updateUI(HexGameEngine* hge)
+void HexConsoleUI::updateUI()
 {
-	cout << '\n'; drawHexBoard( hge->getBoard() );
+	cout << '\n'; drawHexBoard();
 	
 	if( hge->getWinner() == &hge->getHuman() )
 		cout << "\nHuman Wins, Game Over\n";

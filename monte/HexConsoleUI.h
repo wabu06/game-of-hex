@@ -15,10 +15,12 @@ using namespace std;
 
 class HexConsoleUI : public HexUI
 {
-	void drawHexBoard(HexBoard& board);
+	HexGameEngine* hge;
+	
+	void drawHexBoard();
 	
 	public:
-		HexConsoleUI()
+		HexConsoleUI(HexGameEngine* engine) : hge(engine)
 		{
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 			cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
@@ -41,12 +43,12 @@ class HexConsoleUI : public HexUI
 				return 2;
 		}
 		
-		pair<int, int> getHumanMove(HexGameEngine* hge) override;
+		pair<int, int> getHumanMove() override;
 		
-		void displayMsg(const string& msg) override {
-			cout << msg;
+		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO, bool replace = false) override {
+			cout << '\n' << msg << '\n';
 		}
 		
-		void updateUI(HexGameEngine* hge) override;
+		void updateUI() override;
 };
 

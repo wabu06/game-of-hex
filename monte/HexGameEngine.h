@@ -1,19 +1,22 @@
 #pragma once
 
 
-//#include<iostream>
-//#include<string>
 //#include<stdexcept>
-//#include<utility>
 #include<algorithm>
 #include<random>
 #include<chrono>
 #include<unordered_set>
-//#include<locale>
 
 //#include "HexPlayer.h"
 #include "HexBoard.h"
+
+#ifndef CONSOLE
 #include "HexConsoleUI.h"
+#endif
+
+#ifndef CURSE
+#include "HexCurseUI.h"
+#endif
 
 
 class HexGameEngine
@@ -124,7 +127,7 @@ class HexGameEngine
 				return;
 	
 			if(currentPlayer == &human)
-				ui->updateUI(this);
+				ui->updateUI();
 
 			while(!done)
 			{
@@ -133,19 +136,19 @@ class HexGameEngine
 				if(done)
 				{
 					if(winner == nullptr) // if there's no winner, and done is true then exit
-						ui->displayMsg("\nExiting ....\n");
+						ui->displayMsg("Exiting ....");
 					else
-						ui->updateUI(this);
+						ui->updateUI();
 				}
 				else
-					ui->updateUI(this);
+					ui->updateUI();
 			}
 		}
 		
 		void shutdown()
 		{
 			if(!isInitialized)
-				ui->displayMsg("\nGame Engine Was Not Initialized\n");
+				ui->displayMsg("Game Engine Was Not Initialized");
 		}
 };
 

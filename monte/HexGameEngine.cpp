@@ -8,7 +8,7 @@ void HexGameEngine::playHuman()
 	bool legal;
 			
 	do
-	{	move = ui->getHumanMove(this);
+	{	move = ui->getHumanMove();
 			
 		if(done)
 		{
@@ -55,13 +55,13 @@ bool HexGameEngine::isMoveLegal(pair<int, int> move)
 
 	if( row < 0 || row > size )
 	{
-		ui->displayMsg("ILLEGAL MOVE!\n");
+		ui->displayMsg("ILLEGAL MOVE!");
 		return false;
 	}
 		
 	if( col < 0 || col > size )
 	{
-		ui->displayMsg("ILLEGAL MOVE!\n");
+		ui->displayMsg("ILLEGAL MOVE!");
 		return false;
 	}
 		
@@ -69,7 +69,7 @@ bool HexGameEngine::isMoveLegal(pair<int, int> move)
 		
 	if(cc != hexColors::NONE)
 	{
-		ui->displayMsg("ILLEGAL MOVE!\n");
+		ui->displayMsg("ILLEGAL MOVE!");
 		return false;
 	}
 
@@ -78,7 +78,7 @@ bool HexGameEngine::isMoveLegal(pair<int, int> move)
 
 bool HexGameEngine::initialize()
 {
-	ui = new HexConsoleUI(); // user interface
+	ui = new HexConsoleUI(this); // user interface
 	
 	int player = ui->getHumanPlayer();
 	
