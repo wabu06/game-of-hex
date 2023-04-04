@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 class HexCurseUI : public HexUI
 {
 	HexGameEngine* hge;
@@ -22,22 +21,27 @@ class HexCurseUI : public HexUI
 	WINDOW *mainwin, *boardWin, *banner, *inputWin, *msgWin;
 	
 	void drawHexBoard();
+	void showWinner(const string& msg);
 	
 	public:
 		HexCurseUI(HexGameEngine* engine);
 		
 		~HexCurseUI()
 		{
-			delwin(boardWin);
     		delwin(msgWin);
+    		delwin(inputWin);
+    		delwin(banner);
+    		delwin(boardWin);
     		delwin(mainwin);
 			endwin();
 		}
 		
 		void finish(int sig)
 		{
-    		delwin(boardWin);
     		delwin(msgWin);
+    		delwin(inputWin);
+    		delwin(banner);
+    		delwin(boardWin);
     		delwin(mainwin);
     		endwin();
 
@@ -46,60 +50,26 @@ class HexCurseUI : public HexUI
 		
 		static void resizeHandler(int sig);
 		
-		int getHumanPlayer() override
-		{
-			mvwprintw(msgWin, 6, 1, "1) Blue Player");
-    		mvwprintw(msgWin, 7, 1, "2) Red Player");
-			mvwprintw(msgWin, 8, 1, "==>Enter 1 or 2: ");
-			wrefresh(msgWin);
-			
-			raw();
-			
-			int player = getch();
-			
-			while(player != 49 && player != 50) {
-				mvwprintw(msgWin, 8, 1, "==>Invalid choice, Enter 1 or 2: ");
-				wrefresh(msgWin);
-				
-				player = getch();
-			}
-			
-			noraw();
-			
-			return player -= 48; 
-		}
+		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
 
-		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO, bool replace = false) override
+		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override
 		{
-			if(replace) // replace previous message
+			if(mType == MSGTYPE::INFO)
 			{
-				if(mType == MSGTYPE::INFO)
-				{
-					wmove(msgWin, rows - 3, 1);
-					wclrtoeol(msgWin);
-					mvwaddstr(msgWin, rows - 2, 1, msg.c_str() );
-				}
+				scroll(msgWin);
+				mvwprintw(msgWin, rows/2-2, 1, "%s", msg.c_str());
+				//wprintw(msgWin, "%s", msg.c_str());
+				box(msgWin, 0, 0);
+				wrefresh(msgWin);
 			}
-			else
-			{
-				if(mType == MSGTYPE::INFO)
-				{
-					char mstr[50];
-					
-					mvwinstr(msgWin, rows - 2, 1, mstr);
-					wmove(msgWin, rows - 3, 1);
-					wclrtoeol(msgWin);
-					mvwaddstr(msgWin, rows - 3, 1, mstr);
-					mvwaddstr(msgWin, rows - 2, 1, msg.c_str() );
-				}
-				
-				if(mType == MSGTYPE::ERROR)
-					mvwaddstr(msgWin, 5, 1, msg.c_str() );
+
+			if(mType == MSGTYPE::ERROR) {
+				mvwprintw(inputWin, 1, 1, "%s", msg.c_str());
+				//box(inputWin, 0, 0);
+				wrefresh(inputWin);
 			}
-			
-			wrefresh(msgWin);
 		}
 		
 		void updateUI() override;

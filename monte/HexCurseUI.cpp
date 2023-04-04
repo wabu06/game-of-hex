@@ -15,6 +15,54 @@ void HexCurseUI::resizeHandler(int sig)
 	rows = nh; cols = nw;
 }
 
+int HexCurseUI::getHumanPlayer()
+{
+	mvwprintw(inputWin, 1, 1, "1) Blue Player");
+	mvwprintw(inputWin, 2, 1, "2) Red Player");
+	mvwprintw(inputWin, 4, 1, "==>Enter 1 or 2: ");
+	wrefresh(inputWin);
+			
+	raw();
+			
+	int player = wgetch(inputWin);
+	wrefresh(inputWin);
+			
+	while(player != 49 && player != 50) {
+		mvwprintw(inputWin, 4, 1, "==>Invalid choice, Enter 1 or 2: ");
+		wrefresh(inputWin);
+
+		player = wgetch(inputWin);
+	}
+			
+	wclear(inputWin);
+	mvwprintw(inputWin, 1, 1, "3) Expert");
+	mvwprintw(inputWin, 2, 1, "2) Intermediate");
+	mvwprintw(inputWin, 3, 1, "1) Beginner");
+	mvwprintw(inputWin, 5, 1, "==>Enter 1, 2, or 3: ");
+	box(inputWin, 0, 0);
+	wrefresh(inputWin);
+
+	int level = wgetch(inputWin);
+	wrefresh(inputWin);
+			
+	while(level != 49 && level != 50 && level != 51) {
+		mvwprintw(inputWin, 5, 1, "==>Invalid choice, Enter 1, 2, or 3: ");
+		wrefresh(inputWin);
+
+		level = wgetch(inputWin);
+	}
+			
+	noraw();
+			
+	hge->setLevel(level - 48);
+			
+	wclear(inputWin);
+	box(inputWin, 0, 0);
+	wrefresh(inputWin);
+			
+	return player -= 48; 
+}
+
 HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 {
 	mainwin = initscr();
@@ -28,14 +76,23 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
     		
 	drawHexBoard();
     		
-    msgWin = newwin(rows, (cols - (cols/2 + size)), 0, (cols/2 + size));
+    banner = newwin(rows/6, (cols - (cols/2 + size)), 0, (cols/2 + size));
     refresh();
-	box(msgWin, 0, 0);
+	box(banner, 0, 0);
     		
-	mvwprintw(msgWin, 1, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
-	mvwprintw(msgWin, 2, 1, "|A| |G|A|M|E| |O|F| |H|E|X|");
-	mvwprintw(msgWin, 3, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
-			
+	mvwprintw(banner, 0, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
+	mvwprintw(banner, 1, 1, "|A| |G|A|M|E| |O|F| |H|E|X|");
+	mvwprintw(banner, 2, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
+	wrefresh(banner);
+	
+	inputWin = newwin(rows/3, (cols - (cols/2 + size)), rows/6, (cols/2 + size));
+    refresh();
+	box(inputWin, 0, 0);
+	
+	msgWin = newwin(rows/2, (cols - (cols/2 + size)), rows/2, (cols/2 + size));
+	refresh();
+	box(msgWin, 0, 0);
+	scrollok(msgWin, true);
 	wrefresh(msgWin);
 			
 	signal(SIGWINCH, resizeHandler); //signal(SIGINT, finish); signal(SIGTERM, finish);
@@ -51,19 +108,23 @@ pair<int, int> HexCurseUI::getHumanMove()
 
 	while(true)
 	{
-		mvwaddstr(msgWin, 6, 1, "Enter selection for your move, <h> for help, or <q> to quit: ");
-		wrefresh(msgWin);
-		getstr(input);
+		mvwaddstr(inputWin, rows/3/2 - 2, 1, "Enter your move, "); 
+		mvwaddstr(inputWin, rows/3/2 - 1, 1, "Or Enter <h> for help, or <q> to quit: ");
+		wrefresh(inputWin);
+		wgetstr(inputWin, input);
 		
-		wmove(msgWin, 5, 1); // clear previous error message
-		wclrtoeol(msgWin);
-		wrefresh(msgWin);
+		wclear(inputWin);
+		box(inputWin, 0, 0);
 		
-		wmove(msgWin, 8, 1); // clear help message
-		wclrtoeol(msgWin);
-		wmove(msgWin, 9, 1);
-		wclrtoeol(msgWin);
-		wrefresh(msgWin);
+		//wmove(inputWin, 5, 1); // clear previous error message
+		//wclrtoeol(inputWin);
+		//wrefresh(inputWin);
+		
+		//wmove(inputWin, 8, 1); // clear help message
+		//wclrtoeol(inputWin);
+		//wmove(inputWin, 9, 1);
+		//wclrtoeol(inputWin);
+		//wrefresh(inputWin);
 		
 		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 		
@@ -85,9 +146,25 @@ pair<int, int> HexCurseUI::getHumanMove()
 			
 			if( (cell == "h") || (cell == "help") )
 			{
-				mvwaddstr(msgWin, 8, 1, "If for example you want to select the cell at row 5, & column 2, simply enter 52.");
-				mvwaddstr(msgWin, 9, 1, "Or if you wanted to select the cell at row 7, & column 11, enter 0711.");
-				wrefresh(msgWin);
+				wclear(inputWin);
+				mvwaddstr(inputWin, 2, 1, "If for example you want to select the cell at row 5, & column 2, simply enter 52.");
+				mvwaddstr(inputWin, 3, 1, "Or if you wanted to select the cell at row 7, & column 11, enter 0711.");
+				mvwaddstr(inputWin, 5, 1, "Press Any Key To Continue");
+				box(inputWin, 0, 0);
+				wrefresh(inputWin);
+				
+				noecho();
+				raw();
+				
+				wgetch(inputWin);
+				
+				noraw();
+				echo();
+				
+				nocbreak();
+				
+				wclear(inputWin);
+				
 				continue;
 			}
 		}
@@ -112,8 +189,8 @@ pair<int, int> HexCurseUI::getHumanMove()
 			break;
 		}
 		else {
-			mvwaddstr(msgWin, 5, 1, "INVALID ENTRY");
-			wrefresh(msgWin);
+			mvwaddstr(inputWin, 1, 1, "INVALID ENTRY");
+			wrefresh(inputWin);
 		}
 			
 	}
@@ -192,15 +269,34 @@ void HexCurseUI::drawHexBoard()
 	wrefresh(boardWin);
 }
 
+void HexCurseUI::showWinner(const string& msg)
+{
+	noecho();
+	raw();
+
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-2, 1, "%s, Game Over", msg.c_str());
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-2, 1, "Press Any Key To Continue");
+
+	box(msgWin, 0, 0);
+	wrefresh(msgWin);
+
+	wgetch(msgWin);
+
+	noraw();
+	echo();
+}
+
 void HexCurseUI::updateUI()
 {
 	drawHexBoard();
 	
 	if( hge->getWinner() == &hge->getHuman() )
-		mvwprintw(msgWin, rows - 2, 1, "Human Wins, Game Over");
+		showWinner("Human Wins");
 	
 	if( hge->getWinner() == &hge->getComputer() )
-		mvwprintw(msgWin, rows - 2, 1, "Computer Wins, Game Over");
+		showWinner("Computer Wins");
 
 	wrefresh(msgWin);
 }

@@ -76,9 +76,15 @@ bool HexGameEngine::isMoveLegal(pair<int, int> move)
 	return true;
 }
 
+#define CONCUR 0
+
 bool HexGameEngine::initialize()
 {
+#if CONCUR
 	ui = new HexConsoleUI(this); // user interface
+#else
+	ui = new HexCurseUI(this);
+#endif
 	
 	int player = ui->getHumanPlayer();
 	

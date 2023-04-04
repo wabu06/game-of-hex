@@ -21,6 +21,8 @@ using namespace std::chrono;
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove(int shuffleMax)
 {
+	shuffleMax = level * shuffleMax / 3;
+	
 	int size{ board.getSize() }, cells{size*size};
 	
 	vector<int> vacancies;

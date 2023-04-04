@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 class HexConsoleUI : public HexUI
 {
 	HexGameEngine* hge;
@@ -27,25 +26,11 @@ class HexConsoleUI : public HexUI
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 		}
 		
-		int getHumanPlayer() override
-		{
-			string player;
-			
-			do
-			{	cout << "\n1) Blue Player\n2) Red Player\n" << "\u2016\nV==>Enter 1 or 2: ";
-				getline(cin, player);
-			}
-			while( (player.size() > 1) || (player[0] != '1') && (player[0] != '2') );
-			
-			if (player[0] == '1')
-				return 1;
-			else
-				return 2;
-		}
+		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
 		
-		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO, bool replace = false) override {
+		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override {
 			cout << '\n' << msg << '\n';
 		}
 		

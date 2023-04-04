@@ -3,6 +3,61 @@
 #include "HexGameEngine.h"
 
 
+int HexConsoleUI::getHumanPlayer()
+{
+	int player;
+			
+	do
+	{	cout << "\n1) Blue Player\n2) Red Player\n" << "\n==>Enter 1 or 2: ";
+			
+		cin >> player;
+				
+		string badstr;
+				
+		if(cin.fail())
+		{
+			cin.clear();
+			getline(cin, badstr);
+			player = -1;
+			continue;
+		}
+				
+		getline(cin, badstr);
+
+		if(badstr.size() > 0)
+			player = -1;
+	}
+	while( (player != 1) && (player != 2) );
+			
+	int level;
+			
+	do
+	{	cout << "\n3) Expert\n2) Intermediate\n1) Beginner\n" << "\n==>Enter 1, 2, or 3: ";
+				
+		cin >> level;
+
+		string badstr;
+				
+		if(cin.fail())
+		{
+			cin.clear();
+			getline(cin, badstr);
+			level = -1;
+			continue;
+		}
+				
+		getline(cin, badstr);
+
+		if(badstr.size() > 0)
+			level = -1;
+	}
+	while( (level != 1) && (level != 2) && (level != 3) );
+	
+	hge->setLevel(level);
+			
+	return player;
+}
+
 pair<int, int> HexConsoleUI::getHumanMove()
 {
 	string input; pair<int, int> position;

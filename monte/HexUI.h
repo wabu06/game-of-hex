@@ -19,7 +19,7 @@ class HexUI
 	
 		virtual int getHumanPlayer() = 0;
 		virtual pair<int, int> getHumanMove() = 0;
-		virtual void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO, bool replace = false) = 0;
+		virtual void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) = 0;
 		virtual void updateUI() = 0;
 };
 

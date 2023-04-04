@@ -28,6 +28,8 @@ class HexGameEngine
 	
 	bool isInitialized;
 	bool done;
+	
+	int level;
 
 	bool isMoveLegal(pair<int, int> move);
 
@@ -46,10 +48,10 @@ class HexGameEngine
 	}
 
 	//int genMonteMove();
-	int genMonteMove(int shuffleMax = 5000);
+	int genMonteMove(int shuffleMax = 5001);
 	
 	public:
-		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false) {}
+		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false), level(3) {}
 		
 		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer), winner(hge.winner),
 												 board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized), done(hge.done) {}
@@ -117,6 +119,10 @@ class HexGameEngine
 		
 		void endGame() {
 			done = true;
+		}
+		
+		void setLevel(int L) {
+			level = L;
 		}
 
 		bool initialize();
