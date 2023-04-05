@@ -48,7 +48,7 @@ class HexGameEngine
 	}
 
 	//int genMonteMove();
-	int genMonteMove(int shuffleMax = 5001);
+	int genMonteMove(int shuffleMax = 2004);
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false), level(3) {}

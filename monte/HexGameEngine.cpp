@@ -34,6 +34,8 @@ void HexGameEngine::playHuman()
 		if( board.getCellColor(N) == human.getColor() )
 			human.connectCells(cell, N);
 	}
+
+	ui->displayMsg("Human selects cell (" + to_string(row+1) + ", " + to_string(col+1) + ")");
 	
 	if( human.win() )
 	{

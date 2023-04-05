@@ -219,7 +219,7 @@ void HexGameEngine::playComputer()
 	 
 	auto size{ board.getSize() };
 	
-	ui->displayMsg("Computer takes cell: (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")");
+	ui->displayMsg("Computer selects cell (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")");
 	
 	board.setCellColor( cell, computer.getColor() ); //, computer);
 

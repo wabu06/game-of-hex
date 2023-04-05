@@ -57,6 +57,11 @@ int HexCurseUI::getHumanPlayer()
 	hge->setLevel(level - 48);
 			
 	wclear(inputWin);
+	
+	char *cptr = player == 49 ? stpcpy(color, "Blue"): stpcpy(color, "Red");
+	
+	mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
+	
 	box(inputWin, 0, 0);
 	wrefresh(inputWin);
 			
@@ -80,9 +85,9 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
     refresh();
 	box(banner, 0, 0);
     		
-	mvwprintw(banner, 0, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
-	mvwprintw(banner, 1, 1, "|A| |G|A|M|E| |O|F| |H|E|X|");
-	mvwprintw(banner, 2, 1, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
+	mvwprintw(banner, 0, 0, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
+	mvwprintw(banner, 1, 0, "|A| |G|A|M|E| |O|F| |H|E|X|");
+	mvwprintw(banner, 2, 0, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
 	wrefresh(banner);
 	
 	inputWin = newwin(rows/3, (cols - (cols/2 + size)), rows/6, (cols/2 + size));
@@ -91,7 +96,7 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 	
 	msgWin = newwin(rows/2, (cols - (cols/2 + size)), rows/2, (cols/2 + size));
 	refresh();
-	box(msgWin, 0, 0);
+	//box(msgWin, 0, 0);
 	scrollok(msgWin, true);
 	wrefresh(msgWin);
 			
@@ -108,12 +113,13 @@ pair<int, int> HexCurseUI::getHumanMove()
 
 	while(true)
 	{
-		mvwaddstr(inputWin, rows/3/2 - 2, 1, "Enter your move, "); 
-		mvwaddstr(inputWin, rows/3/2 - 1, 1, "Or Enter <h> for help, or <q> to quit: ");
+		mvwaddstr(inputWin, rows/3 - 3, 1, "Enter your move, "); 
+		mvwaddstr(inputWin, rows/3 - 2, 1, "Or Enter <h> for help, or <q> to quit: ");
 		wrefresh(inputWin);
 		wgetstr(inputWin, input);
 		
 		wclear(inputWin);
+		mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
 		box(inputWin, 0, 0);
 		
 		//wmove(inputWin, 5, 1); // clear previous error message
@@ -147,8 +153,9 @@ pair<int, int> HexCurseUI::getHumanMove()
 			if( (cell == "h") || (cell == "help") )
 			{
 				wclear(inputWin);
-				mvwaddstr(inputWin, 2, 1, "If for example you want to select the cell at row 5, & column 2, simply enter 52.");
-				mvwaddstr(inputWin, 3, 1, "Or if you wanted to select the cell at row 7, & column 11, enter 0711.");
+				mvwaddstr(inputWin, 1, 1, "If for example you want to select the cell at row 5,");
+				mvwaddstr(inputWin, 2, 1, "& column 2, simply enter 52. Or if you wanted to");
+				mvwaddstr(inputWin, 3, 1, "select the cell at row 7, & column 11, enter 0711.");
 				mvwaddstr(inputWin, 5, 1, "Press Any Key To Continue");
 				box(inputWin, 0, 0);
 				wrefresh(inputWin);
@@ -164,6 +171,9 @@ pair<int, int> HexCurseUI::getHumanMove()
 				nocbreak();
 				
 				wclear(inputWin);
+				
+				mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
+				box(inputWin, 0, 0);
 				
 				continue;
 			}
@@ -188,9 +198,11 @@ pair<int, int> HexCurseUI::getHumanMove()
 			
 			break;
 		}
-		else {
-			mvwaddstr(inputWin, 1, 1, "INVALID ENTRY");
-			wrefresh(inputWin);
+		else
+		{
+			scroll(msgWin);
+			mvwaddstr(msgWin, rows/2-2, 1, "INVALID ENTRY");
+			wrefresh(msgWin);
 		}
 			
 	}
