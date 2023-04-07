@@ -75,7 +75,7 @@ class HexGameEngine
 			return *this;
 		}*/
 		
-		/*HexGameEngine operator=(HexGameEngine& hge)
+		HexGameEngine operator=(const HexGameEngine& hge)
 		{
 			this->computer = hge.computer;
 			this->human = hge.human;
@@ -87,7 +87,7 @@ class HexGameEngine
 			this->done = hge.done;
 			
 			return *this;
-		}*/
+		}
 		
 		HexPlayer& getComputer() {
 			return computer;

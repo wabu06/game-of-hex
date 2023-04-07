@@ -286,30 +286,22 @@ void HexCurseUI::drawHexBoard()
 void HexCurseUI::showWinner(HexPlayer *winner)
 {
 	const char* victor = winner == &hge->getComputer() ? "Computer Wins" : "Human Wins";
-	
-	int size = hge->getBoard().getSize();
 
-	int h = rows/6, w = (cols - (cols/2 + size))*3 / 4;
-	int y = (rows - rows/6) / 2 - 1, x = cols/2 + size;
-	
-	WINDOW* victorWin = newwin(h, w, y, x);
-	refresh();
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-1, 0, "%s, Game Over", victor);
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-1, 0, "Press Any Key To Continue");
 
-	mvwprintw(victorWin, (h - 2)/2, (w - 22)/2, "%s, Game Over", victor);
-	mvwprintw(victorWin, (h - 2)/2 + 1, (w - 25)/2, "Press Any Key To Continue");
-	box(victorWin, 0, 0);
-
-	wrefresh(victorWin);
+	//box(msgWin, 0, 0);
+	wrefresh(msgWin);
 
 	noecho();
 	raw();
 	
-	wgetch(victorWin);
+	wgetch(msgWin);
 
 	noraw();
 	echo();
-	
-	delwin(victorWin);
 }
 
 void HexCurseUI::updateUI()
@@ -321,6 +313,6 @@ void HexCurseUI::updateUI()
 	if(winner != nullptr)
 		showWinner(winner);
 
-	//wrefresh(msgWin);
+	wrefresh(msgWin);
 }
 

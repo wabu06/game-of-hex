@@ -80,12 +80,8 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
     box(boardWin, 0, 0);
     		
 	drawHexBoard();
-	
-	int h = rows/6, w = cols - (cols/2 + size);
-	
-	int y = 0, x = cols/2 + size;
     		
-    banner = newwin(h, w, y, x);
+    banner = newwin(rows/6, (cols - (cols/2 + size)), 0, (cols/2 + size));
     refresh();
 	box(banner, 0, 0);
     		
@@ -94,19 +90,11 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 	mvwprintw(banner, 2, 0, "+-+ +-+-+-+-+ +-+-+ +-+-+-+");
 	wrefresh(banner);
 	
-	h = rows/3; //w = cols - (cols/2 + size);
-	
-	y = rows/6; x = cols/2 + size;
-	
-	inputWin = newwin(h, w, y, x);
+	inputWin = newwin(rows/3, (cols - (cols/2 + size)), rows/6, (cols/2 + size));
     refresh();
 	box(inputWin, 0, 0);
 	
-	h = rows/2; //w = cols - (cols/2 + size);
-	
-	y = rows/2; //x = cols/2 + size;
-	
-	msgWin = newwin(h, w, y, x);
+	msgWin = newwin(rows/2, (cols - (cols/2 + size)), rows/2, (cols/2 + size));
 	refresh();
 	//box(msgWin, 0, 0);
 	scrollok(msgWin, true);
@@ -133,6 +121,16 @@ pair<int, int> HexCurseUI::getHumanMove()
 		wclear(inputWin);
 		mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
 		box(inputWin, 0, 0);
+		
+		//wmove(inputWin, 5, 1); // clear previous error message
+		//wclrtoeol(inputWin);
+		//wrefresh(inputWin);
+		
+		//wmove(inputWin, 8, 1); // clear help message
+		//wclrtoeol(inputWin);
+		//wmove(inputWin, 9, 1);
+		//wclrtoeol(inputWin);
+		//wrefresh(inputWin);
 		
 		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 		
@@ -283,44 +281,35 @@ void HexCurseUI::drawHexBoard()
 	wrefresh(boardWin);
 }
 
-void HexCurseUI::showWinner(HexPlayer *winner)
+void HexCurseUI::showWinner(const string& msg)
 {
-	const char* victor = winner == &hge->getComputer() ? "Computer Wins" : "Human Wins";
-	
-	int size = hge->getBoard().getSize();
-
-	int h = rows/6, w = (cols - (cols/2 + size))*3 / 4;
-	int y = (rows - rows/6) / 2 - 1, x = cols/2 + size;
-	
-	WINDOW* victorWin = newwin(h, w, y, x);
-	refresh();
-
-	mvwprintw(victorWin, (h - 2)/2, (w - 22)/2, "%s, Game Over", victor);
-	mvwprintw(victorWin, (h - 2)/2 + 1, (w - 25)/2, "Press Any Key To Continue");
-	box(victorWin, 0, 0);
-
-	wrefresh(victorWin);
-
 	noecho();
 	raw();
-	
-	wgetch(victorWin);
+
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-2, 1, "%s, Game Over", msg.c_str());
+	scroll(msgWin);
+	mvwprintw(msgWin, rows/2-2, 1, "Press Any Key To Continue");
+
+	box(msgWin, 0, 0);
+	wrefresh(msgWin);
+
+	wgetch(msgWin);
 
 	noraw();
 	echo();
-	
-	delwin(victorWin);
 }
 
 void HexCurseUI::updateUI()
 {
 	drawHexBoard();
 	
-	HexPlayer *winner = hge->getWinner();
+	if( hge->getWinner() == &hge->getHuman() )
+		showWinner("Human Wins");
 	
-	if(winner != nullptr)
-		showWinner(winner);
+	if( hge->getWinner() == &hge->getComputer() )
+		showWinner("Computer Wins");
 
-	//wrefresh(msgWin);
+	wrefresh(msgWin);
 }
 
