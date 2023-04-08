@@ -8,7 +8,7 @@
 #include<unordered_set>
 
 //#include "HexPlayer.h"
-#include "HexBoard.h"
+//#include "HexBoard.h"
 
 #ifndef CONSOLE
 #include "HexConsoleUI.h"
@@ -48,13 +48,14 @@ class HexGameEngine
 	}
 
 	//int genMonteMove();
-	int genMonteMove(int shuffleMax = 2004);
+	int genMonteMove(int shuffleMax = 6009);
 	
 	public:
-		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false), level(3) {}
+		HexGameEngine(const int& size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false), level(3) {}
 		
-		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer), winner(hge.winner),
-												 board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized), done(hge.done) {}
+		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer),
+												 winner(hge.winner), board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized),
+												 done(hge.done), level(hge.level) {}
 		
 		~HexGameEngine() {
 			if(ui != nullptr)
@@ -75,7 +76,7 @@ class HexGameEngine
 			return *this;
 		}*/
 		
-		HexGameEngine operator=(const HexGameEngine& hge)
+		HexGameEngine& operator=(const HexGameEngine& hge)
 		{
 			this->computer = hge.computer;
 			this->human = hge.human;
@@ -85,6 +86,7 @@ class HexGameEngine
 			this->ui = hge.ui;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
+			this->level = hge.level;
 			
 			return *this;
 		}
@@ -154,7 +156,8 @@ class HexGameEngine
 		void shutdown()
 		{
 			if(!isInitialized)
-				ui->displayMsg("Game Engine Was Not Initialized");
+				cerr << "\nGame Engine Was Not Initialized" << endl;
+				//ui->displayMsg("Game Engine Was Not Initialized");
 		}
 };
 

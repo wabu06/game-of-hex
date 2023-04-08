@@ -90,7 +90,7 @@ pair<int, int> HexConsoleUI::getHumanMove()
 			}
 		}
 		
-		bool allDigits = all_of(input.begin(), input.end(), [](char c) { return isdigit( c, locale("en_US.UTF8") ); });
+		bool allDigits = all_of(input.begin(), input.end(), [](char& c) { return isdigit( c, locale("en_US.UTF8") ); });
 		
 		if(allDigits)
 		{

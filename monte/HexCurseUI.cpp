@@ -5,7 +5,9 @@
 
 int HexCurseUI::rows; int HexCurseUI::cols;
 
-void HexCurseUI::resizeHandler(int sig)
+HexGameEngine* HexCurseUI::shge;
+
+void HexCurseUI::resize()
 {
 	int nh, nw;
 
@@ -13,6 +15,22 @@ void HexCurseUI::resizeHandler(int sig)
 	resizeterm(nh, nw);
 
 	rows = nh; cols = nw;
+}
+
+void HexCurseUI::sigHandler(int sig)
+{
+	switch(sig)
+	{
+		case SIGTERM:
+		case SIGINT:
+			shge->shutdown();
+			exit(EXIT_SUCCESS);
+		break;
+		
+		case SIGWINCH:
+			resize();
+		break;
+	}
 }
 
 int HexCurseUI::getHumanPlayer()
@@ -70,6 +88,8 @@ int HexCurseUI::getHumanPlayer()
 
 HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 {
+	shge = hge;
+	
 	mainwin = initscr();
 	getmaxyx(stdscr, rows, cols);
 			
@@ -112,7 +132,9 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 	scrollok(msgWin, true);
 	wrefresh(msgWin);
 			
-	signal(SIGWINCH, resizeHandler); //signal(SIGINT, finish); signal(SIGTERM, finish);
+	signal(SIGWINCH, sigHandler);
+	signal(SIGINT, sigHandler);
+	signal(SIGTERM, sigHandler);
 }
 
 pair<int, int> HexCurseUI::getHumanMove()
@@ -181,7 +203,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 			}
 		}
 		
-		bool allDigits = all_of(cell.begin(), cell.end(), [](char c) { return isdigit( c, locale("en_US.UTF8") ); });
+		bool allDigits = all_of(cell.begin(), cell.end(), [](char& c) { return isdigit( c, locale("en_US.UTF8") ); });
 		
 		if(allDigits)
 		{

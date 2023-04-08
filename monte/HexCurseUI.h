@@ -16,6 +16,8 @@ using namespace std;
 class HexCurseUI : public HexUI
 {
 	HexGameEngine* hge;
+	
+	static HexGameEngine* shge;
 
 	static int rows, cols;
 	
@@ -38,20 +40,10 @@ class HexCurseUI : public HexUI
     		delwin(mainwin);
 			endwin();
 		}
-		
-		void finish(int sig)
-		{
-    		delwin(msgWin);
-    		delwin(inputWin);
-    		delwin(banner);
-    		delwin(boardWin);
-    		delwin(mainwin);
-    		endwin();
 
-    		exit(0);
-		}
+		static void resize();
 		
-		static void resizeHandler(int sig);
+		static void sigHandler(int sig);
 		
 		int getHumanPlayer() override;
 		

@@ -20,16 +20,16 @@ class HexBoard
 	public:
 		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
 		
-		HexBoard(const HexBoard& B) : size(B.size), boardCell(B.boardCell) {}
+		HexBoard(const HexBoard& brd) : size(brd.size), boardCell(brd.boardCell) {}
 		
-		/*HexBoard operator=(HexBoard& B) {
-			this->size = B.size;
-			this->boardCell = B.boardCell;
+		HexBoard& operator=(const HexBoard& brd) {
+			this->size = brd.size;
+			this->boardCell = brd.boardCell;
 			
 			return *this;
 		}
 		
-		HexBoard operator=(HexBoard&& B) {
+		/*HexBoard operator=(HexBoard&& B) {
 			this->size = B.size;
 			this->boardCell = B.boardCell;
 			

@@ -28,18 +28,18 @@ class HexPlayer
 	public:
 		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ) {}
 		
-		HexPlayer(const HexPlayer& P) : bSize(P.bSize), color(P.color), playGraph(P.playGraph) {}
+		HexPlayer(const HexPlayer& player) : bSize(player.bSize), color(player.color), playGraph(player.playGraph) {}
 		
-		/*HexPlayer operator=(HexPlayer& P)
+		HexPlayer& operator=(const HexPlayer& player)
 		{
-			this->bSize = P.bSize;
-			this->color = P.color;
-			this->playGraph = P.playGraph;
+			this->bSize = player.bSize;
+			this->color = player.color;
+			this->playGraph = player.playGraph;
 			
 			return *this;
 		}
 		
-		HexPlayer operator=(HexPlayer&& P)
+		/*HexPlayer operator=(HexPlayer&& P)
 		{
 			this->bSize = P.bSize;
 			this->color = P.color;
