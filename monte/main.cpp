@@ -11,7 +11,7 @@ int main (int argc, char* argv[])
 	{
 		string arg1{argv[1]};
 		
-		bool allDigits = all_of(arg1.begin(), arg1.end(), [](char& c) { return isdigit( c, locale("en_US.UTF8") ); });
+		bool allDigits = all_of(arg1.begin(), arg1.end(), [](char& c)->bool { return isdigit( c, locale("en_US.UTF8") ); });
 		
 		if(allDigits) {
 			int bSize = stoi(arg1, nullptr);

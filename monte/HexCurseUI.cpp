@@ -225,7 +225,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 		else
 		{
 			scroll(msgWin);
-			mvwaddstr(msgWin, rows/2-2, 1, "INVALID ENTRY");
+			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY");
 			wrefresh(msgWin);
 		}
 			
