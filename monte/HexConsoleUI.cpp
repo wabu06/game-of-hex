@@ -66,6 +66,9 @@ pair<int, int> HexConsoleUI::getHumanMove()
 	{
 		cout << "\nEnter selection for your move, <h> for help, or <q> to quit: "; getline(cin, input);
 		
+		if(input.size() == 0)
+			continue;
+		
 		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 	
 		for_each(input.begin(), input.end(), toLowerCase);

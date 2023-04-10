@@ -18,7 +18,7 @@ int main (int argc, char* argv[])
 			game = HexGameEngine(bSize);
 		}
 		else
-			cerr << "\nInvalid Arguement, Reverting To Default Board Size!" << endl;
+			cerr << "\nInvalid Arguement, Using Default Board Size!" << endl;
 	}
 	
 	if( !game.initialize() )

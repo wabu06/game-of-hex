@@ -144,17 +144,28 @@ pair<int, int> HexCurseUI::getHumanMove()
 	pair<int, int> position;
 	
 	nocbreak();
+	
+	wclear(inputWin);
+	box(inputWin, 0, 0);
+	mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
+	mvwaddstr(inputWin, rows/3 - 3, 1, "Enter your move, ");
 
 	while(true)
 	{
-		mvwaddstr(inputWin, rows/3 - 3, 1, "Enter your move, "); 
+		//mvwaddstr(inputWin, rows/3 - 3, 1, "Enter your move, "); 
 		mvwaddstr(inputWin, rows/3 - 2, 1, "Or Enter <h> for help, or <q> to quit: ");
 		wrefresh(inputWin);
 		wgetstr(inputWin, input);
-		
-		wclear(inputWin);
-		mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
-		box(inputWin, 0, 0);
+
+		if(strlen(input) == 0) {
+			scroll(msgWin);
+			mvwaddstr(msgWin, rows/2-1, 0, "NO ENTRY MADE!");
+			wrefresh(msgWin);
+			wmove(inputWin, rows/3 - 2, 1);
+			wclrtoeol(inputWin);
+			box(inputWin, 0, 0);
+			continue;
+		}
 		
 		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 		
@@ -195,10 +206,11 @@ pair<int, int> HexCurseUI::getHumanMove()
 				nocbreak();
 				
 				wclear(inputWin);
-				
-				mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
 				box(inputWin, 0, 0);
 				
+				mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
+				mvwaddstr(inputWin, rows/3 - 3, 1, "Enter your move, ");
+
 				continue;
 			}
 		}
@@ -225,10 +237,13 @@ pair<int, int> HexCurseUI::getHumanMove()
 		else
 		{
 			scroll(msgWin);
-			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY");
+			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY!");
 			wrefresh(msgWin);
 		}
-			
+		
+		wmove(inputWin, rows/3 - 2, 1);
+		wclrtoeol(inputWin);
+		box(inputWin, 0, 0);
 	}
 	
 	return position;
@@ -313,6 +328,8 @@ void HexCurseUI::showWinner(HexPlayer *winner)
 
 	int h = rows/6, w = (cols - (cols/2 + size))*3 / 4;
 	int y = (rows - rows/6) / 2 - 1, x = cols/2 + size;
+	
+	flash();
 	
 	WINDOW* victorWin = newwin(h, w, y, x);
 	refresh();
