@@ -32,31 +32,29 @@ int HexConsoleUI::getHumanPlayer()
 
 pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 {
-	string input = "";
+	string input;
 	
-	pair<int, int> position;
+	int move, row, col;
+
+	auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 
 	while(true)
 	{
-		cout << "\nEnter selection for your move, <h> for help, or <q> to quit: ";
-		getline(cin, input);
+		cout << "\nEnter your move, or <h> for help, or <q> to quit: ";
+		cin >> move;
 		
-		if(input.size() == 0)
-			continue;
-		
-		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
-	
-		for_each(input.begin(), input.end(), toLowerCase);
-		
-		bool allAlpha = all_of(input.begin(), input.end(), [](char c) { return isalpha( c, locale("en_US.UTF8") ); });
-		
-		if(allAlpha)
+		if(cin.fail())
 		{
+			cin.clear();
+			getline(cin, input);
+			
+			for_each(input.begin(), input.end(), toLowerCase);
+			
 			if( (input == "q") || (input == "quit") || (input == "exit") || (input == "end") )
 			{
 				hge->setCurrentPlayer(nullptr);
 				hge->endGame();
-				position.first = position.second = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
+				row = col = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
 				break;
 			}
 			
@@ -64,34 +62,32 @@ pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 			{
 				cout << "\nIf for example you want to select the cell at row 5, & column 2, simply enter 52.\n";
 				cout << "Or if you wanted to select the cell at row 7, & column 11, enter 0711.\n";
-				continue;
 			}
+			continue;
 		}
 		
-		bool allDigits = all_of(input.begin(), input.end(), [](char c) { return isdigit( c, locale("en_US.UTF8") ); });
+		getline(cin, input);
 		
-		if(allDigits)
+		if(input.size() > 0)
+			continue;
+			
+		input = to_string(move);
+
+		if(input.size() > 3)
 		{
-			int number = stoi(input, nullptr);
-			
-			if(input.size() > 3)
-			{
-				position.first = number / 100 - 1;
-				position.second = number % 100 - 1;
-			}
-			else
-			{
-				position.first = number / 10 - 1;
-				position.second = number % 10 - 1;
-			}
-			
+			row = move / 100 - 1;
+			col = move % 100 - 1;
 			break;
 		}
 		else
-			cout << "INVALID ENTRY" << endl;
+		{
+			row = move / 10 - 1;
+			col = move % 10 - 1;
+			break;
+		}
 	}
 	
-	return position;
+	return {row, col};
 }
 
 void HexConsoleUI::drawHexBoard(HexBoard& board)

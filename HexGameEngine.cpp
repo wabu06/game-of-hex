@@ -3,11 +3,13 @@
 
 void HexGameEngine::playHuman()
 {
-	pair<int, int> move;
+	//pair<int, int> move;
 	bool legal;
+	
+	int row, col;
 			
 	do
-	{	move = ui->getHumanMove(this);
+	{	tie(row, col) = ui->getHumanMove(this);
 			
 		if(done)
 		{
@@ -15,11 +17,11 @@ void HexGameEngine::playHuman()
 			return; // end game if human choose to quit instead of entering a move
 		}
 			
-		legal = isMoveLegal(move);
+		legal = isMoveLegal(row, col);
 	}
 	while(!legal);
 	
-	int row{move.first}, col{move.second};
+	//int row{move.first}, col{move.second};
 	
 	board.setCellColor(row, col, human.getColor(), human);
 		
@@ -46,13 +48,13 @@ void HexGameEngine::playHuman()
 	//cout << boolalpha << "win " << human.win();
 }
 
-bool HexGameEngine::isMoveLegal(pair<int, int> move)
+bool HexGameEngine::isMoveLegal(int row, int col)
 {
 	hexColors cc; // cell color
 	
 	int size{ board.getSize() - 1 };
 	
-	int row{move.first}, col{move.second};
+	//int row{move.first}, col{move.second};
 
 	if( row < 0 || row > size )
 	{

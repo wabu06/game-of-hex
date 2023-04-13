@@ -26,7 +26,7 @@ class HexGameEngine
 	bool isInitialized;
 	bool done;
 
-	bool isMoveLegal(pair<int, int> move);
+	bool isMoveLegal(int row, int col);
 
 	void playHuman();
 	void playComputer();
