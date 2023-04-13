@@ -60,24 +60,23 @@ int HexConsoleUI::getHumanPlayer()
 
 pair<int, int> HexConsoleUI::getHumanMove()
 {
-	string input;
-	int move;
-	pair<int, int> position;
-	
-	auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
+	string input; pair<int, int> position;
 
 	while(true)
 	{
-		cout << "\nEnter your move, or <h> for help, or <q> to quit: "; //getline(cin, input);
-		cin >> move;
+		cout << "\nEnter selection for your move, <h> for help, or <q> to quit: "; getline(cin, input);
 		
-		if(cin.fail())
-		{
-			cin.clear();
-			getline(cin, input);
+		if(input.size() == 0)
+			continue;
+		
+		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 	
-			for_each(input.begin(), input.end(), toLowerCase);
-			
+		for_each(input.begin(), input.end(), toLowerCase);
+		
+		bool allAlpha = all_of(input.begin(), input.end(), [](char& c) { return isalpha( c, locale("en_US.UTF8") ); });
+		
+		if(allAlpha)
+		{
 			if( (input == "q") || (input == "quit") || (input == "exit") || (input == "end") )
 			{
 				hge->setCurrentPlayer(nullptr);
@@ -86,33 +85,35 @@ pair<int, int> HexConsoleUI::getHumanMove()
 				break;
 			}
 			
-			if( (input == "h") || (input == "help") ) {
+			if( (input == "h") || (input == "help") )
+			{
 				cout << "\nIf for example you want to select the cell at row 5, & column 2, simply enter 52.\n";
 				cout << "Or if you wanted to select the cell at row 7, & column 11, enter 0711.\n";
+				continue;
 			}
-			continue;
 		}
 		
-		getline(cin, input);
+		bool allDigits = all_of(input.begin(), input.end(), [](char& c) { return isdigit( c, locale("en_US.UTF8") ); });
 		
-		if(input.size() > 0)
-			continue;
-		
-		input = to_string(move);
-		
-		if(input.size() > 3)
+		if(allDigits)
 		{
-			position.first = move / 100 - 1;
-			position.second = move % 100 - 1;
+			int number = stoi(input, nullptr);
+			
+			if(input.size() > 3)
+			{
+				position.first = number / 100 - 1;
+				position.second = number % 100 - 1;
+			}
+			else
+			{
+				position.first = number / 10 - 1;
+				position.second = number % 10 - 1;
+			}
+			
 			break;
 		}
 		else
-		{
-			position.first = move / 10 - 1;
-			position.second = move % 10 - 1;
-			break;
-		}	
-			//cout << "INVALID ENTRY" << endl;
+			cout << "INVALID ENTRY" << endl;
 	}
 	
 	return position;
