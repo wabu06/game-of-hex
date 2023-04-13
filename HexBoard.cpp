@@ -75,9 +75,9 @@ vector<int> HexBoard::getRedNeighbors(int cell)
 	vector<int> neighbors = vector<int>();
 	
 	array<sides, 6> sideAR; // = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
-	array<sides, 6> left = {sides::L, sides::UL, sides::LL, sides::R, sides::LR, sides::UR};
+	array<sides, 6> left = {sides::L, sides::R, sides::UL, sides::LL, sides::LR, sides::UR};
 	array<sides, 6> middle = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
-	array<sides, 6> right = {sides::R, sides::UR, sides::LR, sides::L, sides::UL, sides::LL};
+	array<sides, 6> right = {sides::R, sides::L, sides::UR, sides::LR, sides::UL, sides::LL};
 	
 	auto ccol = size%2; // center column
 	auto col = cell%size;
