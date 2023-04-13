@@ -24,7 +24,7 @@ void HexCurseUI::sigHandler(int sig)
 		case SIGTERM:
 		case SIGINT:
 			shge->shutdown();
-			exit(EXIT_SUCCESS);
+			//exit(EXIT_SUCCESS);
 		break;
 		
 		case SIGWINCH:

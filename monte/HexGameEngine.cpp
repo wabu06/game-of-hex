@@ -82,7 +82,7 @@ bool HexGameEngine::isMoveLegal(int row, int col)
 
 #define CONCUR 0
 
-bool HexGameEngine::initialize()
+HexGameEngine& HexGameEngine::initialize()
 {
 #if CONCUR
 	ui = new HexConsoleUI(this); // user interface
@@ -109,6 +109,6 @@ bool HexGameEngine::initialize()
 	
 	isInitialized = true;
 	
-	return isInitialized;
+	return *this; //isInitialized;
 }
 

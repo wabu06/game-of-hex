@@ -127,12 +127,12 @@ class HexGameEngine
 			level = L;
 		}
 
-		bool initialize();
+		HexGameEngine& initialize();
 		
-		void runLoop()
+		HexGameEngine& runLoop()
 		{
 			if(!isInitialized) // insures initialize method is called first
-				return;
+				return *this;
 	
 			if(currentPlayer == &human)
 				ui->updateUI();
@@ -151,13 +151,19 @@ class HexGameEngine
 				else
 					ui->updateUI();
 			}
+			
+			return *this;
 		}
 		
-		void shutdown()
+		int shutdown()
 		{
-			if(!isInitialized)
+			if(!isInitialized) {
 				cerr << "\nGame Engine Was Not Initialized" << endl;
+				return EXIT_FAILURE;
+			}
 				//ui->displayMsg("Game Engine Was Not Initialized");
+
+			return EXIT_SUCCESS;
 		}
 };
 
