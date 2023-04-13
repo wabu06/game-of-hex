@@ -21,6 +21,15 @@ int main (int argc, char* argv[])
 			cerr << "\nInvalid Arguement, Using Default Board Size!" << endl;
 	}
 	
-	return game.initialize().runLoop().shutdown();
+	/*if( !game.initialize() )
+	{
+		cerr << "\nGame Initialization Failure, Exiting ...." << endl;
+		return EXIT_FAILURE;
+	}*/
+
+	//game.runLoop();
+	//game.shutdown();
+	
+	return game.initialize().runLoop().shutdown(); //EXIT_SUCCESS;
 }
 
