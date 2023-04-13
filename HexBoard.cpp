@@ -39,7 +39,25 @@ vector<int> HexBoard::getBlueNeighbors(int cell)
 {
 	vector<int> neighbors = vector<int>();
 	
-	array<sides, 6> sideAR = {sides::LR, sides::UL, sides::LL, sides::UR, sides::L, sides::R};
+	//array<sides, 6> sideAR = {sides::LR, sides::UL, sides::LL, sides::UR, sides::L, sides::R};
+	array<sides, 6> middle = {sides::LR, sides::UL, sides::LL, sides::UR, sides::L, sides::R};
+	array<sides, 6> lower = {sides::LR, sides::LL, sides::UL, sides::UR, sides::L, sides::R}; //, sides::UL, sides::UR};
+	array<sides, 6> upper = {sides::UL, sides::UR, sides::LR, sides::LL, sides::L, sides::R};
+	
+	auto crow = size/2; // center row
+	auto row = cell/size;
+	
+	array<sides, 6> sideAR;
+	
+	if(row > crow)
+		sideAR = lower;
+	else
+	{
+		if(row < crow)
+			sideAR = upper;
+		else
+			sideAR = middle;
+	}
 	
 	for(auto& s: sideAR)
 	{
@@ -56,8 +74,24 @@ vector<int> HexBoard::getRedNeighbors(int cell)
 {
 	vector<int> neighbors = vector<int>();
 	
-	array<sides, 6> sideAR = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
-		
+	array<sides, 6> sideAR; // = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
+	array<sides, 6> left = {sides::L, sides::UL, sides::LL, sides::R, sides::LR, sides::UR};
+	array<sides, 6> middle = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
+	array<sides, 6> right = {sides::R, sides::UR, sides::LR, sides::L, sides::UL, sides::LL};
+	
+	auto ccol = size%2; // center column
+	auto col = cell%size;
+	
+	if(col > ccol)
+		sideAR = right;
+	else
+	{
+		if(col < ccol)
+			sideAR = left;
+		else
+			sideAR = middle;
+	}
+	
 	for(auto& s: sideAR)
 	{
 		auto n = getCellNeighbor(cell, s);

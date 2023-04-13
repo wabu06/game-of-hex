@@ -71,14 +71,15 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 		}
 		
 		path = simPlayer.winPath();
-		
-		for(auto& n: path)
-			fout << n << '\t';
-		
-		fout << '\n';
 
 		if(path.size() > 0)
+		{
 			winPaths.push_back(path);
+
+			for(auto& n: path)
+				fout << n << '\t';
+			fout << '\n';
+		}
 		
 			// reset board & player for next round of simulation
 		simPlayer = computer;
@@ -106,11 +107,17 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	
 	auto lessThan = [](const pair<int, int> &e1, const pair<int, int> &e2)->bool { return e1.second < e2.second; };
 	
-	auto mapMax = max_element(cellCountMap.begin(), cellCountMap.end(), lessThan); // get move with the most wins
+	//auto mapMax = max_element(cellCountMap.begin(), cellCountMap.end(), lessThan); // get move with the most wins
 	
-	fout << mapMax->first << '\n'; fout.close();
+		// returns a pointer to a pair, so must dereference 1st
+		// find most frequently recurring cell among winning paths
+	auto [cell, count] = *max_element(cellCountMap.begin(), cellCountMap.end(), lessThan); 
 	
-	return mapMax->first;
+	//fout << mapMax->first << '\n'; fout.close();
+	
+	fout << "cell: " << cell << '\t' << "count: " << count << '\n'; fout.close();
+	
+	return cell; //return mapMax->first;
 }
 
 #else

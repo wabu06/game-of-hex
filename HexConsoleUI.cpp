@@ -5,11 +5,17 @@
 
 pair<int, int> HexConsoleUI::getHumanMove(HexGameEngine* hge)
 {
-	string input; pair<int, int> position;
+	string input = "";
+	
+	pair<int, int> position;
 
 	while(true)
 	{
-		cout << "\nEnter selection for your move, <h> for help, or <q> to quit: "; getline(cin, input);
+		cout << "\nEnter selection for your move, <h> for help, or <q> to quit: ";
+		getline(cin, input);
+		
+		if(input.size() == 0)
+			continue;
 		
 		auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
 	

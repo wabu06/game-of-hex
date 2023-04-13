@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<array>
+#include<random>
 //#include<iostream>
 
 #define _HEX
@@ -10,7 +11,7 @@
 #include "HexPlayer.h"
 
 
-enum class sides: unsigned {L, R, UL, LL, UR, LR};
+enum class sides: unsigned {L, R, UL, LL, UR, LR}; // neighboring cells
 
 class HexBoard
 {
@@ -21,6 +22,14 @@ class HexBoard
 		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
 
 		int getSize() { return size; }
+		
+			// random cell for first move of computer player
+		int getRandCell() {
+			random_device rd{"hw"};
+			uniform_int_distribution<> dist(0, size*size);
+			
+			return dist(rd);
+		}
 		
 		hexColors getCellColor(int r, int c) { return boardCell[r][c]; }
 		

@@ -10,6 +10,9 @@
 //#include<locale>
 
 //#include "HexPlayer.h"
+//#include<tuple>
+#include<map>
+
 #include "HexBoard.h"
 #include "HexConsoleUI.h"
 
@@ -39,14 +42,18 @@ class HexGameEngine
 			playComputer();
 	}
 
-	pair<int, int> colorCellNeighbor(int cell);
+	pair<bool, pair<int, int>> colorCellNeighbor(int cell);
 	
-	pair<int, int> findLongestPath(int cell);
+	multimap<int, int, greater<int>> findPathSizes(int cell);
 	
 	pair<int, int> extendLongestPath();
 	
 	public:
 		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false) {}
+		~HexGameEngine() {
+			if(ui != nullptr)
+				delete ui;
+		}
 
 		HexPlayer& getComputer() {
 			return computer;
@@ -106,13 +113,9 @@ class HexGameEngine
 			}
 		}
 		
-		void shutdown()
-		{
+		void shutdown() {
 			if(!isInitialized)
 				ui->displayMsg("\nGame Engine Was Not Initialized\n");
-	
-			if(ui != nullptr)
-				delete ui;
 		}
 };
 
