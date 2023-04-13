@@ -31,7 +31,7 @@ class HexGameEngine
 	
 	int level;
 
-	bool isMoveLegal(pair<int, int> move);
+	bool isMoveLegal(int row, int col);
 
 	void playHuman();
 	void playComputer();

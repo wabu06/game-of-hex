@@ -141,7 +141,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 {
 	char input[20]; string cell;
 	
-	pair<int, int> position;
+	int row, col; //pair<int, int> position;
 	
 	nocbreak();
 	
@@ -181,7 +181,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 			{
 				hge->setCurrentPlayer(nullptr);
 				hge->endGame();
-				position.first = position.second = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
+				row = col = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
 				break;
 			}
 			
@@ -223,13 +223,13 @@ pair<int, int> HexCurseUI::getHumanMove()
 			
 			if(cell.size() > 3)
 			{
-				position.first = number / 100 - 1;
-				position.second = number % 100 - 1;
+				row = number / 100 - 1;
+				col = number % 100 - 1;
 			}
 			else
 			{
-				position.first = number / 10 - 1;
-				position.second = number % 10 - 1;
+				row = number / 10 - 1;
+				col = number % 10 - 1;
 			}
 			
 			break;
@@ -246,7 +246,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 		box(inputWin, 0, 0);
 	}
 	
-	return position;
+	return {row, col}; //position;
 }
 
 void HexCurseUI::drawHexBoard()
