@@ -6,6 +6,8 @@
 #include<random>
 #include<chrono>
 #include<unordered_set>
+#include<tuple>
+#include<numeric>
 
 //#include "HexPlayer.h"
 //#include "HexBoard.h"
@@ -30,6 +32,8 @@ class HexGameEngine
 	bool done;
 	
 	int level;
+	
+	string UIname;
 
 	bool isMoveLegal(int row, int col);
 
@@ -51,11 +55,12 @@ class HexGameEngine
 	int genMonteMove(int shuffleMax = 3600);
 	
 	public:
-		HexGameEngine(const int& size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), done(false), level(3) {}
+		HexGameEngine(int size = 7, const string& uin = "console"): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false),
+																	done(false), level(3), UIname(uin) {}
 		
 		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer),
 												 winner(hge.winner), board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized),
-												 done(hge.done), level(hge.level) {}
+												 done(hge.done), level(hge.level), UIname(hge.UIname) {}
 		
 		~HexGameEngine() {
 			if(ui != nullptr)
@@ -87,6 +92,7 @@ class HexGameEngine
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
 			this->level = hge.level;
+			this->UIname = hge.UIname;
 			
 			return *this;
 		}

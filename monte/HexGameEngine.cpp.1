@@ -80,25 +80,16 @@ bool HexGameEngine::isMoveLegal(int row, int col)
 	return true;
 }
 
+#define CONCUR 1
+
 HexGameEngine& HexGameEngine::initialize()
 {
-	auto sumchars = [](int s, const char& c) {
-						return s + static_cast<unsigned int>(c);
-					};
-
-	auto opt = accumulate(UIname.begin(), UIname.end(), 0, sumchars);
+#if CONCUR
+	ui = new HexConsoleUI(this); // user interface
+#else
+	ui = new HexCurseUI(this);
+#endif
 	
-	switch(opt)
-	{
-			case 755:
-				ui = new HexConsoleUI(this); // user interface
-			break;
-			
-			case 546:
-				ui = new HexCurseUI(this);
-			break;
-	}
-
 	int player = ui->getHumanPlayer();
 	
 	int size{ board.getSize() };
