@@ -121,10 +121,10 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 #else
 
 maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-								unordered_map<int, hexColors> colored, bool max);
+								unordered_map<int, hexColors> colored, bool max)
 {
 	if(unColored.size() == 0)
-		return {0, unColored, colored};
+		return {0, move, unColored, colored};
 	
 	for(auto& [cell, color]: colored)
 	{
@@ -160,21 +160,21 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 		for(auto& N: neighbors)
 		{
 			if( maxBoard.getCellColor(N) == maxPlayer.getColor() )
-				maxPlayer.connectCells(cell, N);
+				maxPlayer.connectCells(move, N);
 		}
 		
 		colored[move] = maxPlayer.getColor();
 	}
 	else
 	{
-		minBoard.setCellColor(move, minPlayer.getColor());
+		maxBoard.setCellColor(move, minPlayer.getColor());
 		
 		vector<int> neighbors = maxBoard.getCellNeighbors(move);
 		
 		for(auto& N: neighbors)
 		{
 			if( maxBoard.getCellColor(N) == minPlayer.getColor() )
-				minPlayer.connectCells(cell, N);
+				minPlayer.connectCells(move, N);
 		}
 		
 		colored[move] = minPlayer.getColor();
@@ -205,11 +205,11 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
 	
 	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) < get<int>(t2);
+							return get<0>(t1) < get<0>(t2);
 						};
 	
 	auto greaterThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) > get<int>(t2);
+							return get<0>(t1) > get<0>(t2);
 						};
 	
 	if(max) {
@@ -261,7 +261,7 @@ int HexGameEngine::genMiniMaxMove()
 	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
 	
 	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) < get<int>(t2);
+							return get<0>(t1) < get<0>(t2);
 						};
 	
 	auto [val, move, unColored, colored] = *max_element(states.begin(), states.end(), lessThan);

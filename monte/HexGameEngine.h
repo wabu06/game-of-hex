@@ -25,7 +25,7 @@
 #if MONTE
 #else
 #include<tuple>
-typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
+typedef tuple< int, int, vector<int>, unordered_map<int, hexColors> > maxTuple;
 #endif
 
 class HexGameEngine
