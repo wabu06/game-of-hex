@@ -10,8 +10,6 @@
 #include "HexUI.h"
 
 
-using namespace std;
-
 class HexConsoleUI : public HexUI
 {
 	HexGameEngine* hge;

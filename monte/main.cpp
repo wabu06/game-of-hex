@@ -1,6 +1,3 @@
-#define _HEX
-
-
 //#include<numeric>
 
 #include "HexGameEngine.h"
@@ -12,7 +9,11 @@ int main (int argc, char* argv[])
 {
 	//HexGameEngine game, game1;
 	
-	auto [bs, ui] = parseArgs(argv + 1, argc - 1); // returns board size and user interface
+		// takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
+		// and returns the user selected board size and user interface
+		// improperly formed arguments are ignored, as well as incorrect parameters,
+		// in either case defaults are used
+	auto [bs, ui] = parseArgs(argv + 1, argc - 1); 
 	
 	HexGameEngine game(bs, ui), game1;
 	

@@ -11,10 +11,12 @@
 
 #include<fstream>
 
+#define MONTE1 1
+
 
 using namespace std::chrono;
 
-#if MONTE
+#if MONTE1
 
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove(int shuffleMax)
@@ -120,162 +122,98 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 
 #else
 
-maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-								unordered_map<int, hexColors> colored, bool max);
-{
-	if(unColored.size() == 0)
-		return {0, unColored, colored};
-	
-	for(auto& [cell, color]: colored)
-	{
-		maxBoard.setCellColor(cell, color);
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(cell);
-		
-		if(maxPlayer.getColor() == color)
-		{
-			for(auto& N: neighbors)
-			{
-				if( maxBoard.getCellColor(N) == maxPlayer.getColor() )
-					maxPlayer.connectCells(cell, N);
-			}
-		}
-		
-		if(minPlayer.getColor() == color)
-		{
-			for(auto& N: neighbors)
-			{
-				if( maxBoard.getCellColor(N) == minPlayer.getColor() )
-					minPlayer.connectCells(cell, N);
-			}
-		}	
-	}
-	
-	if(max)
-	{
-		maxBoard.setCellColor(move, maxPlayer.getColor());
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(move);
-		
-		for(auto& N: neighbors)
-		{
-			if( maxBoard.getCellColor(N) == maxPlayer.getColor() )
-				maxPlayer.connectCells(cell, N);
-		}
-		
-		colored[move] = maxPlayer.getColor();
-	}
-	else
-	{
-		minBoard.setCellColor(move, minPlayer.getColor());
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(move);
-		
-		for(auto& N: neighbors)
-		{
-			if( maxBoard.getCellColor(N) == minPlayer.getColor() )
-				minPlayer.connectCells(cell, N);
-		}
-		
-		colored[move] = minPlayer.getColor();
-	}
-
-	if(maxPlayer.win())
-		return {1, move, unColored, colored};
-	
-	if(minPlayer.win())
-		return {-1, move, unColored, colored};
-	
-	maxBoard = board; // reset maxBoard
-	maxPlayer = computer;
-	minPlayer = human;
-	
-	vector<maxTuple> states; // game state in a tree node
-	
-	for(auto& cell: unColored)
-	{
-		vector<int> tmpColored = unColored;
-		
-		remove(tmpColored.begin(), tmpColored.end(), cell);
-		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpColored, cell, colored, !max);
-		states.push_back(state);
-	}
-	
-	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
-	
-	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) < get<int>(t2);
-						};
-	
-	auto greaterThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) > get<int>(t2);
-						};
-	
-	if(max) {
-		auto [val, maxMove, maxUnColored, maxColored] = *max_element(states.begin(), states.end(), lessThan);
-		return {val, move, unColored, colored};
-	}
-	else {
-		auto [val, minMove, minUnColored, minColored] = *min_element(states.begin(), states.end(), greaterThan);
-		return {val, move, unColored, colored};
-	}
-}
-
-	// generates moves via minimax
-int HexGameEngine::genMiniMaxMove()
+	// generates moves via monte carlo simulation
+int HexGameEngine::genMonteMove()
 {
 	int size{ board.getSize() }, cells{size*size};
 	
-	vector<int> vacants;
+	vector<int> vacancies;
 	
 	for(int c = 0; c < cells; c++)
 	{
 		if( board.getCellColor(c) == hexColors::NONE )
-			vacants.push_back(c);
+			vacancies.push_back(c);
 	}
 	
 	hexColors simColor = computer.getColor();
 	
-	HexPlayer maxPlayer(computer), minPlayer(human);
-	HexBoard maxBoard(board);
+	HexPlayer simPlayer(computer);
+	HexBoard simBoard(board);
 	
-	//unordered_map<int, hexColors> colored;
-
-	//auto [val, move, unColored, colored] = getMax(maxPlayer, minPlayer, maxBoard, vacancies, -1, unordered_map<int, hexColors>{}, true);
+	vector<int> simVacancies = vacancies;
 	
-	vector<maxTuple> states; // game state in a tree node
+	random_device rd{"hw"}; mt19937 eng( rd() );
+	
+	hexColors current{ human.getColor() };
+	
+	unordered_map<int,int> winMap; // frequency map of winnning moves
 	
 	auto start = high_resolution_clock::now();
 	
-	for(auto& cell: vacants)
-	{
-		vector<int> tmpVacants = vacants;
+	for(auto& cell: vacancies)
+	{	
+		remove(simVacancies.begin(), simVacancies.end(), cell);
 		
-		remove(tmpVacants.begin(), tmpVacants.end(), cell);
+		for(int reps = 0; reps <= 5000; reps++)
+		{
+			simBoard.setCellColor(cell, simColor); // cell currently under consideration
+			
+			vector<int> neighbors = simBoard.getCellNeighbors(cell);
+							
+			for(auto& N: neighbors) // update computer sim player graph
+			{
+				if( simBoard.getCellColor(N) == simPlayer.getColor() )
+					simPlayer.connectCells(cell, N);
+			}
 		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, false);
-		states.push_back(state);
+			shuffle(simVacancies.begin(), simVacancies.end(), eng);
+
+			for(auto& c: simVacancies)
+			{
+				simBoard.setCellColor(c, current);
+			
+				if( current == human.getColor() )
+					current = simColor;
+				else
+				{
+					vector<int> neighbors = simBoard.getCellNeighbors(c);
+							
+					for(auto& N: neighbors) // update computer sim player graph
+					{
+						if( simBoard.getCellColor(N) == simPlayer.getColor() )
+							simPlayer.connectCells(c, N);
+					}
+					current = human.getColor();
+				}
+			}
+
+			if( simPlayer.win() )
+				++winMap[cell];
+
+				// reset board & player for next round of simulation
+			simPlayer = computer;
+			simBoard = board;
+		}
+		
+		simVacancies.push_back(cell);
 	}
-	
-	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
-	
-	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<int>(t1) < get<int>(t2);
-						};
-	
-	auto [val, move, unColored, colored] = *max_element(states.begin(), states.end(), lessThan);
 	
 	auto stop = high_resolution_clock::now();
 	
 	//duration<double, milli> elapse = stop - start;
 	duration<double> elapse = stop - start;
-
-	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
+	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
+
+	if(winMap.size() < 1)
+		return vacancies.back();
 	
-	return move;
+	auto lessThan = [](const pair<int, int> &e1, const pair<int, int> &e2)->bool { return e1.second < e2.second; };
+	
+	auto mapMax = max_element(winMap.begin(), winMap.end(), lessThan); // get move with the most wins
+	
+	return mapMax->first;
 }
 
 #endif
@@ -284,11 +222,7 @@ void HexGameEngine::playComputer()
 {
 	ui->displayMsg("Computer Takes It's Turn");
 
-#if MONTE
 	int cell { genMonteMove() };
-#else
-	int cell { genMiniMaxMove() };
-#endif
 	 
 	auto size{ board.getSize() };
 	

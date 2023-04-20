@@ -5,8 +5,6 @@
 #include<array>
 //#include<iostream>
 
-#define _HEX
-
 #include "HexPlayer.h"
 
 

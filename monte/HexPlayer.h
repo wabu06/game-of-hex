@@ -6,8 +6,7 @@
 #include "dPath.h"
 #include "bfs.h"
 #include "dfs.h"
-
-#define _HEX
+//#include "rdfs.h"
 
 // 1. start with graph of unconnected nodes
 // 2. everytime a node is colored, check for which neighbors are the same color

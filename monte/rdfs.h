@@ -5,8 +5,8 @@
 
 #include "graph.h"
 
-using namespace std;
 
+using namespace std;
 
 	// Depth First Search, can be used to find winner
 class DFS
@@ -17,31 +17,20 @@ class DFS
 	
 	void visitNodes(int n)
 	{
+		visited[n] = true;
+
 		for(auto& N: dfsGraph.getNeighbors(n))
 		{
 			if( !visited[N] )
-			{
-				visited[N] = true;
 				visitNodes(N);
-			}
 		}
-		
-		return;
 	}
 	
 	public:
-		Dfs( const graph& G = graph() ): dfsGraph(G) {
+		DFS( const graph& G = graph() ): dfsGraph(G), visited( vector<bool>(dfsGraph.getNodeCount(), false) ) {}
 		
-			auto size = dfsGraph.getNodeCount();
-			
-			visited = vector<bool>(size, false);
-		}
-		
-		bool hasPath(int n1, int n2)
-		{
-			visited[n1] = true;
+		bool hasPath(int n1, int n2) {
 			visitNodes(n1);
-
 			return visited[n2];
 		}
 };

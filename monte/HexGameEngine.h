@@ -6,7 +6,7 @@
 #include<random>
 #include<chrono>
 #include<unordered_set>
-#include<tuple>
+//#include<tuple>
 #include<numeric>
 
 //#include "HexPlayer.h"
@@ -20,6 +20,13 @@
 #include "HexCurseUI.h"
 #endif
 
+#define MONTE 1
+
+#if MONTE
+#else
+#include<tuple>
+typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
+#endif
 
 class HexGameEngine
 {
@@ -51,8 +58,13 @@ class HexGameEngine
 			playComputer();
 	}
 
-	//int genMonteMove();
-	int genMonteMove(int shuffleMax = 3600);
+#if MONTE
+	int genMonteMove(int shuffleMax = 1833);
+#else
+	maxTuple getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
+						unordered_map<int, hexColors> colored, bool max);
+	int genMiniMaxMove();
+#endif
 	
 	public:
 		HexGameEngine(int size = 7, const string& uin = "console"): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false),

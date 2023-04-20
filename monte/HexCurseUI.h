@@ -11,8 +11,6 @@
 #include "HexUI.h"
 
 
-using namespace std;
-
 class HexCurseUI : public HexUI
 {
 	HexGameEngine* hge;

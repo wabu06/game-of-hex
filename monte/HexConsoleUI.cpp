@@ -140,11 +140,11 @@ void HexConsoleUI::drawHexBoard()
 				switch( hge->getBoard().getCellColor(r, col) )
 				{
 					case hexColors::BLUE:
-						cout << "B"; //cout << "B\u2650";
+						 cout << "B"; //cout << "\u2650";
 					break;
 					
 					case hexColors::RED:
-						cout << "R"; //cout << "R\u2648";
+						 cout << "R"; //cout << "\u2648";
 					break;
 					
 					default:

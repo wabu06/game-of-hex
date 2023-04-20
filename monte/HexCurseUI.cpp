@@ -91,6 +91,12 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
 	shge = hge;
 	
 	mainwin = initscr();
+	
+	start_color();
+	//init_pair(0, COLOR_WHITE, 0);
+	init_pair(1, COLOR_BLUE, 0);
+	init_pair(2, COLOR_RED, 0);
+	
 	getmaxyx(stdscr, rows, cols);
 			
 	int size = hge->getBoard().getSize();
@@ -270,11 +276,11 @@ void HexCurseUI::drawHexBoard()
 				switch( hge->getBoard().getCellColor(r, cell) )
 				{
 					case hexColors::BLUE:
-						mvwprintw(boardWin, height, width, "B"); //cout << "B\u2650";
+						mvwaddch(boardWin, height, width, 'B' | COLOR_PAIR(1)); // cout << "B\u2650";
 					break;
 					
 					case hexColors::RED:
-						mvwprintw(boardWin, height, width, "R"); //cout << "R\u2648";
+						mvwaddch(boardWin, height, width, 'R' | COLOR_PAIR(2)); // cout << "R\u2648";
 					break;
 					
 					default:
