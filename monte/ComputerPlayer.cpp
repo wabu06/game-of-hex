@@ -235,7 +235,7 @@ int HexGameEngine::genMiniMaxMove()
 			vacants.push_back(c);
 	}
 	
-	hexColors simColor = computer.getColor();
+	//hexColors simColor = computer.getColor();
 	
 	HexPlayer maxPlayer(computer), minPlayer(human);
 	HexBoard maxBoard(board);
@@ -254,7 +254,7 @@ int HexGameEngine::genMiniMaxMove()
 		
 		remove(tmpVacants.begin(), tmpVacants.end(), cell);
 		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, false);
+		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, true);
 		states.push_back(state);
 	}
 	
