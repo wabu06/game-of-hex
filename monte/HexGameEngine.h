@@ -38,7 +38,7 @@ class HexGameEngine
 	bool isInitialized;
 	bool done;
 	
-	int level;
+	int level; // game difficulty level
 	
 	string UIname;
 

@@ -43,7 +43,7 @@ class HexCurseUI : public HexUI
 		
 		static void sigHandler(int sig);
 		
-		int getHumanPlayer() override;
+		pair<int, int> getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
 

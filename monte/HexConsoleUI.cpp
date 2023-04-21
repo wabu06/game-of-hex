@@ -3,7 +3,7 @@
 #include "HexGameEngine.h"
 
 
-int HexConsoleUI::getHumanPlayer()
+pair<int, int> HexConsoleUI::getHumanPlayer()
 {
 	int player;
 			
@@ -53,9 +53,9 @@ int HexConsoleUI::getHumanPlayer()
 	}
 	while( (level != 1) && (level != 2) && (level != 3) );
 	
-	hge->setLevel(level);
+	//hge->setLevel(level);
 			
-	return player;
+	return {player, level};
 }
 
 pair<int, int> HexConsoleUI::getHumanMove()

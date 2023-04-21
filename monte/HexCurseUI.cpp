@@ -33,7 +33,7 @@ void HexCurseUI::sigHandler(int sig)
 	}
 }
 
-int HexCurseUI::getHumanPlayer()
+pair<int, int> HexCurseUI::getHumanPlayer()
 {
 	mvwprintw(inputWin, 1, 1, "1) Blue Player");
 	mvwprintw(inputWin, 2, 1, "2) Red Player");
@@ -72,7 +72,7 @@ int HexCurseUI::getHumanPlayer()
 			
 	noraw();
 			
-	hge->setLevel(level - 48);
+	//hge->setLevel(level - 48);
 			
 	wclear(inputWin);
 	
@@ -83,7 +83,7 @@ int HexCurseUI::getHumanPlayer()
 	box(inputWin, 0, 0);
 	wrefresh(inputWin);
 			
-	return player -= 48; 
+	return {player - 48, level - 48}; 
 }
 
 HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)

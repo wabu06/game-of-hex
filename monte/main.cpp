@@ -9,7 +9,7 @@ int main (int argc, char* argv[])
 {
 	//HexGameEngine game, game1;
 	
-		// takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
+		// the parseArgs function takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
 		// and returns the user selected board size and user interface
 		// improperly formed arguments are ignored, as well as incorrect parameters,
 		// in either case defaults are used
@@ -22,6 +22,9 @@ int main (int argc, char* argv[])
 
 tuple<int, string> parseArgs(char* args[], int len)
 {
+	if(len == 0)
+		return {7, "curse"};
+
 	auto sumchars = [](int s, const char& c) {
 						return s + static_cast<unsigned int>(c);
 					};

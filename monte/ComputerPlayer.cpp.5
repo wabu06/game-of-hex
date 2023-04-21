@@ -188,29 +188,17 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 		
 		if(maxPlayer.getColor() == hexColors::BLUE)
 		{
-			auto crange = (path[path.size() - 1] % bSize) - (path[0] % bSize);
-			
-			crange = crange < 0 ? -1 * crange : crange;
-			
-			return {bSize - crange + 1, move, unColored, colored};
-			
-			/*if( path[0] % bSize == path[path.size() - 1] % bSize )
+			if( path[0] % bSize == path[path.size() - 1] % bSize )
 				return {2, move, unColored, colored};
 			else
-				return {1, move, unColored, colored};*/
+				return {1, move, unColored, colored};
 		}
 		else
 		{
-			auto rrange = (path[path.size() - 1] / bSize) - (path[0] / bSize);
-			
-			rrange = rrange < 0 ? -1 * rrange : rrange;
-			
-			return {bSize - rrange + 1, move, unColored, colored};
-			
-			/*if( path[0] / bSize == path[path.size() - 1] / bSize )
+			if( path[0] / bSize == path[path.size() - 1] / bSize )
 				return {2, move, unColored, colored};
 			else
-				return {1, move, unColored, colored};*/
+				return {1, move, unColored, colored};
 		}
 		
 		//return {1, move, unColored, colored};
@@ -224,29 +212,17 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 		
 		if(minPlayer.getColor() == hexColors::BLUE)
 		{
-			auto crange = (path[path.size() - 1] % bSize) - (path[0] % bSize);
-			
-			crange = crange < 0 ? -1 * crange : crange;
-			
-			return {-1 * (bSize - crange + 1), move, unColored, colored};
-			
-			/*if( (path[0] % bSize) == (path[path.size() - 1] % bSize) )
+			if( (path[0] % bSize) == (path[path.size() - 1] % bSize) )
 				return {-2, move, unColored, colored};
 			else
-				return {-1, move, unColored, colored};*/
+				return {-1, move, unColored, colored};
 		}
 		else
 		{
-			auto rrange = (path[path.size() - 1] / bSize) - (path[0] / bSize);
-			
-			rrange = rrange < 0 ? -1 * rrange : rrange;
-			
-			return {-1 * (bSize - rrange + 1), move, unColored, colored};
-
-			/*if( (path[0] / bSize) == (path[path.size() - 1] / bSize) )
+			if( (path[0] / bSize) == (path[path.size() - 1] / bSize) )
 				return {-2, move, unColored, colored};
 			else
-				return {-1, move, unColored, colored};*/
+				return {-1, move, unColored, colored};
 		}
 		
 		//return {1, move, unColored, colored};

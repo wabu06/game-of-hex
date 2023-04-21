@@ -99,7 +99,9 @@ HexGameEngine& HexGameEngine::initialize()
 			break;
 	}
 
-	int player = ui->getHumanPlayer();
+	auto [player, ilevel] = ui->getHumanPlayer();
+	
+	level = ilevel;
 	
 	int size{ board.getSize() };
 	
