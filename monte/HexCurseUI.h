@@ -13,15 +13,15 @@
 
 class HexCurseUI : public HexUI
 {
-	HexGameEngine* hge;
+	static HexGameEngine* hge;
 	
-	static HexGameEngine* shge;
+	//static HexGameEngine* shge;
 
 	static int rows, cols;
 	
 	char color[5]; // human color
 	
-	WINDOW *mainwin, *boardWin, *banner, *inputWin, *msgWin;
+	static WINDOW *mainwin, *boardWin, *banner, *inputWin, *msgWin;
 	
 	void drawHexBoard();
 	void showWinner(HexPlayer *winner);
@@ -39,9 +39,11 @@ class HexCurseUI : public HexUI
 			endwin();
 		}
 
+		static void sigHandler(int sig);
+		
 		static void resize();
 		
-		static void sigHandler(int sig);
+		static void finish();
 		
 		pair<int, int> getHumanPlayer() override;
 		

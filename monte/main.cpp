@@ -48,6 +48,10 @@ tuple<int, string> parseArgs(char* args[], int len)
 	for(int i = 0; i < len; i++)
 	{
 		auto arg = string(args[i]);
+		
+		if(arg.size() < 3)
+			continue;
+		
 		auto option = arg.substr(0, 3);
 		auto param = arg.substr(3);
 		

@@ -5,7 +5,9 @@
 #include<iostream>
 #include<string>
 
-#include "HexBoard.h"
+//#include "HexBoard.h"
+
+using namespace std;
 
 
 enum class MSGTYPE: unsigned {INFO, WARN, ERROR};

@@ -1,7 +1,11 @@
 #pragma once
 
 
+#define HEX
+
 #include<unordered_set>
+
+#include "HexGameEngine.h"
 
 #include "dPath.h"
 #include "bfs.h"
@@ -15,7 +19,7 @@
 
 using namespace std;
 
-enum class hexColors: unsigned {NONE, RED, BLUE};
+//enum class hexColors: unsigned {NONE, RED, BLUE};
 
 class HexPlayer
 {

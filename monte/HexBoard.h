@@ -1,28 +1,34 @@
 #pragma once
 
 
+#define HEX
+
 #include<vector>
 #include<array>
 //#include<iostream>
 
-#include "HexPlayer.h"
+#include "HexGameEngine.h"
 
+
+using namespace std;
 
 enum class sides: unsigned {L, R, UL, LL, UR, LR};
 
 class HexBoard
 {
-	int size;
+	int size, nones;
+
 	vector< vector<hexColors> > boardCell;
 	
 	public:
-		HexBoard(int S = 0): size(S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
+		HexBoard(int S = 0): size(S), nones(S*S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
 		
-		HexBoard(const HexBoard& brd) : size(brd.size), boardCell(brd.boardCell) {}
+		HexBoard(const HexBoard& brd) : size(brd.size), nones(brd.nones), boardCell(brd.boardCell) {}
 		
 		HexBoard& operator=(const HexBoard& brd) {
 			this->size = brd.size;
 			this->boardCell = brd.boardCell;
+			this->nones = brd.nones;
 			
 			return *this;
 		}
@@ -38,6 +44,10 @@ class HexBoard
 			return size;
 		}
 		
+		int getNoneCount() {
+			return nones;
+		}
+		
 		hexColors getCellColor(int r, int c) {
 			return boardCell[r][c];
 		}
@@ -49,11 +59,13 @@ class HexBoard
 		
 		void setCellColor(int r, int c, hexColors hCC) {
 			boardCell[r][c] = hCC;
+			nones--;
 		}
 		
 		void setCellColor(int n, hexColors hCC) {
 			int r{ n/size }, c{ n%size };
 			boardCell[r][c] = hCC;
+			nones--;
 		}
 		
 		vector<int> getCellNeighbors(int cell)

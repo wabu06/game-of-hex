@@ -1,6 +1,10 @@
 #pragma once
 
 
+enum class hexColors: unsigned {NONE, RED, BLUE};
+
+#ifndef HEX
+
 //#include<stdexcept>
 #include<algorithm>
 #include<random>
@@ -9,8 +13,10 @@
 //#include<tuple>
 #include<numeric>
 
-//#include "HexPlayer.h"
-//#include "HexBoard.h"
+#include<fstream>
+
+#include "HexPlayer.h"
+#include "HexBoard.h"
 
 #ifndef CONSOLE
 #include "HexConsoleUI.h"
@@ -28,6 +34,9 @@
 typedef tuple< int, int, vector<int>, unordered_map<int, hexColors> > maxTuple;
 #endif
 
+
+using namespace std;
+
 class HexGameEngine
 {
 	HexPlayer computer, human, *currentPlayer, *winner;
@@ -41,6 +50,8 @@ class HexGameEngine
 	int level; // game difficulty level
 	
 	string UIname;
+	
+	random_device rd{"/dev/urandom"};
 
 	bool isMoveLegal(int row, int col);
 
@@ -59,10 +70,10 @@ class HexGameEngine
 	}
 
 #if MONTE
-	int genMonteMove(int shuffleMax = 1833);
+	int genMonteMove(int shuffleMax = 2421);
 #else
 	maxTuple getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-						unordered_map<int, hexColors> colored, bool max);
+						unordered_map<int, hexColors> colored, ofstream& fout, int depth, bool max);
 	int genMiniMaxMove();
 #endif
 	
@@ -184,4 +195,7 @@ class HexGameEngine
 			return EXIT_SUCCESS;
 		}
 };
+
+#endif
+
 

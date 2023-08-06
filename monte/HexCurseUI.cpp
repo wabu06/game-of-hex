@@ -3,9 +3,11 @@
 #include "HexGameEngine.h"
 
 
-int HexCurseUI::rows; int HexCurseUI::cols;
+int HexCurseUI::rows, HexCurseUI::cols;
 
-HexGameEngine* HexCurseUI::shge;
+HexGameEngine* HexCurseUI::hge;
+
+WINDOW *HexCurseUI::mainwin, *HexCurseUI::boardWin, *HexCurseUI::banner, *HexCurseUI::inputWin, *HexCurseUI::msgWin;
 
 void HexCurseUI::resize()
 {
@@ -17,14 +19,25 @@ void HexCurseUI::resize()
 	rows = nh; cols = nw;
 }
 
+void HexCurseUI::finish()
+{
+	delwin(msgWin);
+	delwin(inputWin);
+	delwin(banner);
+	delwin(boardWin);
+	delwin(mainwin);
+	endwin();
+			
+	exit( hge->shutdown() );
+}
+
 void HexCurseUI::sigHandler(int sig)
 {
 	switch(sig)
 	{
 		case SIGTERM:
 		case SIGINT:
-			shge->shutdown();
-			//exit(EXIT_SUCCESS);
+			finish();
 		break;
 		
 		case SIGWINCH:
@@ -86,9 +99,9 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 	return {player - 48, level - 48}; 
 }
 
-HexCurseUI::HexCurseUI(HexGameEngine* engine) : hge(engine)
+HexCurseUI::HexCurseUI(HexGameEngine* engine) //: hge(engine)
 {
-	shge = hge;
+	hge = engine;
 	
 	mainwin = initscr();
 	

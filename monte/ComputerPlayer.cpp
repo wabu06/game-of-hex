@@ -9,8 +9,6 @@
 
 #include "HexGameEngine.h"
 
-#include<fstream>
-
 
 using namespace std::chrono;
 
@@ -31,9 +29,9 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 			vacancies.push_back(c);
 	}
 	
-	random_device rd{"hw"}; mt19937 eng( rd() );
+	//random_device rd{"/dev/urandom"}; mt19937 eng( rd() );
 
-	hexColors manColor{ human.getColor() }, cmpColor{ computer.getColor() }, current{ manColor };
+	hexColors manColor{ human.getColor() }, cmpColor{ computer.getColor() }, current{ cmpColor };
 	
 	HexPlayer simPlayer(computer);
 	HexBoard simBoard(board);
@@ -48,7 +46,7 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 	
 	for(int reps = 0; reps <= shuffleMax; reps++)
 	{
-		shuffle(vacancies.begin(), vacancies.end(), eng);
+		shuffle(vacancies.begin(), vacancies.end(), rd);
 		
 		for(auto& c: vacancies)
 		{
@@ -121,8 +119,10 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 #else
 
 maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-								unordered_map<int, hexColors> colored, bool max)
+								unordered_map<int, hexColors> colored, ofstream& fout, int depth, bool max)
 {
+	fout << depth << '\n';
+	
 	if(unColored.size() == 0)
 		return {0, move, unColored, colored};
 	
@@ -180,8 +180,19 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 		colored[move] = minPlayer.getColor();
 	}
 
-	if(maxPlayer.win())
+	if(maxPlayer.win() && max)
 	{
+		//vector<int> path = maxPlayer.winPath();
+		
+		//auto pSum = accumulate(path.begin(), path.end(), (rd() % (board.getSize() + 1))); //path.size());
+		
+		//auto bSize = board.getSize();
+		
+		//return {bSize * bSize - path.size(), move, unColored, colored};
+		return {1, move, unColored, colored};
+	}
+		//return {rd() % (board.getSize() + 1), move, unColored, colored};
+	/*{
 		vector<int> path = maxPlayer.winPath();
 		
 		auto bSize = board.getSize();
@@ -193,11 +204,6 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 			crange = crange < 0 ? -1 * crange : crange;
 			
 			return {bSize - crange + 1, move, unColored, colored};
-			
-			/*if( path[0] % bSize == path[path.size() - 1] % bSize )
-				return {2, move, unColored, colored};
-			else
-				return {1, move, unColored, colored};*/
 		}
 		else
 		{
@@ -206,18 +212,22 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 			rrange = rrange < 0 ? -1 * rrange : rrange;
 			
 			return {bSize - rrange + 1, move, unColored, colored};
-			
-			/*if( path[0] / bSize == path[path.size() - 1] / bSize )
-				return {2, move, unColored, colored};
-			else
-				return {1, move, unColored, colored};*/
 		}
-		
-		//return {1, move, unColored, colored};
-	}
+	}*/
 	
-	if(minPlayer.win())
+	if(minPlayer.win() && !max)
 	{
+		//vector<int> path = minPlayer.winPath();
+		
+		//auto pSum = accumulate(path.begin(), path.end(), (rd() % (board.getSize() + 1))); //path.size());
+
+		//auto bSize = board.getSize();
+		
+		//return {-1 * (bSize * bSize - path.size()), move, unColored, colored};
+		return {-1, move, unColored, colored};
+	}
+		//return {-1 * (rd() % (board.getSize() + 1)), move, unColored, colored};
+	/*{
 		vector<int> path = minPlayer.winPath();
 		
 		auto bSize = board.getSize();
@@ -229,11 +239,6 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 			crange = crange < 0 ? -1 * crange : crange;
 			
 			return {-1 * (bSize - crange + 1), move, unColored, colored};
-			
-			/*if( (path[0] % bSize) == (path[path.size() - 1] % bSize) )
-				return {-2, move, unColored, colored};
-			else
-				return {-1, move, unColored, colored};*/
 		}
 		else
 		{
@@ -242,17 +247,9 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 			rrange = rrange < 0 ? -1 * rrange : rrange;
 			
 			return {-1 * (bSize - rrange + 1), move, unColored, colored};
-
-			/*if( (path[0] / bSize) == (path[path.size() - 1] / bSize) )
-				return {-2, move, unColored, colored};
-			else
-				return {-1, move, unColored, colored};*/
 		}
-		
-		//return {1, move, unColored, colored};
-	}
-		//return {-1, move, unColored, colored};
-	
+	}*/
+
 	maxBoard = board; // reset maxBoard
 	maxPlayer = computer;
 	minPlayer = human;
@@ -265,12 +262,10 @@ maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBo
 		
 		remove(tmpColored.begin(), tmpColored.end(), cell);
 		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpColored, cell, colored, !max);
+		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpColored, cell, colored, fout, depth + 1, !max);
 		states.push_back(state);
 	}
-	
-	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
-	
+
 	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
 							return get<0>(t1) < get<0>(t2);
 						};
@@ -301,17 +296,15 @@ int HexGameEngine::genMiniMaxMove()
 		if( board.getCellColor(c) == hexColors::NONE )
 			vacants.push_back(c);
 	}
-	
-	//hexColors simColor = computer.getColor();
-	
+
 	HexPlayer maxPlayer(computer), minPlayer(human);
 	HexBoard maxBoard(board);
-	
-	//unordered_map<int, hexColors> colored;
 
-	//auto [val, move, unColored, colored] = getMax(maxPlayer, minPlayer, maxBoard, vacancies, -1, unordered_map<int, hexColors>{}, true);
-	
 	vector<maxTuple> states; // game state in a tree node
+	
+	random_device rd{"/dev/urandom"};
+	
+	ofstream fout("depth.txt"); //fout << cells << '\t';
 	
 	auto start = high_resolution_clock::now();
 	
@@ -321,12 +314,10 @@ int HexGameEngine::genMiniMaxMove()
 		
 		remove(tmpVacants.begin(), tmpVacants.end(), cell);
 		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, true);
+		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, fout, 0, true);
 		states.push_back(state);
 	}
-	
-	//typedef tuple<int, int, vector<int>, unordered_map<int, hexColors> maxTuple;
-	
+
 	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
 							return get<0>(t1) < get<0>(t2);
 						};
@@ -337,6 +328,8 @@ int HexGameEngine::genMiniMaxMove()
 	
 	//duration<double, milli> elapse = stop - start;
 	duration<double> elapse = stop - start;
+	
+	fout.close();
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
@@ -361,7 +354,7 @@ void HexGameEngine::playComputer()
 	
 	ui->displayMsg("Computer selects cell (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + ")");
 	
-	board.setCellColor( cell, computer.getColor() ); //, computer);
+	board.setCellColor( cell, computer.getColor() );
 
 	vector<int> neighbors = board.getCellNeighbors(cell);
 		
