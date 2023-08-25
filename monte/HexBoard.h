@@ -33,12 +33,17 @@ class HexBoard
 			return *this;
 		}
 		
-		/*HexBoard operator=(HexBoard&& B) {
-			this->size = B.size;
-			this->boardCell = B.boardCell;
+		HexBoard& operator=(HexBoard&& brd) noexcept // move assignment operator
+		{
+			if(this == &brd)
+				return *this;
+
+			this->size = brd.size;
+			this->boardCell = brd.boardCell;
+			this->nones = brd.nones;
 			
 			return *this;
-		}*/
+		}
 
 		int getSize() {
 			return size;

@@ -81,29 +81,54 @@ class HexGameEngine
 		HexGameEngine(int size = 7, const string& uin = "console"): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false),
 																	done(false), level(3), UIname(uin) {}
 		
-		HexGameEngine(const HexGameEngine& hge): computer(hge.computer), human(hge.human), currentPlayer(hge.currentPlayer),
-												 winner(hge.winner), board(hge.board), ui(hge.ui), isInitialized(hge.isInitialized),
-												 done(hge.done), level(hge.level), UIname(hge.UIname) {}
+		HexGameEngine(const HexGameEngine& hge) : // copy constructor
+			computer(hge.computer),
+			human(hge.human),
+			currentPlayer(hge.currentPlayer),
+			winner(hge.winner),
+			board(hge.board),
+			ui(hge.ui),
+			isInitialized(hge.isInitialized),
+			done(hge.done), level(hge.level),
+			UIname(hge.UIname) {}
+		
+		HexGameEngine(HexGameEngine&& hge) noexcept : // move constructor
+			computer(hge.computer),
+			human(hge.human),
+			currentPlayer(hge.currentPlayer),
+			winner(hge.winner),
+			board(hge.board),
+			ui(hge.ui),
+			isInitialized(hge.isInitialized),
+			done(hge.done), level(hge.level),
+			UIname(hge.UIname)
+			{ delete hge.ui; }
 		
 		~HexGameEngine() {
 			if(ui != nullptr)
 				delete ui;
 		}
 
-		/*HexGameEngine operator=(HexGameEngine&& hge)
+			// move assignment operator
+		HexGameEngine& operator=(HexGameEngine&& hge) noexcept
 		{
+			if(this == &hge)
+				return *this;
+			
 			this->computer = hge.computer;
 			this->human = hge.human;
 			this->currentPlayer = hge.currentPlayer;
 			this->winner = hge.winner;
 			this->board = hge.board;
 			this->ui = hge.ui;
+			delete hge.ui;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
 			
 			return *this;
-		}*/
+		}
 		
+			// copy assignment operator
 		HexGameEngine& operator=(const HexGameEngine& hge)
 		{
 			this->computer = hge.computer;

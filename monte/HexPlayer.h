@@ -42,14 +42,17 @@ class HexPlayer
 			return *this;
 		}
 		
-		/*HexPlayer operator=(HexPlayer&& P)
+		HexPlayer& operator=(HexPlayer&& player) noexcept // move assignment operator
 		{
-			this->bSize = P.bSize;
-			this->color = P.color;
-			this->playGraph = P.playGraph;
+			if(this == &player)
+				return *this;
+
+			this->bSize = player.bSize;
+			this->color = player.color;
+			this->playGraph = player.playGraph;
 			
 			return *this;
-		}*/
+		}
 		
 		hexColors getColor() { return color; }
 		void setColor(hexColors c) { color = c; }
