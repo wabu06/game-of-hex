@@ -9,3 +9,8 @@ core
 test/
 monte/*.o
 monte/hex
+img/
+count.py
+hex.zip
+monte/sub/
+monte/*.txt
