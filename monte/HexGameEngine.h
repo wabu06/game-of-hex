@@ -10,7 +10,7 @@ enum class hexColors: unsigned {NONE, RED, BLUE};
 #include<random>
 #include<chrono>
 #include<unordered_set>
-//#include<tuple>
+#include<tuple>
 #include<numeric>
 
 #include<fstream>
@@ -30,7 +30,7 @@ enum class hexColors: unsigned {NONE, RED, BLUE};
 
 #if MONTE
 #else
-#include<tuple>
+//#include<tuple>
 typedef tuple< int, int, vector<int>, unordered_map<int, hexColors> > maxTuple;
 #endif
 
@@ -52,6 +52,12 @@ class HexGameEngine
 	string UIname;
 	
 	random_device rd{"/dev/urandom"};
+	
+		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
+		// and returns the user selected board size and user interface
+		// improperly formed arguments are ignored, as well as incorrect parameters,
+		// in either case defaults are used
+	tuple<int, string> parseArgs(int len, char* args[]);
 	
 	bool initialize();
 
@@ -80,11 +86,14 @@ class HexGameEngine
 #endif
 	
 	public:
-		HexGameEngine(int size = 7, const string& uin = "console"):
-			winner(nullptr),
-			board( HexBoard(size) ),
-			ui(nullptr), isInitialized(false),
-			done(false), level(3), UIname(uin) {}
+		HexGameEngine(int argc = 1, char** argv = nullptr):
+			winner(nullptr), ui(nullptr),
+			isInitialized(false), done(false),
+			level(3) {
+						auto [bs, uin] = parseArgs(argc, argv);
+						board = HexBoard(bs);
+						UIname = uin;
+					 }
 		
 		HexGameEngine(const HexGameEngine& hge) : // copy constructor
 			computer(hge.computer),

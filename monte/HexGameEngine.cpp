@@ -1,6 +1,62 @@
 #include "HexGameEngine.h"
 
 
+
+tuple<int, string> HexGameEngine::parseArgs(int len, char* args[])
+{
+	if(len < 2)
+		return {7, "curse"};
+
+	auto sumchars = [](int s, const char& c) {
+						return s + static_cast<unsigned int>(c);
+					};
+	
+	auto toLowerCase = [](char& c) {
+							c = tolower( c, locale("en_US.UTF8") );
+						};
+	
+	auto digchk = [](const char& c)->bool {
+							return isdigit(c, locale("en_US.UTF8"));
+						};
+	
+	auto allDigits = [digchk](const string& arg)->bool {
+							return all_of(arg.begin(), arg.end(), digchk);
+						};
+
+	len -= 1; args += 1;
+
+	int bSize{7}; string ui("curse");
+	
+	unordered_set<string> uiSet = {"console", "curse"};
+	
+	for(int i = 0; i < len; i++)
+	{
+		auto arg = string(args[i]);
+		
+		if(arg.size() < 3)
+			continue;
+		
+		auto option = arg.substr(0, 3);
+		auto param = arg.substr(3);
+		
+		for_each(option.begin(), option.end(), toLowerCase);
+		auto optv = accumulate(option.begin(), option.end(), 0, sumchars);
+		
+		switch(optv)
+		{
+			case 274: // bs=
+				bSize = allDigits(param) ? stoi(param, nullptr) : 7;
+			break;
+			
+			case 283: // ui=
+				ui = uiSet.count(param) == 1 ? param : ui;
+			break;
+		}
+	}
+
+	return {bSize, ui};
+}
+
 void HexGameEngine::playHuman()
 {
 	// pair<int, int> move;
