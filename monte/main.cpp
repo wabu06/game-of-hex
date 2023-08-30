@@ -5,10 +5,9 @@
 
 int main (int argc, char* argv[])
 {
-	//HexGameEngine game, game1;
 	//auto [bs, ui] = parseArgs(argv + 1, argc - 1); 
 	
-	HexGameEngine game(argc, argv), game1;
+	HexGameEngine game(argc, argv), game1; game1(11, "console");
 	
 	return game.run().shutdown();
 }

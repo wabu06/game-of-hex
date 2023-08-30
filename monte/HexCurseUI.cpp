@@ -57,12 +57,18 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 			
 	int player = wgetch(inputWin);
 	wrefresh(inputWin);
+	
+	if(player == 27) // end program if <esc> key is pressed
+			finish();
 			
 	while(player != 49 && player != 50) {
 		mvwprintw(inputWin, 4, 1, "==>Invalid choice, Enter 1 or 2: ");
 		wrefresh(inputWin);
 
 		player = wgetch(inputWin);
+		
+		if(player == 27) // end program if <esc> key is pressed
+			finish();
 	}
 			
 	wclear(inputWin);
@@ -75,12 +81,18 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 
 	int level = wgetch(inputWin);
 	wrefresh(inputWin);
+	
+	if(level == 27) // end program if <esc> key is pressed
+			finish();
 			
 	while(level != 49 && level != 50 && level != 51) {
 		mvwprintw(inputWin, 5, 1, "==>Invalid choice, Enter 1, 2, or 3: ");
 		wrefresh(inputWin);
 
 		level = wgetch(inputWin);
+		
+		if(level == 27) // end program if <esc> key is pressed
+			finish();
 	}
 			
 	noraw();

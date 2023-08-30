@@ -154,6 +154,8 @@ bool HexGameEngine::initialize()
 				ui = new HexCurseUI(this);
 			break;
 	}
+	
+	isInitialized = true;
 
 	auto [player, ilevel] = ui->getHumanPlayer();
 	
@@ -173,9 +175,7 @@ bool HexGameEngine::initialize()
 		computer = HexPlayer(hexColors::BLUE, size);
 		currentPlayer = &computer;
 	}
-	
-	isInitialized = true;
-	
+
 	return isInitialized;
 }
 

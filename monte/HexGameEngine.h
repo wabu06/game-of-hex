@@ -1,7 +1,24 @@
 #pragma once
 
 
+
+#include<functional>
+
+
+using namespace std;
+
 enum class hexColors: unsigned {NONE, RED, BLUE};
+
+template<>
+struct hash<hexColors>
+{
+	size_t operator() (hexColors const& hc) const noexcept
+	{
+		hash<int> cHash;
+
+		return cHash(1 ^ 2 ^ 3);
+	}
+};
 
 #ifndef HEX
 
@@ -11,7 +28,6 @@ enum class hexColors: unsigned {NONE, RED, BLUE};
 #include<chrono>
 #include<unordered_set>
 #include<tuple>
-#include<numeric>
 
 #include<fstream>
 
@@ -35,7 +51,23 @@ typedef tuple< int, int, vector<int>, unordered_map<int, hexColors> > maxTuple;
 #endif
 
 
-using namespace std;
+struct GameState
+{
+	HexPlayer computer, human;
+	HexBoard board;
+	int value;
+};
+
+template<>
+struct hash<GameState>
+{
+	size_t operator() (GameState const& gs) const noexcept
+	{
+		hash<int> ptrHash;
+
+		return ptrHash(gs.value ^ (long) &gs.computer ^ (long) &gs.human ^ (long) &gs.board);
+	}
+};
 
 class HexGameEngine
 {
@@ -193,6 +225,17 @@ class HexGameEngine
 		
 		void setLevel(int L) {
 			level = L;
+		}
+
+		HexGameEngine& operator() (int bs = 7, string uin = "curse")
+		{
+			if(done)
+				throw string("\nGame Currently Running\n");
+			
+			UIname = unordered_set<string>{"console", "curse"}.count(uin) == 1 ? uin : "curse";
+			board = HexBoard(bs);
+			
+			return *this;
 		}
 
 		HexGameEngine& run()
