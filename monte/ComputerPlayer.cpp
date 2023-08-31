@@ -126,7 +126,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, bool max)
 	
 	auto size { hgs.board.getSize() };
 	
-	unordered_set<GameState> hgsSet;
+	vector<GameState> hgsV;
 	
 		// get all possible states relative to current state
 	for(int c = 0; c < size*size; c++)
@@ -178,14 +178,14 @@ GameState HexGameEngine::getMinMax(GameState hgs, bool max)
 				}
 			}
 			
-			hgsSet.insert(mmhgs);
+			hgsV.push_back(mmhgs);
 		}
 	}
 	
 	GameState cmpHGS; cmpHGS.value = 0;
 	
 		// compare states to get max or min
-	for(const auto& gs: hgsSet)
+	for(const auto& gs: hgsV)
 	{
 		if(gs.value == -1)
 		{
