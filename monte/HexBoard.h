@@ -44,6 +44,10 @@ class HexBoard
 			
 			return *this;
 		}
+		
+		vector< vector<hexColors> > getCells() {
+			return boardCell;
+		}
 
 		int getSize() {
 			return size;

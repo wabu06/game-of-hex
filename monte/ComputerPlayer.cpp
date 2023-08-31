@@ -118,224 +118,133 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 
 #else
 
-maxTuple HexGameEngine::getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-								unordered_map<int, hexColors> colored, ofstream& fout, int depth, bool max)
+GameState HexGameEngine::getMinMax(GameState hgs, bool max)
 {
-	fout << depth << '\n';
+	//fout << depth << '\n';
 	
-	if(unColored.size() == 0)
-		return {0, move, unColored, colored};
+	const bool thisMax{max};
 	
-	for(auto& [cell, color]: colored)
-	{
-		maxBoard.setCellColor(cell, color);
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(cell);
-		
-		if(maxPlayer.getColor() == color)
-		{
-			for(auto& N: neighbors)
-			{
-				if( maxBoard.getCellColor(N) == maxPlayer.getColor() )
-					maxPlayer.connectCells(cell, N);
-			}
-		}
-		
-		if(minPlayer.getColor() == color)
-		{
-			for(auto& N: neighbors)
-			{
-				if( maxBoard.getCellColor(N) == minPlayer.getColor() )
-					minPlayer.connectCells(cell, N);
-			}
-		}	
-	}
+	auto size { hgs.board.getSize() };
 	
-	if(max)
+	unordered_set<GameState> hgsSet;
+	
+		// get all possible states relative to current state
+	for(int c = 0; c < size*size; c++)
 	{
-		maxBoard.setCellColor(move, maxPlayer.getColor());
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(move);
-		
-		for(auto& N: neighbors)
+		if(hgs.board.getCellColor(c) == hexColors::NONE)
 		{
-			if( maxBoard.getCellColor(N) == maxPlayer.getColor() )
-				maxPlayer.connectCells(move, N);
-		}
-		
-		colored[move] = maxPlayer.getColor();
-	}
-	else
-	{
-		maxBoard.setCellColor(move, minPlayer.getColor());
-		
-		vector<int> neighbors = maxBoard.getCellNeighbors(move);
-		
-		for(auto& N: neighbors)
-		{
-			if( maxBoard.getCellColor(N) == minPlayer.getColor() )
-				minPlayer.connectCells(move, N);
-		}
-		
-		colored[move] = minPlayer.getColor();
-	}
-
-	if(maxPlayer.win() && max)
-	{
-		//vector<int> path = maxPlayer.winPath();
-		
-		//auto pSum = accumulate(path.begin(), path.end(), (rd() % (board.getSize() + 1))); //path.size());
-		
-		//auto bSize = board.getSize();
-		
-		//return {bSize * bSize - path.size(), move, unColored, colored};
-		return {1, move, unColored, colored};
-	}
-		//return {rd() % (board.getSize() + 1), move, unColored, colored};
-	/*{
-		vector<int> path = maxPlayer.winPath();
-		
-		auto bSize = board.getSize();
-		
-		if(maxPlayer.getColor() == hexColors::BLUE)
-		{
-			auto crange = (path[path.size() - 1] % bSize) - (path[0] % bSize);
+			GameState mmhgs = hgs;
 			
-			crange = crange < 0 ? -1 * crange : crange;
+			mmhgs.cell = c;
 			
-			return {bSize - crange + 1, move, unColored, colored};
+			if(thisMax)
+			{
+				mmhgs.board.setCellColor(c, hgs.computer.getColor());
+				
+				auto neighbors = mmhgs.board.getCellNeighbors(c);
+				
+				for(auto& n: neighbors)
+				{
+					if(mmhgs.board.getCellColor(n) == mmhgs.computer.getColor())
+						mmhgs.computer.connectCells(c, n);
+				}
+				
+				if( mmhgs.computer.win() )
+					mmhgs.value = 2;
+				else
+				{
+					if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 1;
+				}
+			}
+			else
+			{
+				mmhgs.board.setCellColor(c, hgs.human.getColor());
+				
+				auto neighbors = mmhgs.board.getCellNeighbors(c);
+				
+				for(auto& n: neighbors)
+				{
+					if(mmhgs.board.getCellColor(n) == mmhgs.human.getColor())
+						mmhgs.human.connectCells(c, n);
+				}
+				
+				if( mmhgs.human.win() )
+					mmhgs.value = 0;
+				else
+				{
+					if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 1;
+				}
+			}
+			
+			hgsSet.insert(mmhgs);
+		}
+	}
+	
+	GameState cmpHGS; cmpHGS.value = 0;
+	
+		// compare states to get max or min
+	for(const auto& gs: hgsSet)
+	{
+		if(gs.value == -1)
+		{
+			max = max ? false : true;
+			
+			GameState rgs = getMinMax(gs, max);
+			
+			if(thisMax)
+			{
+				if(rgs.value > cmpHGS.value)
+					cmpHGS = rgs;
+			}
+			else
+			{
+				if(rgs.value < cmpHGS.value)
+					cmpHGS = rgs;
+			}
 		}
 		else
 		{
-			auto rrange = (path[path.size() - 1] / bSize) - (path[0] / bSize);
-			
-			rrange = rrange < 0 ? -1 * rrange : rrange;
-			
-			return {bSize - rrange + 1, move, unColored, colored};
+			if(thisMax)
+			{
+				if(gs.value > cmpHGS.value)
+					cmpHGS = gs;
+			}
+			else
+			{
+				if(gs.value < cmpHGS.value)
+					cmpHGS = gs;
+			}
 		}
-	}*/
-	
-	if(minPlayer.win() && !max)
-	{
-		//vector<int> path = minPlayer.winPath();
-		
-		//auto pSum = accumulate(path.begin(), path.end(), (rd() % (board.getSize() + 1))); //path.size());
-
-		//auto bSize = board.getSize();
-		
-		//return {-1 * (bSize * bSize - path.size()), move, unColored, colored};
-		return {-1, move, unColored, colored};
-	}
-		//return {-1 * (rd() % (board.getSize() + 1)), move, unColored, colored};
-	/*{
-		vector<int> path = minPlayer.winPath();
-		
-		auto bSize = board.getSize();
-		
-		if(minPlayer.getColor() == hexColors::BLUE)
-		{
-			auto crange = (path[path.size() - 1] % bSize) - (path[0] % bSize);
-			
-			crange = crange < 0 ? -1 * crange : crange;
-			
-			return {-1 * (bSize - crange + 1), move, unColored, colored};
-		}
-		else
-		{
-			auto rrange = (path[path.size() - 1] / bSize) - (path[0] / bSize);
-			
-			rrange = rrange < 0 ? -1 * rrange : rrange;
-			
-			return {-1 * (bSize - rrange + 1), move, unColored, colored};
-		}
-	}*/
-
-	maxBoard = board; // reset maxBoard
-	maxPlayer = computer;
-	minPlayer = human;
-	
-	vector<maxTuple> states; // game state in a tree node
-	
-	for(auto& cell: unColored)
-	{
-		vector<int> tmpColored = unColored;
-		
-		remove(tmpColored.begin(), tmpColored.end(), cell);
-		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpColored, cell, colored, fout, depth + 1, !max);
-		states.push_back(state);
 	}
 
-	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<0>(t1) < get<0>(t2);
-						};
-	
-	auto greaterThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<0>(t1) > get<0>(t2);
-						};
-	
-	if(max) {
-		auto [val, maxMove, maxUnColored, maxColored] = *max_element(states.begin(), states.end(), lessThan);
-		return {val, move, unColored, colored};
-	}
-	else {
-		auto [val, minMove, minUnColored, minColored] = *min_element(states.begin(), states.end(), greaterThan);
-		return {val, move, unColored, colored};
-	}
+	return cmpHGS;
 }
-
 	// generates moves via minimax
 int HexGameEngine::genMiniMaxMove()
 {
-	int size{ board.getSize() }, cells{size*size};
-	
-	vector<int> vacants;
-	
-	for(int c = 0; c < cells; c++)
-	{
-		if( board.getCellColor(c) == hexColors::NONE )
-			vacants.push_back(c);
-	}
-
-	HexPlayer maxPlayer(computer), minPlayer(human);
-	HexBoard maxBoard(board);
-
-	vector<maxTuple> states; // game state in a tree node
-	
-	random_device rd{"/dev/urandom"};
-	
-	ofstream fout("depth.txt"); //fout << cells << '\t';
+	GameState hgs = {computer, human, board, -1, -1};
 	
 	auto start = high_resolution_clock::now();
 	
-	for(auto& cell: vacants)
-	{
-		vector<int> tmpVacants = vacants;
-		
-		remove(tmpVacants.begin(), tmpVacants.end(), cell);
-		
-		auto state = getMax(maxPlayer, minPlayer, maxBoard, tmpVacants, cell, unordered_map<int, hexColors>{}, fout, 0, true);
-		states.push_back(state);
-	}
-
-	auto lessThan = [](const maxTuple t1, const maxTuple t2)->bool {
-							return get<0>(t1) < get<0>(t2);
-						};
-	
-	auto [val, move, unColored, colored] = *max_element(states.begin(), states.end(), lessThan);
+	auto state = getMinMax(hgs, true);
 	
 	auto stop = high_resolution_clock::now();
 	
 	//duration<double, milli> elapse = stop - start;
 	duration<double> elapse = stop - start;
-	
-	fout.close();
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
 	
-	return move;
+	return state.cell;
+
+	//random_device rd{"/dev/urandom"};
+	
+	//ofstream fout("depth.txt"); //fout << cells << '\t';
+	//fout.close();
 }
 
 #endif

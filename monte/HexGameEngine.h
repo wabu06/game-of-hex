@@ -42,12 +42,10 @@ struct hash<hexColors>
 #include "HexCurseUI.h"
 #endif
 
-#define MONTE 1
+#define MONTE 0
 
 #if MONTE
 #else
-//#include<tuple>
-typedef tuple< int, int, vector<int>, unordered_map<int, hexColors> > maxTuple;
 #endif
 
 
@@ -55,7 +53,22 @@ struct GameState
 {
 	HexPlayer computer, human;
 	HexBoard board;
-	int value;
+	int cell, value;
+	
+	GameState& operator=(const GameState& hgs)
+	{
+		computer = hgs.computer;
+		human = hgs.human;
+		board = hgs.board;
+		cell = hgs.cell;
+		value = hgs.value;
+		
+		return *this;
+	}
+	
+	bool operator==(const GameState& hgs) const {
+		return cell == hgs.cell && value == hgs.value && &computer == &hgs.computer && &human == &hgs.human && &board == &hgs.board;
+	}
 };
 
 template<>
@@ -112,8 +125,7 @@ class HexGameEngine
 #if MONTE
 	int genMonteMove(int shuffleMax = 2421);
 #else
-	maxTuple getMax(HexPlayer& maxPlayer, HexPlayer& minPlayer, HexBoard& maxBoard, vector<int> unColored, int move,
-						unordered_map<int, hexColors> colored, ofstream& fout, int depth, bool max);
+	GameState getMinMax(GameState hgs, bool max);
 	int genMiniMaxMove();
 #endif
 	
