@@ -44,10 +44,6 @@ struct hash<hexColors>
 
 #define MONTE 0
 
-#if MONTE
-#else
-#endif
-
 
 struct GameState
 {
@@ -78,7 +74,7 @@ struct hash<GameState>
 	{
 		hash<int> ptrHash;
 
-		return ptrHash(gs.value ^ (long) &gs.computer ^ (long) &gs.human ^ (long) &gs.board);
+		return ptrHash(gs.cell ^ gs.value ^ (long) &gs.computer ^ (long) &gs.human ^ (long) &gs.board);
 	}
 };
 
@@ -97,7 +93,13 @@ class HexGameEngine
 	string UIname;
 	
 	random_device rd{"/dev/urandom"};
-	
+
+#if MONTE
+	const string algo = "monte";
+#else
+	const string algo = "minmax";
+#endif
+
 		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
 		// and returns the user selected board size and user interface
 		// improperly formed arguments are ignored, as well as incorrect parameters,
@@ -132,7 +134,7 @@ class HexGameEngine
 	public:
 		HexGameEngine(int argc = 1, char** argv = nullptr):
 			winner(nullptr), ui(nullptr),
-			isInitialized(false), done(false),
+			isInitialized(false), done(true),
 			level(3) {
 						auto [bs, uin] = parseArgs(argc, argv);
 						board = HexBoard(bs);
@@ -241,7 +243,7 @@ class HexGameEngine
 
 		HexGameEngine& operator() (int bs = 7, string uin = "curse")
 		{
-			if(done)
+			if(!done)
 				throw string("\nGame Currently Running\n");
 			
 			UIname = unordered_set<string>{"console", "curse"}.count(uin) == 1 ? uin : "curse";

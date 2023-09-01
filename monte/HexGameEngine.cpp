@@ -156,6 +156,7 @@ bool HexGameEngine::initialize()
 	}
 	
 	isInitialized = true;
+	done = false;
 
 	auto [player, ilevel] = ui->getHumanPlayer();
 	
