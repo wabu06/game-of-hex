@@ -3,7 +3,8 @@
 #include "HexGameEngine.h"
 
 
-pair<int, int> HexConsoleUI::getHumanPlayer()
+//pair<int, int> HexConsoleUI::getHumanPlayer()
+int HexConsoleUI::getHumanPlayer()
 {
 	int player;
 			
@@ -29,7 +30,7 @@ pair<int, int> HexConsoleUI::getHumanPlayer()
 	}
 	while( (player != 1) && (player != 2) );
 			
-	int level;
+	/*int level;
 			
 	do
 	{	cout << "\n3) Expert\n2) Intermediate\n1) Beginner\n" << "\n==>Enter 1, 2, or 3: ";
@@ -51,11 +52,13 @@ pair<int, int> HexConsoleUI::getHumanPlayer()
 		if(badstr.size() > 0)
 			level = -1;
 	}
-	while( (level != 1) && (level != 2) && (level != 3) );
+	while( (level != 1) && (level != 2) && (level != 3) );*/
 	
 	//hge->setLevel(level);
 			
-	return {player, level};
+	//return {player, level};
+	
+	return player;
 }
 
 pair<int, int> HexConsoleUI::getHumanMove()

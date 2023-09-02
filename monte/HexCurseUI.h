@@ -45,7 +45,8 @@ class HexCurseUI : public HexUI
 		
 		static void finish();
 		
-		pair<int, int> getHumanPlayer() override;
+		//pair<int, int> getHumanPlayer() override;
+		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
 

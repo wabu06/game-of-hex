@@ -24,7 +24,7 @@ class HexConsoleUI : public HexUI
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 		}
 		
-		pair<int, int> getHumanPlayer() override;
+		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
 		

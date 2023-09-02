@@ -46,7 +46,8 @@ void HexCurseUI::sigHandler(int sig)
 	}
 }
 
-pair<int, int> HexCurseUI::getHumanPlayer()
+//pair<int, int> HexCurseUI::getHumanPlayer()
+int HexCurseUI::getHumanPlayer()
 {
 	mvwprintw(inputWin, 1, 1, "1) Blue Player");
 	mvwprintw(inputWin, 2, 1, "2) Red Player");
@@ -71,7 +72,7 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 			finish();
 	}
 			
-	wclear(inputWin);
+	/*wclear(inputWin);
 	mvwprintw(inputWin, 1, 1, "3) Expert");
 	mvwprintw(inputWin, 2, 1, "2) Intermediate");
 	mvwprintw(inputWin, 3, 1, "1) Beginner");
@@ -93,7 +94,7 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 		
 		if(level == 27) // end program if <esc> key is pressed
 			finish();
-	}
+	}*/
 			
 	noraw();
 			
@@ -108,7 +109,9 @@ pair<int, int> HexCurseUI::getHumanPlayer()
 	box(inputWin, 0, 0);
 	wrefresh(inputWin);
 			
-	return {player - 48, level - 48}; 
+	//return {player - 48, level - 48};
+	
+	return player; 
 }
 
 HexCurseUI::HexCurseUI(HexGameEngine* engine) //: hge(engine)

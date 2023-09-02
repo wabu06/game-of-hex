@@ -28,6 +28,7 @@ struct hash<hexColors>
 #include<chrono>
 #include<unordered_set>
 #include<tuple>
+#include<cmath>
 
 #include<fstream>
 
@@ -98,6 +99,7 @@ class HexGameEngine
 	const string algo = "monte";
 #else
 	const string algo = "minmax";
+	float depth{3};
 #endif
 
 		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
@@ -127,7 +129,7 @@ class HexGameEngine
 #if MONTE
 	int genMonteMove(int shuffleMax = 2421);
 #else
-	GameState getMinMax(GameState hgs, bool max);
+	GameState getMinMax(GameState hgs, int depth = -1, bool max = true);
 	int genMiniMaxMove();
 #endif
 	
@@ -244,7 +246,7 @@ class HexGameEngine
 		HexGameEngine& operator() (int bs = 7, string uin = "curse")
 		{
 			if(!done)
-				throw string("\nGame Currently Running\n");
+				throw string("\nERROR: Altering parameters not allowed while game is running!!\n");
 			
 			UIname = unordered_set<string>{"console", "curse"}.count(uin) == 1 ? uin : "curse";
 			board = HexBoard(bs);

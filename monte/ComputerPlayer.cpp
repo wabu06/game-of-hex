@@ -17,7 +17,7 @@ using namespace std::chrono;
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove(int shuffleMax)
 {
-	shuffleMax = level * shuffleMax / 3;
+	//shuffleMax = level * shuffleMax / 3;
 	
 	int size{ board.getSize() }, cells{size*size};
 	
@@ -118,7 +118,7 @@ int HexGameEngine::genMonteMove(int shuffleMax)
 
 #else
 
-GameState HexGameEngine::getMinMax(GameState hgs, bool max)
+GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 {
 	//fout << depth << '\n';
 	
@@ -191,7 +191,14 @@ GameState HexGameEngine::getMinMax(GameState hgs, bool max)
 		{
 			max = max ? false : true;
 			
-			GameState rgs = getMinMax(gs, max);
+			GameState rgs;
+			
+			if(depth == 0) {
+				rgs = gs;
+				rgs.value = 1;
+			}
+			else
+				rgs = getMinMax(gs, depth - 1, max);
 			
 			if(thisMax)
 			{
@@ -226,9 +233,15 @@ int HexGameEngine::genMiniMaxMove()
 {
 	GameState hgs = {computer, human, board, -1, -1};
 	
+	auto size = board.getSize();
+	
+	//auto depth = floor( log10(450000000) / log10(size * size) );
+	
+	ui->displayMsg("depth is: " + to_string(depth) );
+	
 	auto start = high_resolution_clock::now();
 	
-	auto state = getMinMax(hgs, true);
+	auto state = getMinMax(hgs, (int) floor(depth), true);
 	
 	auto stop = high_resolution_clock::now();
 	
@@ -236,6 +249,8 @@ int HexGameEngine::genMiniMaxMove()
 	duration<double> elapse = stop - start;
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
+	
+	depth += 1.0 / 3.0;
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
 	

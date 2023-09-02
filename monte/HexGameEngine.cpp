@@ -158,9 +158,11 @@ bool HexGameEngine::initialize()
 	isInitialized = true;
 	done = false;
 
-	auto [player, ilevel] = ui->getHumanPlayer();
+	//auto [player, ilevel] = ui->getHumanPlayer();
 	
-	level = ilevel;
+	auto player = ui->getHumanPlayer();
+	
+	//level = ilevel;
 	
 	int size{ board.getSize() };
 	

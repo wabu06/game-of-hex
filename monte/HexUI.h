@@ -20,7 +20,8 @@ class HexUI
 		HexUI() {}
 		virtual ~HexUI() {}
 	
-		virtual pair<int, int> getHumanPlayer() = 0;
+		//virtual pair<int, int> getHumanPlayer() = 0;
+		virtual int getHumanPlayer() = 0;
 		virtual pair<int, int> getHumanMove() = 0;
 		virtual void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) = 0;
 		virtual void updateUI() = 0;
