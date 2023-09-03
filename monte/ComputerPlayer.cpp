@@ -149,13 +149,13 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 						mmhgs.computer.connectCells(c, n);
 				}
 				
-				if( mmhgs.computer.win() )
-					mmhgs.value = 2;
-				else
-				{
-					if(mmhgs.board.getNoneCount() == 0) // draw
-						mmhgs.value = 1;
+				if( mmhgs.computer.win() ) {
+					mmhgs.value = 3;
+					return mmhgs;
 				}
+				else
+					{ if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 2; }
 			}
 			else
 			{
@@ -169,13 +169,13 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 						mmhgs.human.connectCells(c, n);
 				}
 				
-				if( mmhgs.human.win() )
+				if( mmhgs.human.win() ) {
 					mmhgs.value = 0;
-				else
-				{
-					if(mmhgs.board.getNoneCount() == 0) // draw
-						mmhgs.value = 1;
+					return mmhgs;
 				}
+				else
+					{ if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 2; }
 			}
 			
 			hgsV.push_back(mmhgs);
@@ -187,7 +187,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 		// compare states to get max or min
 	for(const auto& gs: hgsV)
 	{
-		if(gs.value == -1)
+		if(gs.value == -1) // state without a value
 		{
 			max = max ? false : true;
 			
@@ -207,7 +207,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 			}
 			else
 			{
-				if(rgs.value < cmpHGS.value)
+				if(rgs.value <= cmpHGS.value)
 					cmpHGS = rgs;
 			}
 		}
@@ -220,7 +220,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 			}
 			else
 			{
-				if(gs.value < cmpHGS.value)
+				if(gs.value <= cmpHGS.value)
 					cmpHGS = gs;
 			}
 		}
@@ -242,6 +242,7 @@ int HexGameEngine::genMiniMaxMove()
 	auto start = high_resolution_clock::now();
 	
 	auto state = getMinMax(hgs, (int) floor(depth), true);
+	//auto state = getMinMax(hgs, -1, true);
 	
 	auto stop = high_resolution_clock::now();
 	

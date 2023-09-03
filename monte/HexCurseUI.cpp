@@ -111,7 +111,7 @@ int HexCurseUI::getHumanPlayer()
 			
 	//return {player - 48, level - 48};
 	
-	return player; 
+	return player - 48; 
 }
 
 HexCurseUI::HexCurseUI(HexGameEngine* engine) //: hge(engine)
