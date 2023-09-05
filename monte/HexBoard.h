@@ -17,11 +17,13 @@ enum class sides: unsigned {L, R, UL, LL, UR, LR};
 class HexBoard
 {
 	int size, nones;
+	int trc, brc, lcc, rcc; // top row, bottom row, left column, & right column color counts
 
 	vector< vector<hexColors> > boardCell;
 	
 	public:
-		HexBoard(int S = 0): size(S), nones(S*S), boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
+		HexBoard(int S = 0): size(S), nones(S*S), trc(S), brc(S), lcc(S), rcc(S),
+							 boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
 		
 		HexBoard(const HexBoard& brd) : size(brd.size), nones(brd.nones), boardCell(brd.boardCell) {}
 		
@@ -33,7 +35,7 @@ class HexBoard
 			return *this;
 		}
 		
-		HexBoard& operator=(HexBoard&& brd) noexcept // move assignment operator
+		HexBoard& operator=(const HexBoard&& brd) noexcept // move assignment operator
 		{
 			if(this == &brd)
 				return *this;
@@ -66,15 +68,55 @@ class HexBoard
 			return boardCell[r][c];
 		}
 		
-		void setCellColor(int r, int c, hexColors hCC) {
+		void setCellColor(int r, int c, hexColors hCC)
+		{
 			boardCell[r][c] = hCC;
 			nones--;
+			
+			if(r-1 < 0)
+				trc--;
+			
+			if(r+1 > size-1)
+				brc--;
+			
+			if(c-1 < 0)
+				lcc--;
+			
+			if(c+1 > size-1)
+				rcc--;
 		}
 		
-		void setCellColor(int n, hexColors hCC) {
+		void setCellColor(int n, hexColors hCC)
+		{
 			int r{ n/size }, c{ n%size };
+			
 			boardCell[r][c] = hCC;
 			nones--;
+			
+			if(r-1 < 0)
+				trc--;
+			
+			if(r+1 > size-1)
+				brc--;
+			
+			if(c-1 < 0)
+				lcc--;
+			
+			if(c+1 > size-1)
+				rcc--;
+				
+		}
+		
+		bool gotDraw()
+		{
+			if( ((trc <= 0) || (brc <= 0)) && ((lcc <= 0) || (rcc <=0)) )
+				return true;
+			else
+				return false;
+		}
+		
+		tuple<int, int, int, int> getColorCounts() {
+			return {trc, brc, lcc, rcc};
 		}
 		
 		vector<int> getCellNeighbors(int cell)
@@ -94,9 +136,9 @@ class HexBoard
 			return neighbors;
 		}
 		
-		vector<int> getBlueNeighbors(int cell);
+		//vector<int> getBlueNeighbors(int cell);
 		
-		vector<int> getRedNeighbors(int cell);
+		//vector<int> getRedNeighbors(int cell);
 		
 		int getCellNeighbor(int n, sides S);
 };

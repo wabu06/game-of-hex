@@ -35,7 +35,7 @@ int HexBoard::getCellNeighbor(int cell, sides S)
 	return n;
 }
 
-vector<int> HexBoard::getBlueNeighbors(int cell)
+/*vector<int> HexBoard::getBlueNeighbors(int cell)
 {
 	vector<int> neighbors = vector<int>();
 	
@@ -67,5 +67,5 @@ vector<int> HexBoard::getRedNeighbors(int cell)
 	}
 			
 	return neighbors;
-}
+}*/
 

@@ -42,7 +42,7 @@ class HexPlayer
 			return *this;
 		}
 		
-		HexPlayer& operator=(HexPlayer&& player) noexcept // move assignment operator
+		HexPlayer& operator=(const HexPlayer&& player) noexcept // move assignment operator
 		{
 			if(this == &player)
 				return *this;

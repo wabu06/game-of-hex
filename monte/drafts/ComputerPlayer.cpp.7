@@ -122,13 +122,11 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 {
 	//fout << depth << '\n';
 	
-	//const bool thisMax{max};
+	const bool thisMax{max};
 	
 	auto size { hgs.board.getSize() };
 	
 	vector<GameState> hgsV;
-	
-	//GameState cmpHGS; cmpHGS.value = 0;
 	
 		// get all possible states relative to current state
 	for(int c = 0; c < size*size; c++)
@@ -139,9 +137,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 			
 			mmhgs.cell = c;
 			
-			fout << "c- " << c << '\n' << "mmhgs - " << mmhgs.cell << '\n';
-			
-			if(max)
+			if(thisMax)
 			{
 				mmhgs.board.setCellColor(c, hgs.computer.getColor());
 				
@@ -154,23 +150,12 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.computer.win() ) {
-					mmhgs.value = mmhgs.computer.winPath().size();
-					//mmhgs.value = 2;
-					//return mmhgs;
+					mmhgs.value = 3;
+					return mmhgs;
 				}
 				else
-				{
-					if(mmhgs.board.gotDraw()) // draw
-						mmhgs.value = 0;
-					else
-					{
-						if(depth == 0)
-							//mmhgs.value = size * size;
-							mmhgs.value = 1;
-						else
-							mmhgs = getMinMax(mmhgs, depth - 1, !max);
-					}
-				}
+					{ if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 2; }
 			}
 			else
 			{
@@ -185,50 +170,92 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.human.win() ) {
-					mmhgs.value = mmhgs.human.winPath().size() * -1;
-					//mmhgs.value = -2;
-					//return mmhgs;
+					mmhgs.value = 0;
+					return mmhgs;
 				}
 				else
-				{
-					if(mmhgs.board.gotDraw()) // draw
-						mmhgs.value = 0;
-					else
-					{
-						if(depth == 0)
-							//mmhgs.value = -1 * size * size;
-							mmhgs.value = -1;
-						else
-							mmhgs = getMinMax(mmhgs, depth - 1, !max);
-					}
-				}
+					{ if(mmhgs.board.getNoneCount() == 0) // draw
+						mmhgs.value = 2; }
 			}
 			
 			hgsV.push_back(mmhgs);
+		}
+	}
+	
+	GameState cmpHGS; cmpHGS.value = 0;
+	
+		// compare states to get max or min
+	for(const auto& gs: hgsV)
+	{
+		if(gs.value == -1) // state without a value
+		{
+			max = max ? false : true;
 			
-			//fout << "cmpHGS - " << cmpHGS.cell << '\n';
+			GameState rgs;
+			
+			if(depth == 0) {
+				rgs = gs;
+				rgs.value = 1;
+			}
+			else
+				rgs = getMinMax(gs, depth - 1, max);
+			
+			if(thisMax)
+			{
+				if(rgs.value > cmpHGS.value)
+				{
+					cmpHGS = rgs;
+					
+					if(cmpHGS.value == 3)
+						return cmpHGS;
+				}
+			}
+			else
+			{
+				if(rgs.value <= cmpHGS.value)
+				{
+					cmpHGS = rgs;
+					
+					if(cmpHGS.value == 0)
+						return cmpHGS;
+				}
+			}
+		}
+		else
+		{
+			if(thisMax)
+			{
+				if(gs.value > cmpHGS.value)
+				{
+					cmpHGS = gs;
+					
+					if(cmpHGS.value == 3)
+						return cmpHGS;
+				}
+			}
+			else
+			{
+				if(gs.value <= cmpHGS.value)
+				{
+					cmpHGS = gs;
+					
+					if(cmpHGS.value == 0)
+						return cmpHGS;
+				}
+			}
 		}
 	}
 
-	//return cmpHGS;
-	
-	if(max)
-		return *max_element(hgsV.begin(), hgsV.end(), [](GameState lgs1, GameState lgs2)->bool { return lgs1.value < lgs2.value; });
-	else
-		return *min_element(hgsV.begin(), hgsV.end(), [](GameState lgs1, GameState lgs2)->bool { return lgs1.value > lgs2.value; });
+	return cmpHGS;
 }
 	// generates moves via minimax
 int HexGameEngine::genMiniMaxMove()
 {
 	GameState hgs = {computer, human, board, -1, -1};
 	
-	auto size = board.getSize(); size *= size;
-	
-	fout.open("cells.txt");
+	auto size = board.getSize();
 	
 	//auto depth = floor( log10(450000000) / log10(size * size) );
-	
-	static double depth{22.98};
 	
 	ui->displayMsg("depth is: " + to_string(depth) );
 	
@@ -244,17 +271,16 @@ int HexGameEngine::genMiniMaxMove()
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
-	depth += 2.0 / 3.0;
+	depth += 1.0 / 3.0;
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
-	
-	fout.close();
 	
 	return state.cell;
 
 	//random_device rd{"/dev/urandom"};
 	
 	//ofstream fout("depth.txt"); //fout << cells << '\t';
+	//fout.close();
 }
 
 #endif

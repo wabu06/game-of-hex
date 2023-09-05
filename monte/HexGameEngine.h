@@ -95,11 +95,13 @@ class HexGameEngine
 	
 	random_device rd{"/dev/urandom"};
 
+	ofstream fout;
+
 #if MONTE
 	const string algo = "monte";
 #else
 	const string algo = "minmax";
-	float depth{3};
+	//double depth{3.8}; // {16.8};
 #endif
 
 		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
@@ -154,7 +156,7 @@ class HexGameEngine
 			done(hge.done), level(hge.level),
 			UIname(hge.UIname) {}
 		
-		HexGameEngine(HexGameEngine&& hge) noexcept : // move constructor
+		HexGameEngine(const HexGameEngine&& hge) noexcept : // move constructor
 			computer(hge.computer),
 			human(hge.human),
 			currentPlayer(hge.currentPlayer),
@@ -164,7 +166,9 @@ class HexGameEngine
 			isInitialized(hge.isInitialized),
 			done(hge.done), level(hge.level),
 			UIname(hge.UIname)
-			{ delete hge.ui; }
+			{
+				if(ui != nullptr)
+					delete hge.ui; }
 		
 		~HexGameEngine() {
 			if(ui != nullptr)
