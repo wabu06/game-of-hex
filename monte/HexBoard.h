@@ -25,12 +25,19 @@ class HexBoard
 		HexBoard(int S = 0): size(S), nones(S*S), trc(S), brc(S), lcc(S), rcc(S),
 							 boardCell( vector< vector<hexColors> >( size, vector<hexColors>(size, hexColors::NONE) ) ) {}
 		
-		HexBoard(const HexBoard& brd) : size(brd.size), nones(brd.nones), boardCell(brd.boardCell) {}
+		HexBoard(const HexBoard& brd) : size(brd.size), nones(brd.nones), trc(brd.trc), brc(brd.brc), lcc(brd.lcc), rcc(brd.rcc),
+										boardCell(brd.boardCell) {}
 		
-		HexBoard& operator=(const HexBoard& brd) {
+		HexBoard& operator=(const HexBoard& brd)
+		{
 			this->size = brd.size;
 			this->boardCell = brd.boardCell;
 			this->nones = brd.nones;
+			
+			this->trc = brd.trc;
+			this->brc = brd.brc;
+			this->lcc = brd.lcc;
+			this->rcc = brd.rcc;
 			
 			return *this;
 		}
@@ -43,6 +50,11 @@ class HexBoard
 			this->size = brd.size;
 			this->boardCell = brd.boardCell;
 			this->nones = brd.nones;
+			
+			this->trc = brd.trc;
+			this->brc = brd.brc;
+			this->lcc = brd.lcc;
+			this->rcc = brd.rcc;
 			
 			return *this;
 		}

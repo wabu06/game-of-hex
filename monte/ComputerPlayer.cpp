@@ -154,9 +154,9 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.computer.win() ) {
-					mmhgs.value = mmhgs.computer.winPath().size();
-					//mmhgs.value = 2;
-					//return mmhgs;
+					//mmhgs.value = mmhgs.computer.winPath().size();
+					mmhgs.value = 2;
+					return mmhgs;
 				}
 				else
 				{
@@ -185,9 +185,9 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.human.win() ) {
-					mmhgs.value = mmhgs.human.winPath().size() * -1;
-					//mmhgs.value = -2;
-					//return mmhgs;
+					//mmhgs.value = mmhgs.human.winPath().size() * -1;
+					mmhgs.value = -2;
+					return mmhgs;
 				}
 				else
 				{
@@ -228,7 +228,7 @@ int HexGameEngine::genMiniMaxMove()
 	
 	//auto depth = floor( log10(450000000) / log10(size * size) );
 	
-	static double depth{22.98};
+	static double depth{3.28};
 	
 	ui->displayMsg("depth is: " + to_string(depth) );
 	
@@ -244,7 +244,7 @@ int HexGameEngine::genMiniMaxMove()
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
-	depth += 2.0 / 3.0;
+	depth += 1.0 / 3.0;
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
 	
