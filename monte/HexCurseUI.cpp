@@ -50,27 +50,28 @@ int HexCurseUI::getHumanPlayer()
 {
 	mvwprintw(inputWin, 1, 1, "1) Blue Player");
 	mvwprintw(inputWin, 2, 1, "2) Red Player");
-	mvwprintw(inputWin, 4, 1, "==>Enter 1 or 2: ");
-	wrefresh(inputWin);
-			
-	keypad(inputWin, TRUE); //raw();
-			
-	int player = wgetch(inputWin);
-	wrefresh(inputWin);
+
+	int player;
 	
-	if( (player == 27) || (player == 32) ) // end program if <esc> or <spacebar> is pressed
-			finish();
-			
-	while(player != 49 && player != 50)
-	{
-		mvwprintw(inputWin, 4, 1, "==>Invalid choice, Enter 1 or 2: ");
+	keypad(inputWin, TRUE); //raw();
+
+	do
+	{	mvwprintw(inputWin, rows/3 - 3, 1, "Enter 1 or 2: ");
 		wrefresh(inputWin);
 
 		player = wgetch(inputWin);
 		
 		if( (player == 27) || (player == 32) ) // end program if <esc> or <spacebar> is pressed
 			finish();
+
+		if(player != 49 && player != 50)
+		{
+			scroll(msgWin);
+			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY or CHOICE, Only Enter The Numbers 1 or 2!!");
+			wrefresh(msgWin);
+		}	
 	}
+	while(player != 49 && player != 50);
 			
 	keypad(inputWin, FALSE); //noraw();
 
