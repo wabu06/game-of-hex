@@ -2,7 +2,7 @@
 
 
 #include<utility>
-//#include<algorithm>
+#include<algorithm>
 #include<locale>
 #include<ncurses.h>
 #include<csignal>
@@ -14,6 +14,8 @@
 class HexCurseUI : public HexUI
 {
 	static HexGameEngine* hge;
+	
+	//static HexGameEngine* shge;
 
 	static int rows, cols;
 	
@@ -42,7 +44,8 @@ class HexCurseUI : public HexUI
 		static void resize();
 		
 		static void finish();
-
+		
+		//pair<int, int> getHumanPlayer() override;
 		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;

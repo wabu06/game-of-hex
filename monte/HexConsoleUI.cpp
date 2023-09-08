@@ -3,122 +3,76 @@
 #include "HexGameEngine.h"
 
 
-//pair<int, int> HexConsoleUI::getHumanPlayer()
 int HexConsoleUI::getHumanPlayer()
 {
+	struct termios oldsets, newsets;
+	
+	tcgetattr(STDIN_FILENO, &oldsets);
+	
+	newsets = oldsets;
+	newsets.c_lflag &= (~ICANON);
+	
+	tcsetattr(STDIN_FILENO, TCSANOW, &newsets);
+
 	int player;
 			
 	do
-	{	cout << "\n1) Blue Player\n2) Red Player\n" << "\n==>Enter 1 or 2: ";
+	{	cout << "\n1) Blue Player\n2) Red Player\n================>Enter 1 or 2: ";
 			
-		cin >> player;
+		player = cin.get();
+		
+		cout << '\n';
 				
-		string badstr;
-				
-		if(cin.fail())
-		{
-			cin.clear();
-			getline(cin, badstr);
-			player = -1;
-			continue;
-		}
-				
-		getline(cin, badstr);
-
-		if(badstr.size() > 0)
-			player = -1;
+		if( (player == 27) || (player == 32) )
+			exit(hge->shutdown());
 	}
-	while( (player != 1) && (player != 2) );
-			
-	/*int level;
-			
-	do
-	{	cout << "\n3) Expert\n2) Intermediate\n1) Beginner\n" << "\n==>Enter 1, 2, or 3: ";
-				
-		cin >> level;
-
-		string badstr;
-				
-		if(cin.fail())
-		{
-			cin.clear();
-			getline(cin, badstr);
-			level = -1;
-			continue;
-		}
-				
-		getline(cin, badstr);
-
-		if(badstr.size() > 0)
-			level = -1;
-	}
-	while( (level != 1) && (level != 2) && (level != 3) );*/
+	while( (player != 50) && (player != 49) );
 	
-	//hge->setLevel(level);
-			
-	//return {player, level};
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
 	
-	return player;
+	return player - 48;
 }
 
 pair<int, int> HexConsoleUI::getHumanMove()
 {
-	string input;
-	int move;
-	pair<int, int> position;
+	struct termios oldsets, newsets;
 	
-	auto toLowerCase = [](char& c){ c = tolower( c, locale("en_US.UTF8") ); };
-
-	while(true)
-	{
-		cout << "\nEnter your move, or <h> for help, or <q> to quit: "; //getline(cin, input);
-		cin >> move;
-		
-		if(cin.fail())
-		{
-			cin.clear();
-			getline(cin, input);
+	tcgetattr(STDIN_FILENO, &oldsets);
 	
-			for_each(input.begin(), input.end(), toLowerCase);
+	newsets = oldsets;
+	newsets.c_lflag &= (~ICANON);
+	
+	tcsetattr(STDIN_FILENO, TCSANOW, &newsets);
+	
+	int row, col;
+	
+	do
+	{	cout << "\nEnter the row of your move: ";
 			
-			if( (input == "q") || (input == "quit") || (input == "exit") || (input == "end") )
-			{
-				hge->setCurrentPlayer(nullptr);
-				hge->endGame();
-				position.first = position.second = static_cast<unsigned int>('q') * static_cast<unsigned int>('Q');
-				break;
-			}
-			
-			if( (input == "h") || (input == "help") ) {
-				cout << "\nIf for example you want to select the cell at row 5, & column 2, simply enter 52.\n";
-				cout << "Or if you wanted to select the cell at row 7, & column 11, enter 0711.\n";
-			}
-			continue;
-		}
+		row = cin.get();
 		
-		getline(cin, input);
-		
-		if(input.size() > 0)
-			continue;
-		
-		input = to_string(move);
-		
-		if(input.size() > 3)
-		{
-			position.first = move / 100 - 1;
-			position.second = move % 100 - 1;
-			break;
-		}
-		else
-		{
-			position.first = move / 10 - 1;
-			position.second = move % 10 - 1;
-			break;
-		}	
-			//cout << "INVALID ENTRY" << endl;
+		cout << '\n';
+				
+		if( (row == 27) || (row == 32) )
+			exit(hge->shutdown());
 	}
+	while( !isdigit( (char) row, locale("en_US.UTF8") ));
 	
-	return position;
+	do
+	{	cout << "\nEnter the column of your move: ";
+			
+		col = cin.get();
+		
+		cout << '\n';
+				
+		if( (col == 27) || (col == 32) )
+			exit(hge->shutdown());
+	}
+	while( !isdigit( (char) col, locale("en_US.UTF8") ));
+	
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
+	
+	return {row - 49, col - 49};
 }
 
 void HexConsoleUI::drawHexBoard()

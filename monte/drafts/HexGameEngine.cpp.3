@@ -59,21 +59,28 @@ tuple<int, string> HexGameEngine::parseArgs(int len, char* args[])
 
 void HexGameEngine::playHuman()
 {
+	// pair<int, int> move;
+
 	bool legal;
 	
 	int row, col;
 			
 	do
 	{	tie(row, col) = ui->getHumanMove();
-
+			
+		/*if(done)
+		{
+			currentPlayer = nullptr;
+			return; // end game if human choose to quit instead of entering a move
+		}*/
+			
 		legal = isMoveLegal(row, col);
-		
-		if(!legal)
-			ui->displayMsg("ILLEGAL MOVE!");
 	}
 	while(!legal);
 
-	board.setCellColor( row, col, human.getColor() );
+	//int row{move.first}, col{move.second};
+	
+	board.setCellColor( row, col, human.getColor() ); //, human);
 		
 			// create edge between cell neighbors that are the same color
 	int cell{ row*board.getSize() + col };
@@ -100,21 +107,33 @@ void HexGameEngine::playHuman()
 
 bool HexGameEngine::isMoveLegal(int row, int col)
 {
+	hexColors cc; // cell color
+	
 	int size{ board.getSize() - 1 };
 	
-	bool inRange = (row >= 0) && (row <= size);
-	
-	inRange = (col >= 0) && (col <= size) && inRange;
+	//int row{move.first}, col{move.second};
 
-	if(!inRange)
-		return inRange;
-	else
+	if( row < 0 || row > size )
 	{
-		hexColors cc = board.getCellColor(row, col); // cell color
-
-		return inRange && (cc == hexColors::NONE);
+		ui->displayMsg("ILLEGAL MOVE!");
+		return false;
 	}
-	
+		
+	if( col < 0 || col > size )
+	{
+		ui->displayMsg("ILLEGAL MOVE!");
+		return false;
+	}
+		
+	cc = board.getCellColor(row, col);
+		
+	if(cc != hexColors::NONE)
+	{
+		ui->displayMsg("ILLEGAL MOVE!");
+		return false;
+	}
+
+	return true;
 }
 
 bool HexGameEngine::initialize()
