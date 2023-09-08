@@ -148,54 +148,53 @@ pair<int, int> HexCurseUI::getHumanMove()
 	wclear(inputWin);
 	box(inputWin, 0, 0);
 	mvwprintw(inputWin, 1, 1, "Human Playing %s", color);
-
-	mvwaddstr(inputWin, rows/3 - 3, 1, "Enter the row of your move: ");
-	wrefresh(inputWin);
 	
 	keypad(inputWin, TRUE);
 
-	int row = wgetch(inputWin);
+	int row;
+	bool digit;
 	
-	if( (row == 27) || (row == 32) ) // end program if <esc> or <spacebar> is pressed
-			finish();
-	
-	while( !isdigit( (char) row, locale("en_US.UTF8") ))
-	{
-		scroll(msgWin);
-		mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY, Only Enter Digits!!");
-		wrefresh(msgWin);
-		
-		mvwaddstr(inputWin, rows/3 - 3, 1, "Enter the row of your move: ");
+	do
+	{	mvwaddstr(inputWin, rows/3 - 3, 1, "Enter the row of your move: ");
 		wrefresh(inputWin);
 		
 		row = wgetch(inputWin);
 		
 		if( (row == 27) || (row == 32) ) // end program if <esc> or <spacebar> is pressed
 			finish();
-	}
-	
-	mvwaddstr(inputWin, rows/3 - 3, 1, "Enter the column of your move: ");
-	wrefresh(inputWin);
-	
-	int col = wgetch(inputWin);
-	
-	if( (col == 27) || (col == 32) ) // end program if <esc> or <spacebar> is pressed
-			finish();
-	
-	while( !isdigit( (char) col, locale("en_US.UTF8") ))
-	{
-		scroll(msgWin);
-		mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY, Only Enter Digits!!");
-		wrefresh(msgWin);
+
+		digit = isdigit( (char) row, locale("en_US.UTF8") );
 		
-		mvwaddstr(inputWin, rows/3 - 3, 1, "Only Enter Digits, Enter the column of your move: ");
+		if(!digit)
+		{
+			scroll(msgWin);
+			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY, Only Enter Digits!!");
+			wrefresh(msgWin);
+		}
+	}
+	while(!digit);
+
+	int col;
+
+	do
+	{	mvwaddstr(inputWin, rows/3 - 3, 1, "Enter the column of your move: ");
 		wrefresh(inputWin);
 		
 		col = wgetch(inputWin);
 		
 		if( (col == 27) || (col == 32) ) // end program if <esc> or <spacebar> is pressed
 			finish();
+		
+		digit = isdigit( (char) col, locale("en_US.UTF8") );
+		
+		if(!digit)
+		{
+			scroll(msgWin);
+			mvwaddstr(msgWin, rows/2-1, 0, "INVALID ENTRY, Only Enter Digits!!");
+			wrefresh(msgWin);
+		}
 	}
+	while(!digit);
 
 	keypad(inputWin, FALSE);
 
