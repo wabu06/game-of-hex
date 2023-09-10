@@ -4,6 +4,7 @@
 #define HEX
 
 #include<unordered_set>
+#include<string>
 
 #include "HexGameEngine.h"
 
@@ -28,16 +29,19 @@ class HexPlayer
 	hexColors color;
 	graph playGraph;
 	
+	string id;
+	
 	public:
-		HexPlayer(hexColors c = hexColors::NONE, int size = 0): bSize(size), color(c), playGraph( graph{size*size} ) {}
+		HexPlayer(hexColors c = hexColors::NONE, int size = 0, string nid = ""): bSize(size), color(c), playGraph( graph{size*size} ), id(nid) {}
 		
-		HexPlayer(const HexPlayer& player) : bSize(player.bSize), color(player.color), playGraph(player.playGraph) {}
+		HexPlayer(const HexPlayer& player) : bSize(player.bSize), color(player.color), playGraph(player.playGraph), id(player.id) {}
 		
 		HexPlayer& operator=(const HexPlayer& player)
 		{
 			this->bSize = player.bSize;
 			this->color = player.color;
 			this->playGraph = player.playGraph;
+			this->id = player.id;
 			
 			return *this;
 		}
@@ -50,8 +54,13 @@ class HexPlayer
 			this->bSize = player.bSize;
 			this->color = player.color;
 			this->playGraph = player.playGraph;
+			this->id = player.id;
 			
 			return *this;
+		}
+		
+		string getID() {
+			return id;
 		}
 		
 		hexColors getColor() { return color; }

@@ -65,6 +65,12 @@ void HexGameEngine::playHuman()
 			
 	do
 	{	tie(row, col) = ui->getHumanMove();
+	
+		if( (row == 27) || (col == 32) )
+		{
+			done = true;
+			return;
+		}
 
 		legal = isMoveLegal(row, col);
 		
@@ -94,8 +100,10 @@ void HexGameEngine::playHuman()
 		done = true;
 		currentPlayer = nullptr;
 	}
-	else
+	else {
 		currentPlayer = &computer; // human just played so computer plays next
+		playCurrentPlayer = &HexGameEngine::playComputer;
+	}
 }
 
 bool HexGameEngine::isMoveLegal(int row, int col)
@@ -143,21 +151,29 @@ bool HexGameEngine::initialize()
 	
 	auto player = ui->getHumanPlayer();
 	
+	if( player == (27 + 32) ) {
+		done = true;
+		isInitialized = false;
+		return isInitialized;
+	}
+	
 	//level = ilevel;
 	
 	int size{ board.getSize() };
 	
 	if (player == 1)
 	{
-		human = HexPlayer(hexColors::BLUE, size);
+		human = HexPlayer(hexColors::BLUE, size, "Human");
 		currentPlayer = &human;
-		computer = HexPlayer(hexColors::RED, size);
+		computer = HexPlayer(hexColors::RED, size, "Computer");
+		playCurrentPlayer = &HexGameEngine::playHuman;
 	}
 	else
 	{
-		human = HexPlayer(hexColors::RED, size);
-		computer = HexPlayer(hexColors::BLUE, size);
+		human = HexPlayer(hexColors::RED, size, "Human");
+		computer = HexPlayer(hexColors::BLUE, size, "Computer");
 		currentPlayer = &computer;
+		playCurrentPlayer = &HexGameEngine::playComputer;
 	}
 
 	return isInitialized;

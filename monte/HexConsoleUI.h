@@ -24,6 +24,8 @@ class HexConsoleUI : public HexUI
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 			cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n\n";
+			
+			cout << '\n'; drawHexBoard(); cout << '\n';
 		}
 		
 		int getHumanPlayer() override;

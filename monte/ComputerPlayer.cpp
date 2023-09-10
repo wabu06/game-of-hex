@@ -154,9 +154,9 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.computer.win() ) {
-					//mmhgs.value = mmhgs.computer.winPath().size();
-					mmhgs.value = 2;
-					return mmhgs;
+					mmhgs.value = mmhgs.computer.winPath().size();
+					//mmhgs.value = 2;
+					//return mmhgs;
 				}
 				else
 				{
@@ -185,9 +185,9 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.human.win() ) {
-					//mmhgs.value = mmhgs.human.winPath().size() * -1;
-					mmhgs.value = -2;
-					return mmhgs;
+					mmhgs.value = mmhgs.human.winPath().size() * -1;
+					//mmhgs.value = -2;
+					//return mmhgs;
 				}
 				else
 				{
@@ -290,7 +290,9 @@ void HexGameEngine::playComputer()
 		done = true;
 		currentPlayer = nullptr;
 	}
-	else
+	else {
 		currentPlayer = &human; // computer just played so human plays next
+		playCurrentPlayer = &HexGameEngine::playHuman;
+	}
 }
 

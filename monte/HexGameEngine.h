@@ -96,6 +96,8 @@ class HexGameEngine
 	random_device rd{"/dev/urandom"};
 
 	ofstream fout;
+	
+	void(HexGameEngine::*playCurrentPlayer)();
 
 #if MONTE
 	const string algo = "monte";
@@ -117,7 +119,7 @@ class HexGameEngine
 	void playHuman();
 	void playComputer();
 	
-	void executeGamePlay()
+	/*void executeGamePlay()
 	{
 		if(currentPlayer == &human) {
 			playHuman();
@@ -126,7 +128,9 @@ class HexGameEngine
 		
 		if(currentPlayer == &computer)
 			playComputer();
-	}
+	}*/
+	
+	int(HexGameEngine::*generateMove)();
 
 #if MONTE
 	int genMonteMove(int shuffleMax = 2421);
@@ -263,22 +267,19 @@ class HexGameEngine
 			if( !initialize() ) // insures initialize method is called first
 				return *this;
 	
-			if(currentPlayer == &human)
-				ui->updateUI();
+			//if(currentPlayer == &human)
+				//ui->updateUI();
 
 			while(!done)
 			{
-				executeGamePlay(); // update player graphs and gameBoard
+				//executeGamePlay(); // update player graphs and gameBoard
 				
-				if(done)
-				{
-					if(winner == nullptr) // if there's no winner, and done is true then exit
-						ui->displayMsg("Exiting ....");
-					else
-						ui->updateUI();
-				}
-				else
-					ui->updateUI();
+				(this->*playCurrentPlayer)();
+				
+				if( (winner == nullptr) && done )
+					break;
+
+				ui->updateUI();
 			}
 			
 			return *this;

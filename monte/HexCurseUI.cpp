@@ -28,7 +28,7 @@ void HexCurseUI::finish()
 	delwin(mainwin);
 	endwin();
 			
-	exit( hge->shutdown() );
+	//exit( hge->shutdown() );
 }
 
 void HexCurseUI::sigHandler(int sig)
@@ -61,8 +61,10 @@ int HexCurseUI::getHumanPlayer()
 
 		player = wgetch(inputWin);
 		
-		if( (player == 27) || (player == 32) ) // end program if <esc> or <spacebar> is pressed
+		if( (player == 27) || (player == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
+			return 27 + 32;
+		}
 
 		if(player != 49 && player != 50)
 		{
@@ -161,8 +163,10 @@ pair<int, int> HexCurseUI::getHumanMove()
 		
 		row = wgetch(inputWin);
 		
-		if( (row == 27) || (row == 32) ) // end program if <esc> or <spacebar> is pressed
+		if( (row == 27) || (row == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
+			return {27, 32};
+		}
 
 		digit = isdigit( (char) row, locale("en_US.UTF8") );
 		
@@ -183,8 +187,10 @@ pair<int, int> HexCurseUI::getHumanMove()
 		
 		col = wgetch(inputWin);
 		
-		if( (col == 27) || (col == 32) ) // end program if <esc> or <spacebar> is pressed
+		if( (col == 27) || (col == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
+			return {27, 32};
+		}
 		
 		digit = isdigit( (char) col, locale("en_US.UTF8") );
 		
@@ -275,7 +281,8 @@ void HexCurseUI::drawHexBoard()
 
 void HexCurseUI::showWinner(HexPlayer *winner)
 {
-	const char* victor = winner == &hge->getComputer() ? "Computer Wins" : "Human Wins";
+	char victor[11];
+	stpcpy(victor, winner->getID().c_str() );
 	
 	int size = hge->getBoard().getSize();
 
@@ -287,7 +294,7 @@ void HexCurseUI::showWinner(HexPlayer *winner)
 	WINDOW* victorWin = newwin(h, w, y, x);
 	refresh();
 
-	mvwprintw(victorWin, (h - 2)/2, (w - 22)/2, "%s, Game Over", victor);
+	mvwprintw(victorWin, (h - 2)/2, (w - 22)/2, "%s Wins, Game Over", victor);
 	mvwprintw(victorWin, (h - 2)/2 + 1, (w - 25)/2, "Press Any Key To Continue");
 	box(victorWin, 0, 0);
 
@@ -312,7 +319,5 @@ void HexCurseUI::updateUI()
 	
 	if(winner != nullptr)
 		showWinner(winner);
-
-	//wrefresh(msgWin);
 }
 

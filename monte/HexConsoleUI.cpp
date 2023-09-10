@@ -23,8 +23,10 @@ int HexConsoleUI::getHumanPlayer()
 		
 		cout << '\n';
 				
-		if( (player == 27) || (player == 32) )
-			exit(hge->shutdown());
+		if( (player == 27) || (player == 32) ) {
+			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
+			return 27 + 32;
+		}
 	}
 	while( (player != 50) && (player != 49) );
 	
@@ -53,8 +55,10 @@ pair<int, int> HexConsoleUI::getHumanMove()
 		
 		cout << '\n';
 				
-		if( (row == 27) || (row == 32) )
-			exit(hge->shutdown());
+		if( (row == 27) || (row == 32) ) {
+			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
+			return {27, 32};
+		}
 	}
 	while( !isdigit( (char) row, locale("en_US.UTF8") ));
 	
@@ -65,8 +69,10 @@ pair<int, int> HexConsoleUI::getHumanMove()
 		
 		cout << '\n';
 				
-		if( (col == 27) || (col == 32) )
-			exit(hge->shutdown());
+		if( (col == 27) || (col == 32) ) {
+			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
+			return {27, 32};
+		}
 	}
 	while( !isdigit( (char) col, locale("en_US.UTF8") ));
 	
@@ -146,10 +152,9 @@ void HexConsoleUI::updateUI()
 {
 	cout << '\n'; drawHexBoard();
 	
-	if( hge->getWinner() == &hge->getHuman() )
-		cout << "\nHuman Wins, Game Over\n";
+	HexPlayer *winner = hge->getWinner();
 	
-	if( hge->getWinner() == &hge->getComputer() )
-		cout << "\nComputer Wins, Game Over\n";
+	if(winner != nullptr)
+		cout << '\n' << winner->getID() << " Wins, Game Over\n";
 }
 
