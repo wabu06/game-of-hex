@@ -15,9 +15,11 @@ using namespace std::chrono;
 #if MONTE
 
 			// generates moves via monte carlo simulation
-int HexGameEngine::genMonteMove(int shuffleMax)
+int HexGameEngine::genMonteMove()
 {
 	//shuffleMax = level * shuffleMax / 3;
+	
+	int shuffleMax{2421};
 	
 	int size{ board.getSize() }, cells{size*size};
 	
@@ -122,14 +124,10 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 {
 	//fout << depth << '\n';
 	
-	//const bool thisMax{max};
-	
 	auto size { hgs.board.getSize() };
 	
 	vector<GameState> hgsV;
-	
-	//GameState cmpHGS; cmpHGS.value = 0;
-	
+
 		// get all possible states relative to current state
 	for(int c = 0; c < size*size; c++)
 	{
@@ -139,7 +137,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 			
 			mmhgs.cell = c;
 			
-			fout << "c- " << c << '\n' << "mmhgs - " << mmhgs.cell << '\n';
+			//fout << "c- " << c << '\n' << "mmhgs - " << mmhgs.cell << '\n';
 			
 			if(max)
 			{
@@ -210,13 +208,12 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 		}
 	}
 
-	//return cmpHGS;
-	
 	if(max)
 		return *max_element(hgsV.begin(), hgsV.end(), [](GameState lgs1, GameState lgs2)->bool { return lgs1.value < lgs2.value; });
 	else
 		return *min_element(hgsV.begin(), hgsV.end(), [](GameState lgs1, GameState lgs2)->bool { return lgs1.value > lgs2.value; });
 }
+
 	// generates moves via minimax
 int HexGameEngine::genMiniMaxMove()
 {
@@ -224,7 +221,7 @@ int HexGameEngine::genMiniMaxMove()
 	
 	auto size = board.getSize(); size *= size;
 	
-	fout.open("cells.txt");
+	//fout.open("cells.txt");
 	
 	//auto depth = floor( log10(450000000) / log10(size * size) );
 	
@@ -248,7 +245,7 @@ int HexGameEngine::genMiniMaxMove()
 	
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
 	
-	fout.close();
+	//fout.close();
 	
 	return state.cell;
 

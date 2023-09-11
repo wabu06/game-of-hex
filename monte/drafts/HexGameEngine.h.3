@@ -118,7 +118,18 @@ class HexGameEngine
 
 	void playHuman();
 	void playComputer();
-
+	
+	/*void executeGamePlay()
+	{
+		if(currentPlayer == &human) {
+			playHuman();
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}*/
+	
 	int(HexGameEngine::*generateMove)();
 
 #if MONTE
@@ -255,9 +266,14 @@ class HexGameEngine
 		{
 			if( !initialize() ) // insures initialize method is called first
 				return *this;
+	
+			//if(currentPlayer == &human)
+				//ui->updateUI();
 
 			while(!done)
 			{
+				//executeGamePlay(); // update player graphs and gameBoard
+				
 				(this->*playCurrentPlayer)();
 				
 				if( (winner == nullptr) && done )
