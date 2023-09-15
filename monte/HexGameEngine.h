@@ -43,7 +43,7 @@ struct hash<hexColors>
 #include "HexCurseUI.h"
 #endif
 
-#define MONTE 0
+//#define MONTE 0
 
 
 struct GameState
@@ -99,12 +99,12 @@ class HexGameEngine
 	
 	void(HexGameEngine::*playCurrentPlayer)();
 
-#if MONTE
-	const string algo = "monte";
-#else
-	const string algo = "minmax";
+//#if MONTE
+	string algo; //= "monte";
+//#else
+	//const string algo = "minmax";
 	//double depth{3.8}; // {16.8};
-#endif
+//#endif
 
 		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
 		// and returns the user selected board size and user interface
@@ -121,12 +121,12 @@ class HexGameEngine
 
 	int(HexGameEngine::*generateMove)();
 
-#if MONTE
+//#if MONTE
 	int genMonteMove();
-#else
+//#else
 	GameState getMinMax(GameState hgs, int depth = -1, bool max = true);
 	int genMiniMaxMove();
-#endif
+//#endif
 	
 	public:
 		HexGameEngine(int argc = 1, char** argv = nullptr):

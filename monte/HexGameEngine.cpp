@@ -157,6 +157,8 @@ bool HexGameEngine::initialize()
 		return isInitialized;
 	}
 	
+	generateMove = &HexGameEngine::genMonteMove;
+	
 	//level = ilevel;
 	
 	int size{ board.getSize() };
