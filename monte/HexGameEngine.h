@@ -258,7 +258,12 @@ class HexGameEngine
 
 			while(!done)
 			{
-				(this->*playCurrentPlayer)();
+				try {
+					(this->*playCurrentPlayer)();
+				}
+				catch(int exp) {
+					done = true;
+				}
 				
 				if( (winner == nullptr) && done )
 					break;

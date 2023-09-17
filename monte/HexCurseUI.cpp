@@ -63,7 +63,7 @@ int HexCurseUI::getHumanPlayer()
 		
 		if( (player == 27) || (player == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
-			return 27 + 32;
+			throw player; //return 27 + 32;
 		}
 
 		if(player != 49 && player != 50)
@@ -165,7 +165,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 		
 		if( (row == 27) || (row == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
-			return {27, 32};
+			throw row; //return {27, 32};
 		}
 
 		digit = isdigit( (char) row, locale("en_US.UTF8") );
@@ -189,7 +189,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 		
 		if( (col == 27) || (col == 32) ) { // end program if <esc> or <spacebar> is pressed
 			finish();
-			return {27, 32};
+			throw col; //return {27, 32};
 		}
 		
 		digit = isdigit( (char) col, locale("en_US.UTF8") );

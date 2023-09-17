@@ -65,12 +65,6 @@ void HexGameEngine::playHuman()
 			
 	do
 	{	tie(row, col) = ui->getHumanMove();
-	
-		if( (row == 27) || (col == 32) )
-		{
-			done = true;
-			return;
-		}
 
 		legal = isMoveLegal(row, col);
 		
@@ -149,13 +143,21 @@ bool HexGameEngine::initialize()
 
 	//auto [player, ilevel] = ui->getHumanPlayer();
 	
-	auto player = ui->getHumanPlayer();
+	int player;
 	
-	if( player == (27 + 32) ) {
+	try {
+		player = ui->getHumanPlayer();
+	}
+	catch(int exp) {
+		done = true;
+		return isInitialized;
+	}
+	
+	/*if( player == (27 + 32) ) {
 		done = true;
 		isInitialized = false;
 		return isInitialized;
-	}
+	}*/
 	
 	generateMove = &HexGameEngine::genMonteMove;
 	

@@ -25,7 +25,7 @@ int HexConsoleUI::getHumanPlayer()
 				
 		if( (player == 27) || (player == 32) ) {
 			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
-			return 27 + 32;
+			throw player; //return 27 + 32;
 		}
 	}
 	while( (player != 50) && (player != 49) );
@@ -57,7 +57,7 @@ pair<int, int> HexConsoleUI::getHumanMove()
 				
 		if( (row == 27) || (row == 32) ) {
 			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
-			return {27, 32};
+			throw row; //return {27, 32};
 		}
 	}
 	while( !isdigit( (char) row, locale("en_US.UTF8") ));
@@ -71,7 +71,7 @@ pair<int, int> HexConsoleUI::getHumanMove()
 				
 		if( (col == 27) || (col == 32) ) {
 			tcsetattr(STDIN_FILENO, TCSANOW, &oldsets);
-			return {27, 32};
+			throw col; //return {27, 32};
 		}
 	}
 	while( !isdigit( (char) col, locale("en_US.UTF8") ));
