@@ -124,7 +124,7 @@ class HexGameEngine
 //#if MONTE
 	int genMonteMove();
 //#else
-	GameState getMinMax(GameState hgs, int depth = -1, bool max = true);
+	GameState getMinMax(GameState hgs, int depth = -1, bool max = true, int alpha = 0);
 	int genMiniMaxMove();
 //#endif
 	

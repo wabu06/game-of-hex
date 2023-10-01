@@ -119,12 +119,8 @@ class HexBoard
 				
 		}
 		
-		bool gotDraw()
-		{
-			if( ((trc <= 0) || (brc <= 0)) && ((lcc <= 0) || (rcc <=0)) )
-				return true;
-			else
-				return false;
+		bool gotDraw() {
+			return (trc <= 0) && (brc <= 0) && (lcc <= 0) && (rcc <= 0);
 		}
 		
 		tuple<int, int, int, int> getColorCounts() {

@@ -159,7 +159,8 @@ bool HexGameEngine::initialize()
 		return isInitialized;
 	}*/
 	
-	generateMove = &HexGameEngine::genMonteMove;
+	//generateMove = &HexGameEngine::genMonteMove;
+	generateMove = &HexGameEngine::genMiniMaxMove;
 	
 	//level = ilevel;
 	

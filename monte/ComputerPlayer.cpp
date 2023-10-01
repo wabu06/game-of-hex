@@ -127,16 +127,20 @@ int HexGameEngine::genMonteMove()
 
 //#else
 
-GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
+GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha)
 {
 	//fout << depth << '\n';
 	
 	auto size { hgs.board.getSize() };
+	size *= size;
 	
 	vector<GameState> hgsV;
+	
+	int alphaMax, betaMin;
+	alphaMax = betaMin = alpha;
 
 		// get all possible states relative to current state
-	for(int c = 0; c < size*size; c++)
+	for(int c = 0; c < size; c++)
 	{
 		if(hgs.board.getCellColor(c) == hexColors::NONE)
 		{
@@ -159,10 +163,13 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.computer.win() ) {
-					vector<int> p = mmhgs.computer.winPath();
-					int bs = mmhgs.board.getSize();
-					bs *= bs;
-					mmhgs.value = p.size() + abs(bs - p[p.size() - 1]);
+					vector<int> wp = mmhgs.computer.winPath();
+
+					int wplen = wp.size();
+					int avg = accumulate(wp.begin(), wp.end(), 0) / wplen;
+					
+					mmhgs.value = size - avg;
+
 					//mmhgs.value = 2;
 					//return mmhgs;
 				}
@@ -176,9 +183,11 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 							//mmhgs.value = size * size;
 							mmhgs.value = 1;
 						else
-							mmhgs = getMinMax(mmhgs, depth - 1, !max);
+							mmhgs = getMinMax(mmhgs, depth - 1, !max, alphaMax); // * -1);
 					}
 				}
+				
+				alphaMax = mmhgs.value > alphaMax ? mmhgs.value: alphaMax;
 			}
 			else
 			{
@@ -193,10 +202,14 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 				}
 				
 				if( mmhgs.human.win() ) {
-					vector<int> p = mmhgs.human.winPath();
-					int bs = mmhgs.board.getSize();
-					bs *= bs;
-					mmhgs.value = ( p.size() + abs(bs - p[p.size() - 1]) ) * -1;
+					vector<int> wp = mmhgs.human.winPath();
+
+					int wplen = wp.size();
+					int avg = accumulate(wp.begin(), wp.end(), 0) / wplen;
+
+					mmhgs.value = (size - avg); // * -1;
+
+					//mmhgs.value = accumulate(p.begin(), p.end(), 0);// * -1;
 					//mmhgs.value = -2;
 					//return mmhgs;
 				}
@@ -208,10 +221,15 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 					{
 						if(depth == 0)
 							//mmhgs.value = -1 * size * size;
-							mmhgs.value = -1;
+							mmhgs.value = 1;
 						else
-							mmhgs = getMinMax(mmhgs, depth - 1, !max);
+							mmhgs = getMinMax(mmhgs, depth - 1, !max, 0);
 					}
+				}
+				
+				if(mmhgs.value <= betaMin) {
+					hgsV.push_back(mmhgs);
+					break;
 				}
 			}
 			
@@ -227,16 +245,25 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max)
 		return *min_element(hgsV.begin(), hgsV.end(), [](GameState lgs1, GameState lgs2)->bool { return lgs1.value > lgs2.value; });
 }
 
+// Alpha Beta:
+//	-While iterating at a max level, if recursed into a min pass the current max(alpha) to min level
+//	-At min level while iterating compare current computed value to current max passed in from max level
+//	-If current computed value at min level is less or equal to the max level value,
+//		return current computed min value back to max level, otherwise continue at min level
+//	-When recursing into max level from min level reset alpha to 0.
+
 	// generates moves via minimax
 int HexGameEngine::genMiniMaxMove()
 {
 	GameState hgs = {computer, human, board, -1, -1};
 	
-	auto size = board.getSize(); size *= size;
+	//auto size = board.getSize(); size *= size;
+	auto none = board.getNoneCount();
 	
 	//fout.open("cells.txt");
 	
-	auto depth = floor( log10(400000000) / log10(size) ) + 1;
+	double depth = floor( log10(388000000) / log10(none) );
+	//double depth = floor( log10(388000) / log10(none) );
 	
 	//static double depth{3.28};
 	
@@ -245,7 +272,7 @@ int HexGameEngine::genMiniMaxMove()
 	auto start = high_resolution_clock::now();
 	
 	//auto state = getMinMax(hgs, (int) floor(depth), true);
-	auto state = getMinMax(hgs, (int)  depth, true);
+	auto state = getMinMax(hgs, (int) depth, true, 0);
 	//auto state = getMinMax(hgs, -1, true);
 	
 	auto stop = high_resolution_clock::now();
