@@ -141,8 +141,6 @@ bool HexGameEngine::initialize()
 	isInitialized = true;
 	done = false;
 
-	//auto [player, ilevel] = ui->getHumanPlayer();
-	
 	int player;
 	
 	try {
@@ -152,18 +150,10 @@ bool HexGameEngine::initialize()
 		done = true;
 		return isInitialized;
 	}
-	
-	/*if( player == (27 + 32) ) {
-		done = true;
-		isInitialized = false;
-		return isInitialized;
-	}*/
-	
+
 	//generateMove = &HexGameEngine::genMonteMove;
 	generateMove = &HexGameEngine::genMiniMaxMove;
-	
-	//level = ilevel;
-	
+
 	int size{ board.getSize() };
 	
 	if (player == 1)

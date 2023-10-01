@@ -12,13 +12,10 @@
 
 using namespace std::chrono;
 
-//#if MONTE
 
 			// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove()
-{
-	//shuffleMax = level * shuffleMax / 3;
-	
+{	
 	int shuffleMax{2421};
 	
 	int size{ board.getSize() }, cells{size*size};
@@ -122,10 +119,8 @@ int HexGameEngine::genMonteMove()
 	
 	algo = "monte";
 	
-	return cell; //return mapMax->first;
+	return cell;
 }
-
-//#else
 
 GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha)
 {
@@ -169,9 +164,6 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha
 					int avg = accumulate(wp.begin(), wp.end(), 0) / wplen;
 					
 					mmhgs.value = size - avg;
-
-					//mmhgs.value = 2;
-					//return mmhgs;
 				}
 				else
 				{
@@ -180,10 +172,9 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha
 					else
 					{
 						if(depth == 0)
-							//mmhgs.value = size * size;
 							mmhgs.value = 1;
 						else
-							mmhgs = getMinMax(mmhgs, depth - 1, !max, alphaMax); // * -1);
+							mmhgs = getMinMax(mmhgs, depth - 1, !max, alphaMax);
 					}
 				}
 				
@@ -207,11 +198,7 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha
 					int wplen = wp.size();
 					int avg = accumulate(wp.begin(), wp.end(), 0) / wplen;
 
-					mmhgs.value = (size - avg); // * -1;
-
-					//mmhgs.value = accumulate(p.begin(), p.end(), 0);// * -1;
-					//mmhgs.value = -2;
-					//return mmhgs;
+					mmhgs.value = (size - avg);
 				}
 				else
 				{
@@ -220,7 +207,6 @@ GameState HexGameEngine::getMinMax(GameState hgs, int depth, bool max, int alpha
 					else
 					{
 						if(depth == 0)
-							//mmhgs.value = -1 * size * size;
 							mmhgs.value = 1;
 						else
 							mmhgs = getMinMax(mmhgs, depth - 1, !max, 0);
@@ -264,16 +250,13 @@ int HexGameEngine::genMiniMaxMove()
 	
 	double depth = floor( log10(388000000) / log10(none) );
 	//double depth = floor( log10(388000) / log10(none) );
-	
-	//static double depth{3.28};
-	
+
 	ui->displayMsg("depth is: " + to_string(depth) );
 	
 	auto start = high_resolution_clock::now();
-	
-	//auto state = getMinMax(hgs, (int) floor(depth), true);
+
 	auto state = getMinMax(hgs, (int) depth, true, 0);
-	//auto state = getMinMax(hgs, -1, true);
+	//auto state = getMinMax(hgs, -1, true, 0);
 	
 	auto stop = high_resolution_clock::now();
 	
@@ -282,21 +265,13 @@ int HexGameEngine::genMiniMaxMove()
 
 	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	algo = "minmax";
-	
-	//depth += 1.0 / 3.0;
-	
+
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
 	
 	//fout.close();
 	
 	return state.cell;
-
-	//random_device rd{"/dev/urandom"};
-	
-	//ofstream fout("depth.txt"); //fout << cells << '\t';
 }
-
-//#endif
 
 void HexGameEngine::playComputer()
 {
@@ -304,12 +279,6 @@ void HexGameEngine::playComputer()
 	
 	int cell = (this->*generateMove)();
 
-/*#if MONTE
-	int cell { genMonteMove() };
-#else
-	int cell { genMiniMaxMove() };
-#endif*/
-	 
 	auto size{ board.getSize() };
 	
 	ui->displayMsg("Computer selects cell (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + "), via - " + algo);
