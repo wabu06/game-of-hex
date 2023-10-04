@@ -1,0 +1,302 @@
+#pragma once
+
+
+
+#include<functional>
+
+
+using namespace std;
+
+enum class hexColors: unsigned {NONE, RED, BLUE};
+
+template<>
+struct hash<hexColors>
+{
+	size_t operator() (hexColors const& hc) const noexcept
+	{
+		hash<int> cHash;
+
+		return cHash(1 ^ 2 ^ 3);
+	}
+};
+
+#ifndef HEX
+
+//#include<stdexcept>
+#include<algorithm>
+#include<random>
+#include<chrono>
+#include<unordered_set>
+#include<tuple>
+#include<cmath>
+
+#include<fstream>
+
+#include "HexPlayer.h"
+#include "HexBoard.h"
+
+#ifndef CONSOLE
+#include "HexConsoleUI.h"
+#endif
+
+#ifndef CURSE
+#include "HexCurseUI.h"
+#endif
+
+#define MONTE 0
+
+
+struct GameState
+{
+	HexPlayer computer, human;
+	HexBoard board;
+	int cell, value;
+	
+	GameState& operator=(const GameState& hgs)
+	{
+		computer = hgs.computer;
+		human = hgs.human;
+		board = hgs.board;
+		cell = hgs.cell;
+		value = hgs.value;
+		
+		return *this;
+	}
+	
+	bool operator==(const GameState& hgs) const {
+		return cell == hgs.cell && value == hgs.value && &computer == &hgs.computer && &human == &hgs.human && &board == &hgs.board;
+	}
+};
+
+template<>
+struct hash<GameState>
+{
+	size_t operator() (GameState const& gs) const noexcept
+	{
+		hash<int> ptrHash;
+
+		return ptrHash(gs.cell ^ gs.value ^ (long) &gs.computer ^ (long) &gs.human ^ (long) &gs.board);
+	}
+};
+
+class HexGameEngine
+{
+	HexPlayer computer, human, *currentPlayer, *winner;
+
+	HexBoard board;
+	HexUI* ui;
+	
+	bool isInitialized;
+	bool done;
+	
+	int level; // game difficulty level
+	
+	string UIname;
+	
+	random_device rd{"/dev/urandom"};
+
+	ofstream fout;
+	
+	void(HexGameEngine::*playCurrentPlayer)();
+
+#if MONTE
+	const string algo = "monte";
+#else
+	const string algo = "minmax";
+	//double depth{3.8}; // {16.8};
+#endif
+
+		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
+		// and returns the user selected board size and user interface
+		// improperly formed arguments are ignored, as well as incorrect parameters,
+		// in either case defaults are used
+	tuple<int, string> parseArgs(int len, char* args[]);
+	
+	bool initialize();
+
+	bool isMoveLegal(int row, int col);
+
+	void playHuman();
+	void playComputer();
+	
+	/*void executeGamePlay()
+	{
+		if(currentPlayer == &human) {
+			playHuman();
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}*/
+	
+	int(HexGameEngine::*generateMove)();
+
+#if MONTE
+	int genMonteMove();
+#else
+	GameState getMinMax(GameState hgs, int depth = -1, bool max = true);
+	int genMiniMaxMove();
+#endif
+	
+	public:
+		HexGameEngine(int argc = 1, char** argv = nullptr):
+			winner(nullptr), ui(nullptr),
+			isInitialized(false), done(true),
+			level(3) {
+						auto [bs, uin] = parseArgs(argc, argv);
+						board = HexBoard(bs);
+						UIname = uin;
+					 }
+		
+		HexGameEngine(const HexGameEngine& hge) : // copy constructor
+			computer(hge.computer),
+			human(hge.human),
+			currentPlayer(hge.currentPlayer),
+			winner(hge.winner),
+			board(hge.board),
+			ui(hge.ui),
+			isInitialized(hge.isInitialized),
+			done(hge.done), level(hge.level),
+			UIname(hge.UIname) {}
+		
+		HexGameEngine(const HexGameEngine&& hge) noexcept : // move constructor
+			computer(hge.computer),
+			human(hge.human),
+			currentPlayer(hge.currentPlayer),
+			winner(hge.winner),
+			board(hge.board),
+			ui(hge.ui),
+			isInitialized(hge.isInitialized),
+			done(hge.done), level(hge.level),
+			UIname(hge.UIname)
+			{
+				if(ui != nullptr)
+					delete hge.ui; }
+		
+		~HexGameEngine() {
+			if(ui != nullptr)
+				delete ui;
+		}
+
+			// move assignment operator
+		HexGameEngine& operator=(HexGameEngine&& hge) noexcept
+		{
+			if(this == &hge)
+				return *this;
+			
+			this->computer = hge.computer;
+			this->human = hge.human;
+			this->currentPlayer = hge.currentPlayer;
+			this->winner = hge.winner;
+			this->board = hge.board;
+			this->ui = hge.ui;
+			delete hge.ui;
+			this->isInitialized = hge.isInitialized;
+			this->done = hge.done;
+			
+			return *this;
+		}
+		
+			// copy assignment operator
+		HexGameEngine& operator=(const HexGameEngine& hge)
+		{
+			this->computer = hge.computer;
+			this->human = hge.human;
+			this->currentPlayer = hge.currentPlayer;
+			this->winner = hge.winner;
+			this->board = hge.board;
+			this->ui = hge.ui;
+			this->isInitialized = hge.isInitialized;
+			this->done = hge.done;
+			this->level = hge.level;
+			this->UIname = hge.UIname;
+			
+			return *this;
+		}
+		
+		HexPlayer& getComputer() {
+			return computer;
+		}
+		
+		HexPlayer& getHuman() {
+			return human;
+		}
+		
+		HexPlayer* getCurrentPlayer() {
+			return currentPlayer;
+		}
+		
+		void setCurrentPlayer(HexPlayer* p) {
+			currentPlayer = p;
+		}
+		
+		HexPlayer* getWinner() {
+			return winner;
+		}
+
+		HexBoard& getBoard() {
+			return board;
+		}
+		
+		void setDone(bool d) {
+			done = d;
+		}
+		
+		void endGame() {
+			done = true;
+		}
+		
+		void setLevel(int L) {
+			level = L;
+		}
+
+		HexGameEngine& operator() (int bs = 7, string uin = "curse")
+		{
+			if(!done)
+				throw string("\nERROR: Altering parameters not allowed while game is running!!\n");
+			
+			UIname = unordered_set<string>{"console", "curse"}.count(uin) == 1 ? uin : "curse";
+			board = HexBoard(bs);
+			
+			return *this;
+		}
+
+		HexGameEngine& run()
+		{
+			if( !initialize() ) // insures initialize method is called first
+				return *this;
+	
+			//if(currentPlayer == &human)
+				//ui->updateUI();
+
+			while(!done)
+			{
+				//executeGamePlay(); // update player graphs and gameBoard
+				
+				(this->*playCurrentPlayer)();
+				
+				if( (winner == nullptr) && done )
+					break;
+
+				ui->updateUI();
+			}
+			
+			return *this;
+		}
+		
+		int shutdown()
+		{
+			if(!isInitialized) {
+				cerr << "\nGame Engine Was Not Initialized" << endl;
+				return EXIT_FAILURE;
+			}
+				//ui->displayMsg("Game Engine Was Not Initialized");
+
+			return EXIT_SUCCESS;
+		}
+};
+
+#endif
+
+

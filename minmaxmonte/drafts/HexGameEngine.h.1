@@ -1,0 +1,123 @@
+#pragma once
+
+
+//#include<iostream>
+//#include<string>
+//#include<stdexcept>
+//#include<utility>
+#include<algorithm>
+#include<random>
+//#include<locale>
+
+//#include "HexPlayer.h"
+#include "HexBoard.h"
+#include "HexConsoleUI.h"
+
+
+class HexGameEngine
+{
+	HexPlayer computer, human, *currentPlayer, *winner;
+	HexBoard board;
+	HexUI* ui;
+	
+	bool isInitialized;
+	bool run;
+
+	bool isMoveLegal(pair<int, int> move);
+
+	void playHuman(pair<int, int> move);
+	void playComputer();
+	
+	void executeGamePlay()
+	{
+		if(currentPlayer == &human)
+		{
+			pair<int, int> move;
+			bool legal;
+			
+			do
+			{	move = ui->getHumanMove(this);
+			
+				if(!run) return; // end game if human choose to quit instead of entering a move
+			
+				legal = isMoveLegal(move);
+			}
+			while(!legal);
+			
+			playHuman(move);
+			return;
+		}
+		
+		if(currentPlayer == &computer)
+			playComputer();
+	}
+	
+	pair<int, int> colorCellNeighbor(int cell);
+	
+	pair<int, int> genMonteMove();
+	
+	pair<int, int> findLongestPath(int cell);
+	
+	pair<int, int> extendLongestPath();
+	
+	public:
+		HexGameEngine(int size = 7): winner(nullptr), board( HexBoard(size) ), ui(nullptr), isInitialized(false), run(true) {}
+
+		HexPlayer& getComputer() {
+			return computer;
+		}
+		
+		HexPlayer& getHuman() {
+			return human;
+		}
+		
+		HexPlayer* getCurrentPlayer() {
+			return currentPlayer;
+		}
+		
+		void setCurrentPlayer(HexPlayer* p) {
+			currentPlayer = p;
+		}
+		
+		HexPlayer* getWinner() {
+			return winner;
+		}
+
+		HexBoard& getBoard() {
+			return board;
+		}
+		
+		void setRun(bool r) {
+			run = r;
+		}
+
+		bool initialize();
+		
+		void runLoop()
+		{
+			if(!isInitialized) // insures initialize method is called first
+				return;
+	
+			if(currentPlayer == &human)
+				ui->updateUI(this);
+
+			while(run)
+			{
+				executeGamePlay(); // update player graphs and gameBoard
+				
+				if( (winner == nullptr) && !run ) continue; // if there's no winner, and run is false it's time quit
+				
+				ui->updateUI(this);
+			}
+		}
+		
+		void shutdown()
+		{
+			if(!isInitialized)
+				ui->displayMsg("\nGame Engine Was Not Initialized\n");
+	
+			if(ui != nullptr)
+				delete ui;
+		}
+};
+
