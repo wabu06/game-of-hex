@@ -13,7 +13,7 @@
 using namespace std::chrono;
 
 
-			// generates moves via monte carlo simulation
+		// generates moves via monte carlo simulation
 int HexGameEngine::genMonteMove()
 {	
 	int shuffleMax{2421};
@@ -298,11 +298,6 @@ void HexGameEngine::playComputer()
 	{
 		winner = &computer;
 		done = true;
-		currentPlayer = nullptr;
-	}
-	else {
-		currentPlayer = &human; // computer just played so human plays next
-		playCurrentPlayer = &HexGameEngine::playHuman;
 	}
 }
 

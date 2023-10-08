@@ -1,6 +1,6 @@
 #define CURSE
 
-#include "HexGameEngine.h"
+//#include "HexGameEngine.h"
 
 
 int HexConsoleUI::getHumanPlayer()
@@ -83,7 +83,7 @@ pair<int, int> HexConsoleUI::getHumanMove()
 
 void HexConsoleUI::drawHexBoard()
 {
-	int rows{ hge->getBoard().getSize() };
+	int rows{ hge.getBoard().getSize() };
 	int col, space{2}, slash;
 
 	bool dot, back;
@@ -100,7 +100,7 @@ void HexConsoleUI::drawHexBoard()
 		{		
 			if(dot)
 			{
-				switch( hge->getBoard().getCellColor(r, col) )
+				switch( hge.getBoard().getCellColor(r, col) )
 				{
 					case hexColors::BLUE:
 						 cout << "B"; //cout << "\u2650";
@@ -152,7 +152,7 @@ void HexConsoleUI::updateUI()
 {
 	cout << '\n'; drawHexBoard();
 	
-	HexPlayer *winner = hge->getWinner();
+	HexPlayer* winner = hge.getWinner();
 	
 	if(winner != nullptr)
 		cout << '\n' << winner->getID() << " Wins, Game Over\n";

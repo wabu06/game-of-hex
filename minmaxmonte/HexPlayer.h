@@ -3,10 +3,11 @@
 
 #define HEX
 
+#include<functional>
 #include<unordered_set>
 #include<string>
 
-#include "HexGameEngine.h"
+//#include "HexGameEngine.h"
 
 #include "dPath.h"
 #include "bfs.h"
@@ -20,7 +21,18 @@
 
 using namespace std;
 
-//enum class hexColors: unsigned {NONE, RED, BLUE};
+enum class hexColors: unsigned {NONE, RED, BLUE};
+
+template<>
+struct hash<hexColors>
+{
+	size_t operator() (hexColors const& hc) const noexcept
+	{
+		hash<int> cHash;
+
+		return cHash(1 ^ 2 ^ 3);
+	}
+};
 
 class HexPlayer
 {

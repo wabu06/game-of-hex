@@ -7,10 +7,12 @@
 #include<array>
 //#include<iostream>
 
-#include "HexGameEngine.h"
+//#include "HexGameEngine.h"
 
 
 using namespace std;
+
+extern enum class hexColors: unsigned {NONE, RED, BLUE};
 
 enum class sides: unsigned {L, R, UL, LL, UR, LR};
 
@@ -143,10 +145,6 @@ class HexBoard
 	
 			return neighbors;
 		}
-		
-		//vector<int> getBlueNeighbors(int cell);
-		
-		//vector<int> getRedNeighbors(int cell);
 		
 		int getCellNeighbor(int n, sides S);
 };

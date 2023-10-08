@@ -17,8 +17,8 @@ class HexGameEngine;
 class HexUI
 {
 	public:
-		HexUI() {}
-		virtual ~HexUI() {}
+		HexUI() = default; //{}
+		virtual ~HexUI() = default; //{}
 	
 		//virtual pair<int, int> getHumanPlayer() = 0;
 		virtual int getHumanPlayer() = 0;

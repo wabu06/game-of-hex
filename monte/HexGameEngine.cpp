@@ -119,6 +119,18 @@ bool HexGameEngine::isMoveLegal(int row, int col)
 	
 }
 
+void runShutdown(int status, void* vhge)
+{
+	HexGameEngine* hge = (HexGameEngine*) vhge;
+	ofstream fout;
+	
+	fout.open("shutdown.txt");		
+	fout << "\nShutting down ..." << endl;
+	fout.close();
+	//if(status == EXIT_FAILURE)
+	hge->shutdown();
+}
+
 bool HexGameEngine::initialize()
 {
 	auto sumchars = [](int s, const char& c) {
@@ -150,6 +162,8 @@ bool HexGameEngine::initialize()
 		done = true;
 		return isInitialized;
 	}
+	
+	on_exit(runShutdown, (void*) this);
 
 	//generateMove = &HexGameEngine::genMonteMove;
 	generateMove = &HexGameEngine::genMiniMaxMove;

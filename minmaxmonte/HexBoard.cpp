@@ -35,37 +35,3 @@ int HexBoard::getCellNeighbor(int cell, sides S)
 	return n;
 }
 
-/*vector<int> HexBoard::getBlueNeighbors(int cell)
-{
-	vector<int> neighbors = vector<int>();
-	
-	array<sides, 6> sideAR = {sides::LR, sides::UL, sides::LL, sides::UR, sides::L, sides::R};
-	
-	for(auto& s: sideAR)
-	{
-		auto n = getCellNeighbor(cell, s);
-				
-		if(n > -1)
-			neighbors.push_back(n);
-	}
-			
-	return neighbors;
-}
-
-vector<int> HexBoard::getRedNeighbors(int cell)
-{
-	vector<int> neighbors = vector<int>();
-	
-	array<sides, 6> sideAR = {sides::L, sides::R, sides::UL, sides::UR, sides::LL, sides::LR};
-		
-	for(auto& s: sideAR)
-	{
-		auto n = getCellNeighbor(cell, s);
-				
-		if(n > -1)
-			neighbors.push_back(n);
-	}
-			
-	return neighbors;
-}*/
-

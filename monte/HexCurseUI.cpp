@@ -27,8 +27,9 @@ void HexCurseUI::finish()
 	delwin(boardWin);
 	delwin(mainwin);
 	endwin();
-			
-	exit( hge->shutdown() );
+	
+	exit(0);		
+	//exit(hge->shutdown());
 }
 
 void HexCurseUI::sigHandler(int sig)

@@ -13,7 +13,7 @@
 
 class HexCurseUI : public HexUI
 {
-	static HexGameEngine* hge;
+	static HexGameEngine hge;
 
 	static int rows, cols;
 	
@@ -25,7 +25,7 @@ class HexCurseUI : public HexUI
 	void showWinner(HexPlayer *winner);
 	
 	public:
-		HexCurseUI(HexGameEngine* engine);
+		HexCurseUI(HexGameEngine engine);
 		
 		~HexCurseUI()
 		{
@@ -46,6 +46,46 @@ class HexCurseUI : public HexUI
 		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
+		
+		int runGame() override
+		{
+			if( !hge.initialize() ) // insures initialize method is called first
+				return hge.shutdown();
+
+			if(hge.getComputer().getColor() == hexColors::BLUE)
+			{
+				hge.playComputer();
+				updateUI();
+			}
+
+			bool done = hge.getDone();
+			
+			while(!done)
+			{
+				hge.playHuman();
+				done = hge.getDone();
+				
+				if(winner != nullptr)
+				{
+					updateUI();
+					break;
+				}
+				else if(done)
+					break;
+				else
+					updateUI();
+				
+				hge.playComputer();
+				updateUI();
+				
+				done = hge.getDone();
+				
+				//if( (winner == nullptr) && done )
+					//break;
+			}
+			
+			return hge.shutdown();
+		}
 
 		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override
 		{	

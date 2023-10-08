@@ -14,3 +14,8 @@ count.py
 hex.zip
 monte/sub/
 monte/*.txt
+minmaxmonte/sub/
+minmaxmonte/test/
+minmaxmonte/*.txt
+minmaxmonte/*.o
+minmaxmonte/hex

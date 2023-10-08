@@ -86,7 +86,7 @@ class HexGameEngine
 	bool isInitialized;
 	bool done;
 	
-	int level; // game difficulty level
+	//int level; // game difficulty level
 	
 	string UIname;
 	
@@ -119,14 +119,12 @@ class HexGameEngine
 	int genMiniMaxMove();
 
 	public:
-		HexGameEngine(int argc = 1, char** argv = nullptr):
-			winner(nullptr), ui(nullptr),
-			isInitialized(false), done(true),
-			level(3) {
-						auto [bs, uin] = parseArgs(argc, argv);
-						board = HexBoard(bs);
-						UIname = uin;
-					 }
+		HexGameEngine(int argc = 1, char** argv = nullptr) : winner(nullptr), ui(nullptr), isInitialized(false), done(true) //, level(3)
+		{
+			auto [bs, uin] = parseArgs(argc, argv);
+			board = HexBoard(bs);
+			UIname = uin;
+		}
 		
 		HexGameEngine(const HexGameEngine& hge) : // copy constructor
 			computer(hge.computer),
@@ -136,8 +134,11 @@ class HexGameEngine
 			board(hge.board),
 			ui(hge.ui),
 			isInitialized(hge.isInitialized),
-			done(hge.done), level(hge.level),
-			UIname(hge.UIname) {}
+			done(hge.done), //level(hge.level),
+			UIname(hge.UIname)
+			{
+				generateMove = hge.generateMove;
+			}
 		
 		HexGameEngine(const HexGameEngine&& hge) noexcept : // move constructor
 			computer(hge.computer),
@@ -147,7 +148,7 @@ class HexGameEngine
 			board(hge.board),
 			ui(hge.ui),
 			isInitialized(hge.isInitialized),
-			done(hge.done), level(hge.level),
+			done(hge.done), //level(hge.level),
 			UIname(hge.UIname)
 			{
 				if(ui != nullptr)
@@ -188,7 +189,7 @@ class HexGameEngine
 			this->ui = hge.ui;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
-			this->level = hge.level;
+			//this->level = hge.level;
 			this->UIname = hge.UIname;
 			
 			return *this;
@@ -226,9 +227,9 @@ class HexGameEngine
 			done = true;
 		}
 		
-		void setLevel(int L) {
-			level = L;
-		}
+		//void setLevel(int L) {
+			//level = L;
+		//}
 
 		HexGameEngine& operator() (int bs = 7, string uin = "curse")
 		{
@@ -264,6 +265,8 @@ class HexGameEngine
 			return *this;
 		}
 		
+		friend void runShutdown(int status, void* vhge);
+		
 		int shutdown()
 		{
 			if(!isInitialized) {
@@ -271,6 +274,11 @@ class HexGameEngine
 				return EXIT_FAILURE;
 			}
 				//ui->displayMsg("Game Engine Was Not Initialized");
+			
+			fout.open("shutdown.txt");
+			
+			fout << "\nShutting down ..." << endl;
+			fout.close();
 
 			return EXIT_SUCCESS;
 		}
