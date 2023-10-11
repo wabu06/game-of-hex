@@ -11,6 +11,7 @@
 //#ifndef HEX
 
 //#include<stdexcept>
+#include<iostream>
 #include<algorithm>
 #include<random>
 #include<chrono>
@@ -20,24 +21,10 @@
 
 #include<fstream>
 
-#include "HexPlayer.h"
 #include "HexBoard.h"
+#include "HexPlayer.h"
+#include "HexExecutor.h"
 
-/*#ifndef CONSOLE*/
-/*#include "HexConsoleUI.h"*/
-/*#endif*/
-
-/*#ifndef CURSE*/
-/*#include "HexCurseUI.h"*/
-/*#endif*/
-
-extern enum class MSGTYPE: unsigned {INFO, WARN, ERROR};
-
-extern class HexUI;
-
-extern int HexUI::getHumanPlayer();
-extern pair<int, int> HexUI::getHumanMove();
-extern void HexUI::displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO);
 
 struct GameState
 {
@@ -76,7 +63,7 @@ class HexGameEngine
 {
 	HexPlayer computer, human, *winner;
 	
-	HexUI* ui;
+	HexExecutor* exe;
 
 	HexBoard board;
 	
@@ -103,33 +90,33 @@ class HexGameEngine
 	int genMiniMaxMove();
 
 	public:
-		HexGameEngine(int bs = 7) : winner(nullptr), ui(nullptr), board(HexBoard(bs)), isInitialized(false), done(true) {}
+		HexGameEngine(int bs = 7, HexExecutor* E = nullptr) : winner(nullptr), exe(E), board(HexBoard(bs)), isInitialized(false), done(true) {}
 		
 		HexGameEngine(const HexGameEngine& hge) : // copy constructor
 			computer(hge.computer),
 			human(hge.human),
 			winner(hge.winner),
-			ui(hge.ui),
+			exe(hge.exe),
 			board(hge.board),
 			isInitialized(hge.isInitialized),
 			done(hge.done),
-			rd(hge.rd),
-			fout(hge.fout),
+			//rd(hge.rd),
+			//fout(hge.fout),
 			algo(hge.algo) { generateMove = hge.generateMove; }
 		
 		HexGameEngine(const HexGameEngine&& hge) noexcept : // move constructor
 			computer(hge.computer),
 			human(hge.human),
 			winner(hge.winner),
-			ui(hge.ui),
+			exe(hge.exe),
 			board(hge.board),
 			isInitialized(hge.isInitialized),
 			done(hge.done),
-			rd(hge.rd),
-			fout(hge.fout),
-			algo(hge.algo) { if(hge.ui != nullptr) delete hge.ui; }
+			//rd(hge.rd),
+			//fout(hge.fout),
+			algo(hge.algo) { if(hge.exe != nullptr) delete hge.exe; }
 		
-		~HexGameEngine() { if(ui != nullptr) delete ui; }
+		~HexGameEngine() { if(exe != nullptr) delete exe; }
 
 			// move assignment operator
 		HexGameEngine& operator=(HexGameEngine&& hge) noexcept
@@ -141,15 +128,15 @@ class HexGameEngine
 			this->human = hge.human;
 			this->winner = hge.winner;
 			this->board = hge.board;
-			this->ui = hge.ui;
+			this->exe = hge.exe;
 
-			if(hge.ui != nullptr)
-				delete hge.ui;
+			if(hge.exe != nullptr)
+				delete hge.exe;
 
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
-			this->rd = hge.rd;
-			this->fout = hge.fout;
+			//this->rd = hge.rd;
+			//this->fout = hge.fout;
 			this->algo = hge.algo;
 	
 			return *this;
@@ -162,21 +149,16 @@ class HexGameEngine
 			this->human = hge.human;
 			this->winner = hge.winner;
 			this->board = hge.board;
-			this->ui = hge.ui;
+			this->exe = hge.exe;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
-			this->rd = hge.rd;
-			this->fout = hge.fout;
+			//this->rd = hge.rd;
+			//this->fout = hge.fout;
 			this->algo = hge.algo;
 			
 			return *this;
 		}
-		
-		HexUI* setUI(HexUI* ui) {
-			this->ui = ui;
-			return ui;
-		}
-		
+
 		void playHuman();
 		void playComputer();
 		
@@ -200,7 +182,7 @@ class HexGameEngine
 			return done;
 		}
 
-		HexGameEngine& operator() (int bs = 7, string uin = "curse")
+		/*HexGameEngine& operator() (int bs = 7, string uin = "curse")
 		{
 			if(!done)
 				throw string("\nERROR: Altering parameters not allowed while game is running!!\n");
@@ -209,32 +191,9 @@ class HexGameEngine
 			board = HexBoard(bs);
 			
 			return *this;
-		}
-		
-		bool initialize(HexUI* ui = nullptr);
-
-		/*HexGameEngine& run()
-		{
-			if( !initialize() ) // insures initialize method is called first
-				return *this;
-
-			while(!done)
-			{
-				try {
-					(this->*playCurrentPlayer)();
-				}
-				catch(int exp) {
-					done = true;
-				}
-				
-				if( (winner == nullptr) && done )
-					break;
-
-				ui->updateUI();
-			}
-			
-			return *this;
 		}*/
+		
+		bool initialize();
 		
 		int shutdown()
 		{

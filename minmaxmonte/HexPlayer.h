@@ -21,7 +21,7 @@
 
 using namespace std;
 
-enum class hexColors: unsigned {NONE, RED, BLUE};
+//enum class hexColors: unsigned {NONE, RED, BLUE};
 
 template<>
 struct hash<hexColors>

@@ -98,7 +98,7 @@ int HexGameEngine::genMonteMove()
 	
 	duration<double> elapse = stop - start;
 	
-	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
+	exe->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	
 	auto lessThan = [](const pair<int, int> &e1, const pair<int, int> &e2)->bool { return e1.second < e2.second; };
 	
@@ -251,7 +251,7 @@ int HexGameEngine::genMiniMaxMove()
 	double depth = floor( log10(388000000) / log10(none) );
 	//double depth = floor( log10(388000) / log10(none) );
 
-	ui->displayMsg("depth is: " + to_string(depth) );
+	exe->displayMsg("depth is: " + to_string(depth) );
 	
 	auto start = high_resolution_clock::now();
 
@@ -263,7 +263,7 @@ int HexGameEngine::genMiniMaxMove()
 	//duration<double, milli> elapse = stop - start;
 	duration<double> elapse = stop - start;
 
-	ui->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
+	exe->displayMsg("Computer's Elapsed Time: " + to_string( elapse.count() ) + " seconds");
 	algo = "minmax";
 
 	//ui->displayMsg("\ncomputer's elapsed time: " + to_string(elapse.count()/1000.0) + " seconds\n");
@@ -275,13 +275,13 @@ int HexGameEngine::genMiniMaxMove()
 
 void HexGameEngine::playComputer()
 {
-	ui->displayMsg("Computer Takes It's Turn");
+	exe->displayMsg("Computer Takes It's Turn");
 	
 	int cell = (this->*generateMove)();
 
 	auto size{ board.getSize() };
 	
-	ui->displayMsg("Computer selects cell (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + "), via - " + algo);
+	exe->displayMsg("Computer selects cell (" + to_string(cell / size + 1) + ", " + to_string(cell % size + 1) + "), via - " + algo);
 	
 	board.setCellColor( cell, computer.getColor() );
 

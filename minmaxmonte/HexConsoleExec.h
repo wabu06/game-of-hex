@@ -1,7 +1,7 @@
 #pragma once
 
 
-//#include<iostream>
+#include<iostream>
 //#include<string>
 #include<utility>
 //#include<algorithm>
@@ -9,17 +9,17 @@
 #include<unistd.h>
 #include<termios.h>
 
-#include "HexUI.h"
+#include "HexGameEngine.h"
 
 
-class HexConsoleUI : public HexUI
+class HexConsoleExe : public HexExecutor
 {
 	HexGameEngine hge;
 	
 	void drawHexBoard();
 	
 	public:
-		HexConsoleUI(HexGameEngine eng) : hge(eng)
+		HexConsoleExe(int bs = 7) : hge( HexGameEngine(bs, this) )
 		{
 			cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 			cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
@@ -32,7 +32,7 @@ class HexConsoleUI : public HexUI
 		
 		pair<int, int> getHumanMove() override;
 		
-		int runGame() override
+		int execute() override
 		{
 			if( !hge.initialize() ) // insures initialize method is called first
 				return hge.shutdown();
@@ -50,7 +50,7 @@ class HexConsoleUI : public HexUI
 				hge.playHuman();
 				done = hge.getDone();
 				
-				if(winner != nullptr)
+				if(hge.getWinner() != nullptr)
 				{
 					updateUI();
 					break;
@@ -64,9 +64,6 @@ class HexConsoleUI : public HexUI
 				updateUI();
 				
 				done = hge.getDone();
-				
-				//if( (winner == nullptr) && done )
-					//break;
 			}
 			
 			return hge.shutdown();
@@ -76,6 +73,14 @@ class HexConsoleUI : public HexUI
 			cout << '\n' << msg << '\n';
 		}
 		
-		void updateUI() override;
+		void updateUI() override
+		{
+			cout << '\n'; drawHexBoard();
+	
+			HexPlayer* winner = hge.getWinner();
+	
+			if(winner != nullptr)
+				cout << '\n' << winner->getID() << " Wins, Game Over\n";
+		}
 };
 

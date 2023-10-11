@@ -12,7 +12,7 @@
 
 using namespace std;
 
-extern enum class hexColors: unsigned {NONE, RED, BLUE};
+enum class hexColors : unsigned {NONE, RED, BLUE};
 
 enum class sides: unsigned {L, R, UL, LL, UR, LR};
 

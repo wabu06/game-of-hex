@@ -1,15 +1,13 @@
-#define CONSOLE
-
-//#include "HexGameEngine.h"
+#include "HexCurseExec.h"
 
 
-int HexCurseUI::rows, HexCurseUI::cols;
+int HexCurseExe::rows, HexCurseExe::cols;
 
-HexGameEngine* HexCurseUI::hge;
+HexGameEngine HexCurseExe::hge;
 
-WINDOW *HexCurseUI::mainwin, *HexCurseUI::boardWin, *HexCurseUI::banner, *HexCurseUI::inputWin, *HexCurseUI::msgWin;
+WINDOW *HexCurseExe::mainwin, *HexCurseExe::boardWin, *HexCurseExe::banner, *HexCurseExe::inputWin, *HexCurseExe::msgWin;
 
-void HexCurseUI::resize()
+void HexCurseExe::resize()
 {
 	int nh, nw;
 
@@ -19,7 +17,7 @@ void HexCurseUI::resize()
 	rows = nh; cols = nw;
 }
 
-void HexCurseUI::finish()
+void HexCurseExe::finish()
 {
 	delwin(msgWin);
 	delwin(inputWin);
@@ -32,7 +30,7 @@ void HexCurseUI::finish()
 	exit(hge.shutdown());
 }
 
-void HexCurseUI::sigHandler(int sig)
+void HexCurseExe::sigHandler(int sig)
 {
 	switch(sig)
 	{
@@ -47,7 +45,7 @@ void HexCurseUI::sigHandler(int sig)
 	}
 }
 
-int HexCurseUI::getHumanPlayer()
+int HexCurseExe::getHumanPlayer()
 {
 	mvwprintw(inputWin, 1, 1, "1) Blue Player");
 	mvwprintw(inputWin, 2, 1, "2) Red Player");
@@ -90,9 +88,9 @@ int HexCurseUI::getHumanPlayer()
 	return player - 48; 
 }
 
-HexCurseUI::HexCurseUI(HexGameEngine* engine)
+HexCurseExe::HexCurseExe(int bs)
 {
-	hge = engine;
+	hge = HexGameEngine(bs, this);
 	
 	mainwin = initscr();
 	
@@ -147,7 +145,7 @@ HexCurseUI::HexCurseUI(HexGameEngine* engine)
 	signal(SIGTERM, sigHandler);
 }
 
-pair<int, int> HexCurseUI::getHumanMove()
+pair<int, int> HexCurseExe::getHumanMove()
 {
 	wclear(inputWin);
 	box(inputWin, 0, 0);
@@ -209,7 +207,7 @@ pair<int, int> HexCurseUI::getHumanMove()
 	return {row - 49, col - 49};
 }
 
-void HexCurseUI::drawHexBoard()
+void HexCurseExe::drawHexBoard()
 {
 	int size{ hge.getBoard().getSize() };
 	
@@ -280,7 +278,7 @@ void HexCurseUI::drawHexBoard()
 	wrefresh(boardWin);
 }
 
-void HexCurseUI::showWinner(HexPlayer *winner)
+void HexCurseExe::showWinner(HexPlayer *winner)
 {
 	char victor[11];
 	stpcpy(victor, winner->getID().c_str() );
@@ -312,7 +310,7 @@ void HexCurseUI::showWinner(HexPlayer *winner)
 	delwin(victorWin);
 }
 
-void HexCurseUI::updateUI()
+void HexCurseExe::updateUI()
 {
 	drawHexBoard();
 	
@@ -321,4 +319,19 @@ void HexCurseUI::updateUI()
 	if(winner != nullptr)
 		showWinner(winner);
 }
+
+//HexUI* HexUI::create(int argc, char** argv)
+//{
+//	auto [bs, ui] = parseArgs(argc, argv);
+//			
+//	HexGameEngine hge(bs);
+//			
+//	if(ui == "console")
+//		return hge.setUI( new HexConsoleUI(hge) );
+//	else if(ui == "curse")
+//		return hge.setUI( new HexCurseUI(hge) );
+//	else
+//		return nullptr;
+//}
+
 

@@ -8,10 +8,10 @@
 #include<csignal>
 #include<cstring>
 
-#include "HexUI.h"
+#include "HexGameEngine.h"
 
 
-class HexCurseUI : public HexUI
+class HexCurseExe : public HexExecutor
 {
 	static HexGameEngine hge;
 
@@ -25,9 +25,9 @@ class HexCurseUI : public HexUI
 	void showWinner(HexPlayer *winner);
 	
 	public:
-		HexCurseUI(HexGameEngine engine);
+		HexCurseExe(int bs = 7);
 		
-		~HexCurseUI()
+		~HexCurseExe()
 		{
     		delwin(msgWin);
     		delwin(inputWin);
@@ -47,7 +47,7 @@ class HexCurseUI : public HexUI
 		
 		pair<int, int> getHumanMove() override;
 		
-		int runGame() override
+		int execute() override
 		{
 			if( !hge.initialize() ) // insures initialize method is called first
 				return hge.shutdown();
@@ -65,7 +65,7 @@ class HexCurseUI : public HexUI
 				hge.playHuman();
 				done = hge.getDone();
 				
-				if(winner != nullptr)
+				if(hge.getWinner() != nullptr)
 				{
 					updateUI();
 					break;

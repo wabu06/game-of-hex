@@ -1,9 +1,7 @@
-#define CURSE
-
-//#include "HexGameEngine.h"
+#include "HexConsoleExec.h"
 
 
-int HexConsoleUI::getHumanPlayer()
+int HexConsoleExe::getHumanPlayer()
 {
 	struct termios oldsets, newsets;
 	
@@ -35,7 +33,7 @@ int HexConsoleUI::getHumanPlayer()
 	return player - 48;
 }
 
-pair<int, int> HexConsoleUI::getHumanMove()
+pair<int, int> HexConsoleExe::getHumanMove()
 {
 	struct termios oldsets, newsets;
 	
@@ -81,7 +79,7 @@ pair<int, int> HexConsoleUI::getHumanMove()
 	return {row - 49, col - 49};
 }
 
-void HexConsoleUI::drawHexBoard()
+void HexConsoleExe::drawHexBoard()
 {
 	int rows{ hge.getBoard().getSize() };
 	int col, space{2}, slash;
@@ -148,13 +146,17 @@ void HexConsoleUI::drawHexBoard()
 	cout << endl;
 }
 
-void HexConsoleUI::updateUI()
-{
-	cout << '\n'; drawHexBoard();
-	
-	HexPlayer* winner = hge.getWinner();
-	
-	if(winner != nullptr)
-		cout << '\n' << winner->getID() << " Wins, Game Over\n";
-}
+//HexUI* HexUI::create(int argc, char** argv)
+//{
+//	auto [bs, ui] = parseArgs(argc, argv);
+//			
+//	HexGameEngine hge(bs);
+//			
+//	if(ui == "console")
+//		return hge.setUI( new HexConsoleUI(hge) );
+//	else if(ui == "curse")
+//		return hge.setUI( new HexCurseUI(hge) );
+//	else
+//		return nullptr;
+//}
 
