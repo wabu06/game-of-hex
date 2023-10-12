@@ -26,7 +26,8 @@ class HexCurseExe : public HexExecutor
 	void showWinner(HexPlayer *winner);
 	
 	public:
-		HexCurseExe(int bs = 7);
+		HexCurseExe() = default;
+		HexCurseExe(int bs);
 		
 		~HexCurseExe()
 		{
