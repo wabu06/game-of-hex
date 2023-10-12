@@ -23,8 +23,10 @@
 
 #include "HexBoard.h"
 #include "HexPlayer.h"
-#include "HexExecutor.h"
 
+#include "HexExecutor.h"
+#include "HexConsoleExec.h"
+#include "HexCurseExec.h"
 
 struct GameState
 {
@@ -90,7 +92,9 @@ class HexGameEngine
 	int genMiniMaxMove();
 
 	public:
-		HexGameEngine(int bs = 7, HexExecutor* E = nullptr) : winner(nullptr), exe(E), board(HexBoard(bs)), isInitialized(false), done(true) {}
+		HexGameEngine(int bs = 5, HexExecutor* E = new HexConsoleExe() )
+			:
+		winner(nullptr), exe(E), board(HexBoard(bs)), isInitialized(false), done(true) {}
 		
 		HexGameEngine(const HexGameEngine& hge) : // copy constructor
 			computer(hge.computer),
@@ -123,7 +127,7 @@ class HexGameEngine
 		{
 			if(this == &hge)
 				return *this;
-			
+
 			this->computer = hge.computer;
 			this->human = hge.human;
 			this->winner = hge.winner;

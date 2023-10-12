@@ -8,7 +8,7 @@ hpINC = graph.h MinPQ.h dPath.h bfs.h dfs.h HexPlayer.h
 hbINC = HexBoard.h
 geINC = ${hpINC} HexBoard.h HexExecutor.h HexConsoleExec.h HexCurseExec.h HexGameEngine.h
 
-OBJs = main.o dPath.o HexBoard.o ComputerPlayer.o HexConsoleExec.o HexCurseExec.o HexGameEngine.o
+OBJs = main.o dPath.o HexBoard.o HexExecutor.o HexConsoleExec.o HexCurseExec.o ComputerPlayer.o HexGameEngine.o
 
 all: hex
 
@@ -24,10 +24,13 @@ dPath.o: graph.h MinPQ.h dPath.h dPath.cpp
 HexBoard.o:	${hbINC} HexBoard.cpp
 	${CC} -c HexBoard.cpp
 
-HexConsoleExec.o:	HexExecutor.h HexConsoleExec.h HexGameEngine.h HexConsoleExec.cpp
+HexExecutor.o:	HexExecutor.h HexGameEngine.h HexExecutor.cpp
+	${CC} -c HexExecutor.cpp
+
+HexConsoleExec.o:	${hpINC} ${hbINC} HexExecutor.h HexConsoleExec.h HexGameEngine.h HexConsoleExec.cpp
 	${CC} -c HexConsoleExec.cpp
 
-HexCurseExec.o:	HexExecutor.h HexCurseExec.h HexGameEngine.h HexCurseExec.cpp
+HexCurseExec.o:	${hpINC} ${hbINC} HexExecutor.h HexCurseExec.h HexGameEngine.h HexCurseExec.cpp
 	${CC} -c HexCurseExec.cpp
 
 ComputerPlayer.o:	${geINC} ComputerPlayer.cpp

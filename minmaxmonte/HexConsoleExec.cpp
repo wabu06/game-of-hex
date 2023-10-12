@@ -1,5 +1,18 @@
-#include "HexConsoleExec.h"
+#include "HexGameEngine.h"
 
+
+//HexGameEngine HexConsoleExe::hge;
+
+HexConsoleExe::HexConsoleExe(int bs) : hge( new HexGameEngine(bs, this) )
+{
+	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
+	cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
+	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n\n";
+
+	//hge = new HexGameEngine(bs, this);
+			
+	cout << '\n'; drawHexBoard(); cout << '\n';
+}
 
 int HexConsoleExe::getHumanPlayer()
 {
@@ -79,9 +92,46 @@ pair<int, int> HexConsoleExe::getHumanMove()
 	return {row - 49, col - 49};
 }
 
+int HexConsoleExe::execute()
+{
+	if( !hge->initialize() ) // insures initialize method is called first
+		return hge->shutdown();
+
+	if(hge->getComputer().getColor() == hexColors::BLUE)
+	{
+		hge->playComputer();
+		updateUI();
+	}
+
+	bool done = hge->getDone();
+			
+	while(!done)
+	{
+		hge->playHuman();
+		done = hge->getDone();
+				
+		if(hge->getWinner() != nullptr)
+		{
+			updateUI();
+			break;
+		}
+		else if(done)
+			break;
+		else
+			updateUI();
+				
+		hge->playComputer();
+		updateUI();
+				
+		done = hge->getDone();
+	}
+			
+	return hge->shutdown();
+}
+
 void HexConsoleExe::drawHexBoard()
 {
-	int rows{ hge.getBoard().getSize() };
+	int rows{ hge->getBoard().getSize() };
 	int col, space{2}, slash;
 
 	bool dot, back;
@@ -98,7 +148,7 @@ void HexConsoleExe::drawHexBoard()
 		{		
 			if(dot)
 			{
-				switch( hge.getBoard().getCellColor(r, col) )
+				switch( hge->getBoard().getCellColor(r, col) )
 				{
 					case hexColors::BLUE:
 						 cout << "B"; //cout << "\u2650";
@@ -144,6 +194,16 @@ void HexConsoleExe::drawHexBoard()
 		cout << "\n"; space++; cout << string(space, ' ');
 	}
 	cout << endl;
+}
+
+void HexConsoleExe::updateUI()
+{
+	cout << '\n'; drawHexBoard();
+	
+	HexPlayer* winner = hge->getWinner();
+	
+	if(winner != nullptr)
+		cout << '\n' << winner->getID() << " Wins, Game Over\n";
 }
 
 //HexUI* HexUI::create(int argc, char** argv)

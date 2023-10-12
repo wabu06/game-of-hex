@@ -1,4 +1,4 @@
-#include "HexCurseExec.h"
+#include "HexGameEngine.h"
 
 
 int HexCurseExe::rows, HexCurseExe::cols;
@@ -143,6 +143,43 @@ HexCurseExe::HexCurseExe(int bs)
 	signal(SIGWINCH, sigHandler);
 	signal(SIGINT, sigHandler);
 	signal(SIGTERM, sigHandler);
+}
+
+int HexCurseExe::execute()
+{
+	if( !hge.initialize() ) // insures initialize method is called first
+		return hge.shutdown();
+
+	if(hge.getComputer().getColor() == hexColors::BLUE)
+	{
+		hge.playComputer();
+		updateUI();
+	}
+
+	bool done = hge.getDone();
+			
+	while(!done)
+	{
+		hge.playHuman();
+		done = hge.getDone();
+				
+		if(hge.getWinner() != nullptr)
+		{
+			updateUI();
+			break;
+		}
+		else if(done)
+			break;
+		else
+			updateUI();
+				
+		hge.playComputer();
+		updateUI();
+				
+		done = hge.getDone();
+	}
+			
+	return hge.shutdown();
 }
 
 pair<int, int> HexCurseExe::getHumanMove()
