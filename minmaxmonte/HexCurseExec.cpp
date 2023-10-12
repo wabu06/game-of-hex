@@ -3,7 +3,7 @@
 
 int HexCurseExe::rows, HexCurseExe::cols;
 
-HexGameEngine HexCurseExe::hge;
+HexGameEngine HexCurseExe::hge, HexCurseExe::sHGE;
 
 WINDOW *HexCurseExe::mainwin, *HexCurseExe::boardWin, *HexCurseExe::banner, *HexCurseExe::inputWin, *HexCurseExe::msgWin;
 
@@ -91,6 +91,7 @@ int HexCurseExe::getHumanPlayer()
 HexCurseExe::HexCurseExe(int bs)
 {
 	hge = HexGameEngine(bs, this);
+	sHGE = hge;
 	
 	mainwin = initscr();
 	
