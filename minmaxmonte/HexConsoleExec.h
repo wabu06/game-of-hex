@@ -21,6 +21,7 @@ class HexConsoleExe : public HexExecutor
 	public:
 		HexConsoleExe() = default;
 		HexConsoleExe(int bs);
+		~HexConsoleExe() = default;
 		
 		int getHumanPlayer() override;
 		
