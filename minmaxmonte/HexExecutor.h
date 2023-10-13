@@ -33,7 +33,8 @@ class HexExecutor
 
 		static HexExecutor* create(int argc , char** argv);
 		
-		virtual int execute() = 0;
+		//virtual int execute() = 0;
+		int execute();
 
 		virtual int getHumanPlayer() = 0;
 		virtual pair<int, int> getHumanMove() = 0;

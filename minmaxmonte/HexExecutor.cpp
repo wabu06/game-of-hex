@@ -14,6 +14,43 @@ HexExecutor* HexExecutor::create(int argc, char** argv)
 		return new HexConsoleExe(3);
 }
 
+int HexExecutor::execute()
+{
+	if( !hge->initialize() ) // insures initialize method is called first
+		return hge->shutdown();
+
+	if(hge->getComputer().getColor() == hexColors::BLUE)
+	{
+		hge->playComputer();
+		this->updateUI();
+	}
+
+	bool done = hge->getDone();
+			
+	while(!done)
+	{
+		hge->playHuman();
+		done = hge->getDone();
+				
+		if(hge->getWinner() != nullptr)
+		{
+			this->updateUI();
+			break;
+		}
+		else if(done)
+			break;
+		else
+			this->updateUI();
+				
+		hge->playComputer();
+		this->updateUI();
+				
+		done = hge->getDone();
+	}
+			
+	return hge->shutdown();
+}
+
 tuple<int, string> HexExecutor::parseArgs(int len, char** args)
 {
 	if(len < 2)

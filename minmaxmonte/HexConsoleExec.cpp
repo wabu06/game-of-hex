@@ -92,42 +92,42 @@ pair<int, int> HexConsoleExe::getHumanMove()
 	return {row - 49, col - 49};
 }
 
-int HexConsoleExe::execute()
-{
-	if( !hge->initialize() ) // insures initialize method is called first
-		return hge->shutdown();
+//int HexConsoleExe::execute()
+//{
+//	if( !hge->initialize() ) // insures initialize method is called first
+//		return hge->shutdown();
 
-	if(hge->getComputer().getColor() == hexColors::BLUE)
-	{
-		hge->playComputer();
-		updateUI();
-	}
+//	if(hge->getComputer().getColor() == hexColors::BLUE)
+//	{
+//		hge->playComputer();
+//		updateUI();
+//	}
 
-	bool done = hge->getDone();
-			
-	while(!done)
-	{
-		hge->playHuman();
-		done = hge->getDone();
-				
-		if(hge->getWinner() != nullptr)
-		{
-			updateUI();
-			break;
-		}
-		else if(done)
-			break;
-		else
-			updateUI();
-				
-		hge->playComputer();
-		updateUI();
-				
-		done = hge->getDone();
-	}
-			
-	return hge->shutdown();
-}
+//	bool done = hge->getDone();
+//			
+//	while(!done)
+//	{
+//		hge->playHuman();
+//		done = hge->getDone();
+//				
+//		if(hge->getWinner() != nullptr)
+//		{
+//			updateUI();
+//			break;
+//		}
+//		else if(done)
+//			break;
+//		else
+//			updateUI();
+//				
+//		hge->playComputer();
+//		updateUI();
+//				
+//		done = hge->getDone();
+//	}
+//			
+//	return hge->shutdown();
+//}
 
 void HexConsoleExe::drawHexBoard()
 {
@@ -205,18 +205,4 @@ void HexConsoleExe::updateUI()
 	if(winner != nullptr)
 		cout << '\n' << winner->getID() << " Wins, Game Over\n";
 }
-
-//HexUI* HexUI::create(int argc, char** argv)
-//{
-//	auto [bs, ui] = parseArgs(argc, argv);
-//			
-//	HexGameEngine hge(bs);
-//			
-//	if(ui == "console")
-//		return hge.setUI( new HexConsoleUI(hge) );
-//	else if(ui == "curse")
-//		return hge.setUI( new HexCurseUI(hge) );
-//	else
-//		return nullptr;
-//}
 

@@ -49,7 +49,7 @@ class HexCurseExe : public HexExecutor
 		
 		pair<int, int> getHumanMove() override;
 		
-		int execute() override;
+		//int execute() override;
 
 		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override
 		{	

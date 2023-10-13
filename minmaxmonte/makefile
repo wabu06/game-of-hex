@@ -24,7 +24,7 @@ dPath.o: graph.h MinPQ.h dPath.h dPath.cpp
 HexBoard.o:	${hbINC} HexBoard.cpp
 	${CC} -c HexBoard.cpp
 
-HexExecutor.o:	HexExecutor.h HexGameEngine.h HexExecutor.cpp
+HexExecutor.o:	${hpINC} ${hbINC} HexExecutor.h HexGameEngine.h HexExecutor.cpp
 	${CC} -c HexExecutor.cpp
 
 HexConsoleExec.o:	${hpINC} ${hbINC} HexExecutor.h HexConsoleExec.h HexGameEngine.h HexConsoleExec.cpp
