@@ -1,4 +1,5 @@
 *.o
+drafts/
 OLD/
 oldImp/
 oldImp1/
@@ -12,6 +13,7 @@ monte/hex
 img/
 count.py
 hex.zip
+monte/drafts/
 monte/sub/
 monte/*.txt
 minmaxmonte/sub/

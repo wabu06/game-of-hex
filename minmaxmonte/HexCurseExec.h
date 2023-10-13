@@ -13,8 +13,8 @@ class HexGameEngine;
 
 class HexCurseExe : public HexExecutor
 {
-	static HexGameEngine hge;
-	static HexGameEngine sHGE;
+	static HexGameEngine* hge;
+	static HexGameEngine* sHGE;
 
 	static int rows, cols;
 	

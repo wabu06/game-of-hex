@@ -34,7 +34,7 @@ tuple<int, string> HexExecutor::parseArgs(int len, char** args)
 	
 	auto argc = 0;
 	
-	for(int i = 0; i < len || argc < 2; i++)
+	for(int i = 0; i < len && argc < 2; i++)
 	{
 		auto arg = string(args[i]);
 

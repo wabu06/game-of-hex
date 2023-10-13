@@ -3,7 +3,7 @@
 
 int HexCurseExe::rows, HexCurseExe::cols;
 
-HexGameEngine HexCurseExe::hge, HexCurseExe::sHGE;
+HexGameEngine *HexCurseExe::hge, *HexCurseExe::sHGE;
 
 WINDOW *HexCurseExe::mainwin, *HexCurseExe::boardWin, *HexCurseExe::banner, *HexCurseExe::inputWin, *HexCurseExe::msgWin;
 
@@ -27,7 +27,7 @@ void HexCurseExe::finish()
 	endwin();
 	
 	//exit(0);		
-	exit(hge.shutdown());
+	exit(hge->shutdown());
 }
 
 void HexCurseExe::sigHandler(int sig)
@@ -90,7 +90,7 @@ int HexCurseExe::getHumanPlayer()
 
 HexCurseExe::HexCurseExe(int bs)
 {
-	hge = HexGameEngine(bs, this);
+	hge = new HexGameEngine(bs, this);
 	sHGE = hge;
 	
 	mainwin = initscr();
@@ -102,7 +102,7 @@ HexCurseExe::HexCurseExe(int bs)
 	
 	getmaxyx(stdscr, rows, cols);
 			
-	int size = hge.getBoard().getSize();
+	int size = hge->getBoard().getSize();
 			
 	boardWin = newwin(rows, (cols/2 + size), 0, 0); //y, x
     refresh();
@@ -148,23 +148,23 @@ HexCurseExe::HexCurseExe(int bs)
 
 int HexCurseExe::execute()
 {
-	if( !hge.initialize() ) // insures initialize method is called first
-		return hge.shutdown();
+	if( !hge->initialize() ) // insures initialize method is called first
+		return hge->shutdown();
 
-	if(hge.getComputer().getColor() == hexColors::BLUE)
+	if(hge->getComputer().getColor() == hexColors::BLUE)
 	{
-		hge.playComputer();
+		hge->playComputer();
 		updateUI();
 	}
 
-	bool done = hge.getDone();
+	bool done = hge->getDone();
 			
 	while(!done)
 	{
-		hge.playHuman();
-		done = hge.getDone();
+		hge->playHuman();
+		done = hge->getDone();
 				
-		if(hge.getWinner() != nullptr)
+		if(hge->getWinner() != nullptr)
 		{
 			updateUI();
 			break;
@@ -174,13 +174,13 @@ int HexCurseExe::execute()
 		else
 			updateUI();
 				
-		hge.playComputer();
+		hge->playComputer();
 		updateUI();
 				
-		done = hge.getDone();
+		done = hge->getDone();
 	}
 			
-	return hge.shutdown();
+	return hge->shutdown();
 }
 
 pair<int, int> HexCurseExe::getHumanMove()
@@ -247,7 +247,7 @@ pair<int, int> HexCurseExe::getHumanMove()
 
 void HexCurseExe::drawHexBoard()
 {
-	int size{ hge.getBoard().getSize() };
+	int size{ hge->getBoard().getSize() };
 	
 	int bRow{size}, width{10}, height{1}, cell;
 	
@@ -263,7 +263,7 @@ void HexCurseExe::drawHexBoard()
 		{		
 			if(dot)
 			{
-				switch( hge.getBoard().getCellColor(r, cell) )
+				switch( hge->getBoard().getCellColor(r, cell) )
 				{
 					case hexColors::BLUE:
 						mvwaddch(boardWin, height, width, 'B' | COLOR_PAIR(1)); // cout << "B\u2650";
@@ -321,7 +321,7 @@ void HexCurseExe::showWinner(HexPlayer *winner)
 	char victor[11];
 	stpcpy(victor, winner->getID().c_str() );
 	
-	int size = hge.getBoard().getSize();
+	int size = hge->getBoard().getSize();
 
 	int h = rows/6, w = (cols - (cols/2 + size))*3 / 4;
 	int y = (rows - rows/6) / 2 - 1, x = cols/2 + size;
@@ -352,7 +352,7 @@ void HexCurseExe::updateUI()
 {
 	drawHexBoard();
 	
-	HexPlayer *winner = hge.getWinner();
+	HexPlayer *winner = hge->getWinner();
 	
 	if(winner != nullptr)
 		showWinner(winner);
