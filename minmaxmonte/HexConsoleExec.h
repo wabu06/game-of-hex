@@ -14,7 +14,7 @@ class HexGameEngine;
 
 class HexConsoleExe : public HexExecutor
 {
-	HexGameEngine* hge;
+	//HexGameEngine* hge;
 	
 	void drawHexBoard();
 	

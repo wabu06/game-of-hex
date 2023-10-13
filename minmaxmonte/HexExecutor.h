@@ -14,6 +14,8 @@ using namespace std;
 
 enum class MSGTYPE: unsigned {INFO, WARN, ERROR};
 
+class HexGameEngine;
+
 class HexExecutor
 {
 		// the parseArgs method takes a command line in the form of: <hex "bs=9" "ui=curse"> as input,
@@ -21,6 +23,9 @@ class HexExecutor
 		// improperly formed arguments are ignored, as well as incorrect parameters,
 		// in either case defaults are used
 	static tuple<int, string> parseArgs(int len, char** args);
+
+	protected:
+		HexGameEngine* hge;
 
 	public:
 		HexExecutor() = default;

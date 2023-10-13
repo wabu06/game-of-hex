@@ -3,7 +3,8 @@
 
 int HexCurseExe::rows, HexCurseExe::cols;
 
-HexGameEngine *HexCurseExe::hge, *HexCurseExe::sHGE;
+//HexGameEngine *HexCurseExe::hge,
+HexGameEngine *HexCurseExe::curseHGE;
 
 WINDOW *HexCurseExe::mainwin, *HexCurseExe::boardWin, *HexCurseExe::banner, *HexCurseExe::inputWin, *HexCurseExe::msgWin;
 
@@ -27,7 +28,7 @@ void HexCurseExe::finish()
 	endwin();
 	
 	//exit(0);		
-	exit(hge->shutdown());
+	exit(curseHGE->shutdown());
 }
 
 void HexCurseExe::sigHandler(int sig)
@@ -91,7 +92,7 @@ int HexCurseExe::getHumanPlayer()
 HexCurseExe::HexCurseExe(int bs)
 {
 	hge = new HexGameEngine(bs, this);
-	sHGE = hge;
+	curseHGE = hge;
 	
 	mainwin = initscr();
 	

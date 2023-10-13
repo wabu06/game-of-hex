@@ -3,13 +3,13 @@
 
 //HexGameEngine HexConsoleExe::hge;
 
-HexConsoleExe::HexConsoleExe(int bs) : hge( new HexGameEngine(bs, this) )
+HexConsoleExe::HexConsoleExe(int bs) //: hge( new HexGameEngine(bs, this) )
 {
 	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n";
 	cout << "|A| |G|A|M|E| |O|F| |H|E|X|\n";
 	cout << "+-+ +-+-+-+-+ +-+-+ +-+-+-+\n\n";
 
-	//hge = new HexGameEngine(bs, this);
+	hge = new HexGameEngine(bs, this);
 			
 	cout << '\n'; drawHexBoard(); cout << '\n';
 }
