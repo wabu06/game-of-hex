@@ -26,15 +26,20 @@ class HexExecutor
 
 	protected:
 		HexGameEngine* hge;
+		int execute();
 
 	public:
 		HexExecutor() = default;
 		virtual ~HexExecutor() = default;
+		/*virtual ~HexExecutor() {
+			if(hge != nullptr)
+				delete hge;
+		}*/
 
 		static HexExecutor* create(int argc , char** argv);
 		
 		//virtual int execute() = 0;
-		int execute();
+		virtual int launch() = 0;
 
 		virtual int getHumanPlayer() = 0;
 		virtual pair<int, int> getHumanMove() = 0;

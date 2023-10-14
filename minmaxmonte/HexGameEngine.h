@@ -100,7 +100,7 @@ class HexGameEngine
 			//fout(hge.fout),
 			algo(hge.algo) { generateMove = hge.generateMove; }
 		
-		HexGameEngine(const HexGameEngine&& hge) noexcept : // move constructor
+		HexGameEngine(HexGameEngine&& hge) noexcept : // move constructor
 			computer(hge.computer),
 			human(hge.human),
 			winner(hge.winner),
@@ -110,7 +110,7 @@ class HexGameEngine
 			done(hge.done),
 			//rd(hge.rd),
 			//fout(hge.fout),
-			algo(hge.algo) { if(hge.exe != nullptr) delete hge.exe; }
+			algo(hge.algo) { hge.winner = nullptr; hge.exe = nullptr; }
 		
 		~HexGameEngine() { if(exe != nullptr) delete exe; }
 
@@ -123,12 +123,10 @@ class HexGameEngine
 			this->computer = hge.computer;
 			this->human = hge.human;
 			this->winner = hge.winner;
+			hge.winner = nullptr;
 			this->board = hge.board;
 			this->exe = hge.exe;
-
-			if(hge.exe != nullptr)
-				delete hge.exe;
-
+			hge.exe = nullptr;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
 			//this->rd = hge.rd;
@@ -178,16 +176,16 @@ class HexGameEngine
 			return done;
 		}
 
-		/*HexGameEngine& operator() (int bs = 7, string uin = "curse")
+		HexGameEngine& operator() (int bs = 7, HexExecutor* E = new HexConsoleExe())
 		{
 			if(!done)
 				throw string("\nERROR: Altering parameters not allowed while game is running!!\n");
-			
-			UIname = unordered_set<string>{"console", "curse"}.count(uin) == 1 ? uin : "curse";
+
 			board = HexBoard(bs);
+			exe = E;
 			
 			return *this;
-		}*/
+		}
 		
 		bool initialize();
 		

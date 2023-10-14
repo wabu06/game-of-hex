@@ -28,6 +28,9 @@ class HexConsoleExe : public HexExecutor
 		pair<int, int> getHumanMove() override;
 		
 		//int execute() override;
+		int launch() override {
+			return execute();
+		}
 		
 		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override {
 			cout << '\n' << msg << '\n';
