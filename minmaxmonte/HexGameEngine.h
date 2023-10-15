@@ -110,7 +110,9 @@ class HexGameEngine
 			done(hge.done),
 			//rd(hge.rd),
 			//fout(hge.fout),
-			algo(hge.algo) { hge.winner = nullptr; hge.exe = nullptr; }
+			algo(hge.algo) { this->generateMove = hge.generateMove;
+							 hge.winner = nullptr;
+							 hge.exe = nullptr; }
 		
 		~HexGameEngine() { if(exe != nullptr) delete exe; }
 
@@ -132,6 +134,8 @@ class HexGameEngine
 			//this->rd = hge.rd;
 			//this->fout = hge.fout;
 			this->algo = hge.algo;
+			
+			this->generateMove = hge.generateMove;
 	
 			return *this;
 		}
@@ -149,6 +153,8 @@ class HexGameEngine
 			//this->rd = hge.rd;
 			//this->fout = hge.fout;
 			this->algo = hge.algo;
+			
+			this->generateMove = hge.generateMove;
 			
 			return *this;
 		}
