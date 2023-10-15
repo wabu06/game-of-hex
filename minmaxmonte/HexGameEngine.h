@@ -17,8 +17,8 @@
 #include "HexPlayer.h"
 
 #include "HexExecutor.h"
-#include "HexConsoleExec.h"
-#include "HexCurseExec.h"
+#include "HexConsoleExe.h"
+#include "HexCurseExe.h"
 
 struct GameState
 {
