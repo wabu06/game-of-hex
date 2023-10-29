@@ -1,7 +1,7 @@
 //#include "HexGameEngine.h"
-#include "HexExecutor.h"
+#include "HexGameApp.h"
 
 
 int main(int argc, char* argv[]) {
-	return HexExecutor::create(argc, argv)->launch();
+	return HexGameApp::getInstance()->initialize_and_execute(argc, argv);
 }

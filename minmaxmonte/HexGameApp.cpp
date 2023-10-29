@@ -1,57 +1,69 @@
-#include "HexGameEngine.h"
+#include "HexGameApp.h"
 
 
+unique_ptr<HexGameApp> HexGameApp::app; //= nullptr;
 
-HexExecutor* HexExecutor::create(int argc, char** argv)
+int HexGameApp::initialize_and_execute(int argc, char** argv)
 {
 	auto [bs, ui] = parseArgs(argc, argv);
 
-	if(ui == "console")
-		return new HexConsoleExe(bs);
-	else if(ui == "curse")
-		return new HexCurseExe(bs);
-	else
-		return new HexConsoleExe(3);
+	hge = HexGameEngine(bs);
+
+	if(ui == "console") {
+		this->ui = new HexConsoleUI(hge.getBoard());
+		//return execute();
+	}
+	else if(ui == "curse") {
+		this->ui = new HexCurseUI(hge.getBoard());
+		//return execute();
+	}
+	else {
+		this->ui = new HexConsoleUI(hge.getBoard());
+		//return execute();
+	}
+	
+	return execute();
 }
 
-int HexExecutor::execute()
+int HexGameApp::execute()
 {
-	if( !hge->initialize() ) // insures initialize method is called first
-		return hge->shutdown();
+	if( !hge.initialize(this->ui) ) // insures initialize method is called first
+		return hge.shutdown();
 
-	if(hge->getComputer().getColor() == hexColors::BLUE)
+	if(hge.getComputer().getColor() == hexColors::BLUE)
 	{
-		hge->playComputer();
-		this->updateUI();
+		hge.playComputer();
+		ui->updateUI(hge.getWinner());
 	}
 
-	bool done = hge->getDone();
+	bool done = hge.getDone();
 			
 	while(!done)
 	{
-		hge->playHuman();
-		done = hge->getDone();
+		hge.playHuman();
+		done = hge.getDone();
+		HexPlayer* winner = hge.getWinner();
 				
-		if(hge->getWinner() != nullptr)
+		if(winner != nullptr)
 		{
-			this->updateUI();
+			ui->updateUI(winner);
 			break;
 		}
 		else if(done)
 			break;
 		else
-			this->updateUI();
+			ui->updateUI(winner);
 				
-		hge->playComputer();
-		this->updateUI();
+		hge.playComputer();
+		ui->updateUI(hge.getWinner());
 				
-		done = hge->getDone();
+		done = hge.getDone();
 	}
 			
-	return hge->shutdown();
+	return hge.shutdown();
 }
 
-tuple<int, string> HexExecutor::parseArgs(int len, char** args)
+tuple<int, string> HexGameApp::parseArgs(int len, char** args)
 {
 	if(len < 2)
 		return {7, "curse"};

@@ -9,7 +9,7 @@ void HexGameEngine::playHuman()
 			
 	do
 	{	try {
-			tie(row, col) = exe->getHumanMove();
+			tie(row, col) = ui->getHumanMove();
 		}
 		catch(int exp)
 		{
@@ -20,7 +20,7 @@ void HexGameEngine::playHuman()
 		legal = isMoveLegal(row, col);
 		
 		if(!legal)
-			exe->displayMsg("ILLEGAL MOVE!");
+			ui->displayMsg("ILLEGAL MOVE!");
 	}
 	while(!legal);
 
@@ -37,7 +37,7 @@ void HexGameEngine::playHuman()
 			human.connectCells(cell, N);
 	}
 
-	exe->displayMsg("Human selects cell (" + to_string(row+1) + ", " + to_string(col+1) + ")");
+	ui->displayMsg("Human selects cell (" + to_string(row+1) + ", " + to_string(col+1) + ")");
 	
 	if( human.win() )
 	{
@@ -64,12 +64,14 @@ bool HexGameEngine::isMoveLegal(int row, int col)
 	}
 }
 
-bool HexGameEngine::initialize()
+bool HexGameEngine::initialize(HexUI* ui)
 {
+	this->ui = ui;
+
 	int player;
 	
 	try {
-		player = exe->getHumanPlayer();
+		player = ui->getHumanPlayer();
 	}
 	catch(int exp) {
 		done = true;

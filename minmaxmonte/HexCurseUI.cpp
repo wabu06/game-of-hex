@@ -1,14 +1,14 @@
-#include "HexGameEngine.h"
+#include "HexCurseUI.h"
 
 
-int HexCurseExe::rows, HexCurseExe::cols;
+int HexCurseUI::rows, HexCurseUI::cols;
 
-//HexGameEngine *HexCurseExe::hge,
-HexGameEngine *HexCurseExe::curseHGE;
+//HexGameEngine *HexCurseUI::hge,
+//HexGameEngine *HexCurseUI::curseHGE;
 
-WINDOW *HexCurseExe::mainwin, *HexCurseExe::boardWin, *HexCurseExe::banner, *HexCurseExe::inputWin, *HexCurseExe::msgWin;
+WINDOW *HexCurseUI::mainwin, *HexCurseUI::boardWin, *HexCurseUI::banner, *HexCurseUI::inputWin, *HexCurseUI::msgWin;
 
-void HexCurseExe::resize()
+void HexCurseUI::resize()
 {
 	int nh, nw;
 
@@ -18,7 +18,7 @@ void HexCurseExe::resize()
 	rows = nh; cols = nw;
 }
 
-void HexCurseExe::finish()
+void HexCurseUI::finish()
 {
 	delwin(msgWin);
 	delwin(inputWin);
@@ -27,17 +27,18 @@ void HexCurseExe::finish()
 	delwin(mainwin);
 	endwin();
 	
-	//exit(0);		
-	exit(curseHGE->shutdown());
+	exit(0);		
+	//exit(curseHGE->shutdown());
 }
 
-void HexCurseExe::sigHandler(int sig)
+void HexCurseUI::sigHandler(int sig)
 {
 	switch(sig)
 	{
 		case SIGTERM:
 		case SIGINT:
-			finish();
+			exit(0);
+			//finish();
 		break;
 		
 		case SIGWINCH:
@@ -46,7 +47,7 @@ void HexCurseExe::sigHandler(int sig)
 	}
 }
 
-int HexCurseExe::getHumanPlayer()
+int HexCurseUI::getHumanPlayer()
 {
 	mvwprintw(inputWin, 1, 1, "1) Blue Player");
 	mvwprintw(inputWin, 2, 1, "2) Red Player");
@@ -62,7 +63,7 @@ int HexCurseExe::getHumanPlayer()
 		player = wgetch(inputWin);
 		
 		if( (player == 27) || (player == 32) ) { // end program if <esc> or <spacebar> is pressed
-			finish();
+			//finish();
 			throw player; //return 27 + 32;
 		}
 
@@ -89,10 +90,10 @@ int HexCurseExe::getHumanPlayer()
 	return player - 48; 
 }
 
-HexCurseExe::HexCurseExe(int bs)
+HexCurseUI::HexCurseUI(HexBoard& board) : ui_board(board)
 {
-	hge = new HexGameEngine(bs, this);
-	curseHGE = hge;
+	//hge = new HexGameEngine(bs, this);
+	//curseHGE = hge;
 	
 	mainwin = initscr();
 	
@@ -103,7 +104,7 @@ HexCurseExe::HexCurseExe(int bs)
 	
 	getmaxyx(stdscr, rows, cols);
 			
-	int size = hge->getBoard().getSize();
+	int size = ui_board.getSize();
 			
 	boardWin = newwin(rows, (cols/2 + size), 0, 0); //y, x
     refresh();
@@ -147,44 +148,7 @@ HexCurseExe::HexCurseExe(int bs)
 	signal(SIGTERM, sigHandler);
 }
 
-//int HexCurseExe::execute()
-//{
-//	if( !hge->initialize() ) // insures initialize method is called first
-//		return hge->shutdown();
-
-//	if(hge->getComputer().getColor() == hexColors::BLUE)
-//	{
-//		hge->playComputer();
-//		updateUI();
-//	}
-
-//	bool done = hge->getDone();
-//			
-//	while(!done)
-//	{
-//		hge->playHuman();
-//		done = hge->getDone();
-//				
-//		if(hge->getWinner() != nullptr)
-//		{
-//			updateUI();
-//			break;
-//		}
-//		else if(done)
-//			break;
-//		else
-//			updateUI();
-//				
-//		hge->playComputer();
-//		updateUI();
-//				
-//		done = hge->getDone();
-//	}
-//			
-//	return hge->shutdown();
-//}
-
-pair<int, int> HexCurseExe::getHumanMove()
+pair<int, int> HexCurseUI::getHumanMove()
 {
 	wclear(inputWin);
 	box(inputWin, 0, 0);
@@ -202,7 +166,7 @@ pair<int, int> HexCurseExe::getHumanMove()
 		row = wgetch(inputWin);
 		
 		if( (row == 27) || (row == 32) ) { // end program if <esc> or <spacebar> is pressed
-			finish();
+			//finish();
 			throw row; //return {27, 32};
 		}
 
@@ -226,7 +190,7 @@ pair<int, int> HexCurseExe::getHumanMove()
 		col = wgetch(inputWin);
 		
 		if( (col == 27) || (col == 32) ) { // end program if <esc> or <spacebar> is pressed
-			finish();
+			//finish();
 			throw col; //return {27, 32};
 		}
 		
@@ -246,9 +210,9 @@ pair<int, int> HexCurseExe::getHumanMove()
 	return {row - 49, col - 49};
 }
 
-void HexCurseExe::drawHexBoard()
+void HexCurseUI::drawHexBoard()
 {
-	int size{ hge->getBoard().getSize() };
+	int size{ ui_board.getSize() };
 	
 	int bRow{size}, width{10}, height{1}, cell;
 	
@@ -264,7 +228,7 @@ void HexCurseExe::drawHexBoard()
 		{		
 			if(dot)
 			{
-				switch( hge->getBoard().getCellColor(r, cell) )
+				switch( ui_board.getCellColor(r, cell) )
 				{
 					case hexColors::BLUE:
 						mvwaddch(boardWin, height, width, 'B' | COLOR_PAIR(1)); // cout << "B\u2650";
@@ -317,12 +281,12 @@ void HexCurseExe::drawHexBoard()
 	wrefresh(boardWin);
 }
 
-void HexCurseExe::showWinner(HexPlayer *winner)
+void HexCurseUI::showWinner(HexPlayer *winner)
 {
 	char victor[11];
 	stpcpy(victor, winner->getID().c_str() );
 	
-	int size = hge->getBoard().getSize();
+	int size = ui_board.getSize();
 
 	int h = rows/6, w = (cols - (cols/2 + size))*3 / 4;
 	int y = (rows - rows/6) / 2 - 1, x = cols/2 + size;
@@ -350,11 +314,9 @@ void HexCurseExe::showWinner(HexPlayer *winner)
 	finish();
 }
 
-void HexCurseExe::updateUI()
+void HexCurseUI::updateUI(HexPlayer *winner)
 {
 	drawHexBoard();
-	
-	HexPlayer *winner = hge->getWinner();
 	
 	if(winner != nullptr)
 		showWinner(winner);

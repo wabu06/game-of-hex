@@ -7,9 +7,9 @@ BIN = bin
 hpINC = graph.h MinPQ.h dPath.h bfs.h dfs.h HexPlayer.h
 #hbINC = ${hpINC} HexBoard.h
 hbINC = HexBoard.h
-geINC = ${hpINC} HexBoard.h HexExecutor.h HexConsoleExe.h HexCurseExe.h HexGameEngine.h
+geINC = ${hpINC} HexBoard.h HexConsoleUI.h HexCurseUI.h HexGameEngine.h
 
-OBJs = ${BIN}/main.o ${BIN}/dPath.o ${BIN}/HexBoard.o ${BIN}/HexExecutor.o ${BIN}/HexConsoleExe.o ${BIN}/HexCurseExe.o ${BIN}/ComputerPlayer.o ${BIN}/HexGameEngine.o
+OBJs = ${BIN}/main.o ${BIN}/dPath.o ${BIN}/HexBoard.o ${BIN}/HexConsoleUI.o ${BIN}/HexCurseUI.o ${BIN}/HexGameApp.o ${BIN}/ComputerPlayer.o ${BIN}/HexGameEngine.o
 
 all: ${BIN}/hex
 
@@ -25,14 +25,14 @@ ${BIN}/dPath.o: graph.h MinPQ.h dPath.h dPath.cpp
 ${BIN}/HexBoard.o:	${hbINC} HexBoard.cpp
 	${CC} -c HexBoard.cpp -o ${BIN}/HexBoard.o
 
-${BIN}/HexExecutor.o:	${hpINC} ${hbINC} HexExecutor.h HexGameEngine.h HexExecutor.cpp
-	${CC} -c HexExecutor.cpp -o ${BIN}/HexExecutor.o
+${BIN}/HexGameApp.o:	${hpINC} ${hbINC} HexGameApp.h HexGameEngine.h HexGameApp.cpp
+	${CC} -c HexGameApp.cpp -o ${BIN}/HexGameApp.o
 
-${BIN}/HexConsoleExe.o:	${hpINC} ${hbINC} HexExecutor.h HexConsoleExe.h HexGameEngine.h HexConsoleExe.cpp
-	${CC} -c HexConsoleExe.cpp -o ${BIN}/HexConsoleExe.o
+${BIN}/HexConsoleUI.o:	${hpINC} ${hbINC} HexUI.h HexConsoleUI.h HexGameEngine.h HexConsoleUI.cpp
+	${CC} -c HexConsoleUI.cpp -o ${BIN}/HexConsoleUI.o
 
-${BIN}/HexCurseExe.o:	${hpINC} ${hbINC} HexExecutor.h HexCurseExe.h HexGameEngine.h HexCurseExe.cpp
-	${CC} -c HexCurseExe.cpp -o ${BIN}/HexCurseExe.o
+${BIN}/HexCurseUI.o:	${hpINC} ${hbINC} HexUI.h HexCurseUI.h HexGameEngine.h HexCurseUI.cpp
+	${CC} -c HexCurseUI.cpp -o ${BIN}/HexCurseUI.o
 
 ${BIN}/ComputerPlayer.o:	${geINC} ComputerPlayer.cpp
 	${CC} -c ComputerPlayer.cpp -o ${BIN}/ComputerPlayer.o

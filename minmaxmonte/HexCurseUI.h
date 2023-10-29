@@ -8,13 +8,15 @@
 #include<csignal>
 #include<cstring>
 
+#include "HexUI.h"
 
-class HexGameEngine;
 
-class HexCurseExe : public HexExecutor
+class HexCurseUI : public HexUI
 {
+	HexBoard& ui_board;
+	
 	//static HexGameEngine* hge;
-	static HexGameEngine* curseHGE;
+	//static HexGameEngine* curseHGE;
 
 	static int rows, cols;
 	
@@ -26,10 +28,10 @@ class HexCurseExe : public HexExecutor
 	void showWinner(HexPlayer *winner);
 	
 	public:
-		HexCurseExe() = default;
-		HexCurseExe(int bs);
+		//HexCurseUI() = default;
+		HexCurseUI(HexBoard& board);
 		
-		~HexCurseExe()
+		~HexCurseUI()
 		{
     		delwin(msgWin);
     		delwin(inputWin);
@@ -48,11 +50,6 @@ class HexCurseExe : public HexExecutor
 		int getHumanPlayer() override;
 		
 		pair<int, int> getHumanMove() override;
-		
-		//int execute() override;
-		int launch() override {
-			return execute();
-		}
 
 		void displayMsg(const string& msg, MSGTYPE mType = MSGTYPE::INFO) override
 		{	
@@ -69,6 +66,6 @@ class HexCurseExe : public HexExecutor
 			}
 		}
 		
-		void updateUI() override;
+		void updateUI(HexPlayer *winner) override;
 };
 

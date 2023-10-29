@@ -16,9 +16,7 @@
 #include "HexBoard.h"
 #include "HexPlayer.h"
 
-#include "HexExecutor.h"
-#include "HexConsoleExe.h"
-#include "HexCurseExe.h"
+#include "HexUI.h"
 
 struct GameState
 {
@@ -57,7 +55,7 @@ class HexGameEngine
 {
 	HexPlayer computer, human, *winner;
 	
-	HexExecutor* exe;
+	HexUI* ui;
 
 	HexBoard board;
 	
@@ -84,15 +82,16 @@ class HexGameEngine
 	int genMiniMaxMove();
 
 	public:
-		HexGameEngine(int bs = 5, HexExecutor* E = new HexConsoleExe() )
+		//HexGameEngine() = default;
+		HexGameEngine(int bs = 5)
 			:
-		winner(nullptr), exe(E), board(HexBoard(bs)), isInitialized(false), done(true) {}
+		winner(nullptr), ui(nullptr), board(HexBoard(bs)), isInitialized(false), done(true) {}
 		
 		HexGameEngine(const HexGameEngine& hge) : // copy constructor
 			computer(hge.computer),
 			human(hge.human),
 			winner(hge.winner),
-			exe(hge.exe),
+			ui(hge.ui),
 			board(hge.board),
 			isInitialized(hge.isInitialized),
 			done(hge.done),
@@ -104,17 +103,20 @@ class HexGameEngine
 			computer(hge.computer),
 			human(hge.human),
 			winner(hge.winner),
-			exe(hge.exe),
+			ui(hge.ui),
 			board(hge.board),
 			isInitialized(hge.isInitialized),
 			done(hge.done),
 			//rd(hge.rd),
 			//fout(hge.fout),
-			algo(hge.algo) { this->generateMove = hge.generateMove;
-							 hge.winner = nullptr;
-							 hge.exe = nullptr; }
+			algo(hge.algo)
+			{
+				this->generateMove = hge.generateMove;
+				hge.winner = nullptr;
+				hge.ui = nullptr;
+			}
 		
-		~HexGameEngine() { if(exe != nullptr) delete exe; }
+		~HexGameEngine() { if(ui != nullptr) delete ui; }
 
 			// move assignment operator
 		HexGameEngine& operator=(HexGameEngine&& hge) noexcept
@@ -127,8 +129,8 @@ class HexGameEngine
 			this->winner = hge.winner;
 			hge.winner = nullptr;
 			this->board = hge.board;
-			this->exe = hge.exe;
-			hge.exe = nullptr;
+			this->ui = hge.ui;
+			hge.ui = nullptr;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
 			//this->rd = hge.rd;
@@ -147,7 +149,7 @@ class HexGameEngine
 			this->human = hge.human;
 			this->winner = hge.winner;
 			this->board = hge.board;
-			this->exe = hge.exe;
+			this->ui = hge.ui;
 			this->isInitialized = hge.isInitialized;
 			this->done = hge.done;
 			//this->rd = hge.rd;
@@ -161,6 +163,11 @@ class HexGameEngine
 
 		void playHuman();
 		void playComputer();
+		
+		HexUI* setUI(HexUI* ui) {
+			this->ui = ui;
+			return this->ui;
+		}
 		
 		HexPlayer& getComputer() {
 			return computer;
@@ -182,18 +189,18 @@ class HexGameEngine
 			return done;
 		}
 
-		HexGameEngine& operator() (int bs = 7, HexExecutor* E = new HexConsoleExe())
+		HexGameEngine& operator() (HexUI* ui, int bs = 7)
 		{
 			if(!done)
 				throw string("\nERROR: Altering parameters not allowed while game is running!!\n");
 
 			board = HexBoard(bs);
-			exe = E;
+			this->ui = ui;
 			
 			return *this;
 		}
 		
-		bool initialize();
+		bool initialize(HexUI* ui);
 		
 		int shutdown()
 		{
